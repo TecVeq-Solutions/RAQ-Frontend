@@ -22,19 +22,19 @@ export default function DashboardLayout({
     if (cachedUser) {
       setUser(cachedUser);
       setLoading(false);
+    } else {
+      // 2. Fetch fresh user data from API endpoint /api/me if cookie is missing
+      authService
+        .getCurrentUser()
+        .then((freshUser) => {
+          if (freshUser) {
+            setUser(freshUser);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
-
-    // 2. Fetch fresh user data from API endpoint /api/me in background
-    authService
-      .getCurrentUser()
-      .then((freshUser) => {
-        if (freshUser) {
-          setUser(freshUser);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
   }, []);
 
   if (loading && !user) {
@@ -64,7 +64,7 @@ export default function DashboardLayout({
         />
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full">
           {children}
         </main>
       </div>

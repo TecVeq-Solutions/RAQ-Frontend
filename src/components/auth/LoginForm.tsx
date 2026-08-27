@@ -41,18 +41,13 @@ export default function LoginForm() {
     }
   };
 
-  const fillTestCredentials = (roleEmail: string) => {
-    setEmail(roleEmail);
-    setPassword('password');
-    setError(null);
-  };
 
   return (
     <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-slate-100 transition-all">
       {/* Header & Logo */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 mb-4 shadow-sm ring-1 ring-emerald-100">
-          <ShieldCheck className="w-8 h-8 text-[#16A34A]" />
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white mb-4 shadow-sm ring-1 ring-slate-100 p-2">
+          <img src="/tecveq-logo.png" alt="Tecveq Logo" className="w-full h-full object-contain" />
         </div>
         <h1 className="text-2xl font-bold text-[#0F172A] tracking-tight">
           Tecveq Management
@@ -140,38 +135,6 @@ export default function LoginForm() {
         </button>
       </form>
 
-      {/* Demo Credentials Helper */}
-      <div className="mt-8 pt-6 border-t border-slate-100">
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-center mb-3">
-          Quick Demo Login (Password: <span className="font-mono text-slate-700 lowercase">password</span>)
-        </p>
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            type="button"
-            onClick={() => fillTestCredentials('admin@tecveq.com')}
-            className="px-2 py-2 text-xs font-medium text-[#0F172A] bg-slate-100 hover:bg-emerald-50 hover:text-[#16A34A] hover:border-[#16A34A] border border-slate-200 rounded-lg transition-all text-center flex flex-col items-center gap-1"
-          >
-            <span className="font-bold">Admin</span>
-            <span className="text-[10px] text-slate-500">Full Access</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => fillTestCredentials('staff@tecveq.com')}
-            className="px-2 py-2 text-xs font-medium text-[#0F172A] bg-slate-100 hover:bg-emerald-50 hover:text-[#16A34A] hover:border-[#16A34A] border border-slate-200 rounded-lg transition-all text-center flex flex-col items-center gap-1"
-          >
-            <span className="font-bold">Staff</span>
-            <span className="text-[10px] text-slate-500">Sales/Stock</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => fillTestCredentials('viewer@tecveq.com')}
-            className="px-2 py-2 text-xs font-medium text-[#0F172A] bg-slate-100 hover:bg-emerald-50 hover:text-[#16A34A] hover:border-[#16A34A] border border-slate-200 rounded-lg transition-all text-center flex flex-col items-center gap-1"
-          >
-            <span className="font-bold">Viewer</span>
-            <span className="text-[10px] text-slate-500">Read-Only</span>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

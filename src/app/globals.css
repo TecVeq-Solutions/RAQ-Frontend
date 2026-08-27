@@ -73,3 +73,28 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* High-resolution display font scaling for 1600px to 2500px screen sizes */
+@media (min-width: 1600px) {
+  html {
+    font-size: 17.5px;
+  }
+}
+
+@media (min-width: 1920px) {
+  html {
+    font-size: 18.5px;
+  }
+}
+
+@media (min-width: 2200px) {
+  html {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 2500px) {
+  html {
+    font-size: 21.5px;
+  }
+}
