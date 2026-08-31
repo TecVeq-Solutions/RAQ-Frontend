@@ -2,19 +2,76 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Users, CheckCircle2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import apiClient from '@/lib/api';
+import { ArrowLeft, CheckCircle2, Loader2, AlertCircle, UserPlus } from 'lucide-react';
 
 export default function AddCustomerPage() {
+  const router = useRouter();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
-  const [openingBalance, setOpeningBalance] = useState<number>(0);
+  const [openingBalance, setOpeningBalance] = useState<string>('0');
+  const [isActive, setIsActive] = useState(true);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setError('Customer Full Name is required.');
+      return;
+    }
+
+    const parsedBalance = parseFloat(openingBalance);
+    if (isNaN(parsedBalance) || parsedBalance < 0) {
+      setError('Opening balance cannot be negative.');
+      return;
+    }
+
+    setLoading(true);
+
+    const payload = {
+      name: trimmedName,
+      email: email.trim() || null,
+      phone: phone.trim() || null,
+      address: address.trim() || null,
+      opening_balance: parsedBalance,
+      is_active: isActive,
+    };
+
+    try {
+      const res = await apiClient.post('/customers', payload);
+      setSuccess(res.data?.message || `Customer "${trimmedName}" registered successfully with opening balance!`);
+      
+      setTimeout(() => {
+        router.push('/customers');
+      }, 1200);
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.errors?.[Object.keys(err.response?.data?.errors || {})[0]]?.[0] ||
+        'Failed to save customer account. Please check your inputs.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="space-y-6 animate-fadeIn max-w-2xl mx-auto pb-12">
+    <div className="space-y-6 animate-fadeIn max-w-2xl pb-12">
       <div className="flex items-center gap-3">
-        <Link href="/customers" className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">
+        <Link
+          href="/customers"
+          className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors shadow-xs"
+        >
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
@@ -24,70 +81,122 @@ export default function AddCustomerPage() {
       </div>
 
       <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Customer Full Name *</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Tariq Mahmood"
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
-          />
-        </div>
+        {error && (
+          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-semibold flex items-center gap-2 animate-fadeIn">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {success && (
+          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-[#16A34A] text-sm font-bold flex items-center gap-2 animate-fadeIn">
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-[#16A34A]" />
+            <span>{success}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Phone Number</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              Customer Full Name *
+            </label>
             <input
               type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="0300-1234567"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Tariq Mahmood"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+                Phone Number
+              </label>
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="0300-1234567"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+                Opening Balance (Rs.)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={openingBalance}
+                onChange={(e) => setOpeningBalance(e.target.value)}
+                placeholder="0.00"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="customer@example.com"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Opening Balance (Rs.)</label>
-            <input
-              type="number"
-              value={openingBalance}
-              onChange={(e) => setOpeningBalance(Number(e.target.value))}
-              placeholder="0.00"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              Address
+            </label>
+            <textarea
+              rows={3}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Commercial Area, Lahore"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all"
             />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Email Address</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="customer@example.com"
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
-          />
-        </div>
+          <div className="flex items-center gap-2 pt-1">
+            <input
+              type="checkbox"
+              id="customerActive"
+              checked={isActive}
+              onChange={(e) => setIsActive(e.target.checked)}
+              className="w-4 h-4 rounded text-[#16A34A] focus:ring-[#16A34A]"
+            />
+            <label htmlFor="customerActive" className="text-xs font-bold text-slate-700 cursor-pointer">
+              Active Customer Account
+            </label>
+          </div>
 
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Address</label>
-          <textarea
-            rows={3}
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="Commercial Area, Lahore"
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
-          />
-        </div>
-
-        <button
-          type="button"
-          className="w-full py-3.5 rounded-xl bg-purple-600 text-white font-bold text-base hover:bg-purple-700 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer mt-4"
-        >
-          <CheckCircle2 className="w-5 h-5" />
-          <span>Save Customer Account</span>
-        </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 rounded-xl bg-[#16A34A] text-white font-bold text-base hover:bg-[#059669] active:scale-[0.99] transition-all shadow-md hover:shadow-lg shadow-[#16A34A]/20 flex items-center justify-center gap-2 cursor-pointer mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Saving Customer Account...</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-5 h-5" />
+                <span>Save Customer Account</span>
+              </>
+            )}
+          </button>
+        </form>
       </div>
     </div>
   );

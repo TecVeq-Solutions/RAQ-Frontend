@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import apiClient from '@/lib/api';
-import { Users, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Users, FileText, ArrowRight, Loader2 } from 'lucide-react';
 
 export default function CustomerLedgerPage() {
   const [customers, setCustomers] = useState<any[]>([]);
@@ -31,7 +32,7 @@ export default function CustomerLedgerPage() {
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex items-center gap-2 font-bold text-[#0F172A] text-sm">
-          <FileText className="w-4 h-4 text-purple-600" /> Customer Account Statement Summary
+          <FileText className="w-4 h-4 text-[#16A34A]" /> Customer Account Statement Summary
         </div>
 
         <div className="overflow-x-auto">
@@ -43,21 +44,31 @@ export default function CustomerLedgerPage() {
                 <th className="px-6 py-3 text-right">Opening Balance</th>
                 <th className="px-6 py-3 text-right">Current Outstanding</th>
                 <th className="px-6 py-3 text-center">Ledger Status</th>
+                <th className="px-6 py-3 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {customers.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="w-6 h-6 animate-spin text-[#16A34A]" />
+                      <span>Loading customer ledger statements...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : customers.length > 0 ? (
                 customers.map((c) => (
                   <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 font-bold text-[#0F172A]">{c.name}</td>
                     <td className="px-6 py-4 text-slate-500">{c.phone || '—'}</td>
-                    <td className="px-6 py-4 text-right font-medium">Rs. {Number(c.opening_balance || 0).toLocaleString()}</td>
-                    <td className="px-6 py-4 text-right font-extrabold text-purple-700">
-                      Rs. {Number(c.current_balance || 0).toLocaleString()}
+                    <td className="px-6 py-4 text-right font-medium">Rs. {Number(c.opening_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td className="px-6 py-4 text-right font-extrabold text-[#16A34A]">
+                      Rs. {Number(c.current_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
                     <td className="px-6 py-4 text-center">
                       {Number(c.current_balance || 0) > 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border border-purple-200">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
                           Receivable Balance
                         </span>
                       ) : (
@@ -66,12 +77,21 @@ export default function CustomerLedgerPage() {
                         </span>
                       )}
                     </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link
+                        href={`/customers/${c.id}/khata`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors"
+                      >
+                        <span>View Khata</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
-                    {loading ? 'Loading customer ledger statements...' : 'No customer records found.'}
+                  <td colSpan={6} className="px-6 py-8 text-center text-slate-400">
+                    No customer records found.
                   </td>
                 </tr>
               )}

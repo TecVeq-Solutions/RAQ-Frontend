@@ -10,7 +10,7 @@ export default function ReceivePaymentPage() {
   const [narration, setNarration] = useState('');
 
   return (
-    <div className="space-y-6 animate-fadeIn max-w-2xl mx-auto pb-12">
+    <div className="space-y-6 animate-fadeIn max-w-2xl pb-12">
       <div className="flex items-center gap-3">
         <Link href="/payments" className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">
           <ArrowLeft className="w-5 h-5" />
