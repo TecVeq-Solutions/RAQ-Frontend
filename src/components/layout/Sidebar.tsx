@@ -28,6 +28,7 @@ import {
   FileText,
   TrendingUp,
   AlertTriangle,
+  Settings,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -149,6 +150,13 @@ const MENU_ITEMS: MenuItem[] = [
     name: 'Backup & Restore',
     href: '/backup',
     icon: Database,
+    roles: ['admin'],
+    badge: 'Admin',
+  },
+  {
+    name: 'System Settings',
+    href: '/settings',
+    icon: Settings,
     roles: ['admin'],
     badge: 'Admin',
   },

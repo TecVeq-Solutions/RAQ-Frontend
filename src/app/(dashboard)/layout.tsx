@@ -29,7 +29,12 @@ export default function DashboardLayout({
         .then((freshUser) => {
           if (freshUser) {
             setUser(freshUser);
+          } else {
+            window.location.href = '/login';
           }
+        })
+        .catch(() => {
+          window.location.href = '/login';
         })
         .finally(() => {
           setLoading(false);
@@ -37,7 +42,7 @@ export default function DashboardLayout({
     }
   }, []);
 
-  if (loading && !user) {
+  if (loading || !user) {
     return (
       <div className="min-h-screen bg-brand-gray flex flex-col items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-[#16A34A] mb-3" />
