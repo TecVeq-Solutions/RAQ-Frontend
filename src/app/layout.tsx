@@ -4,6 +4,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Tecveq - Sales, Purchase, Stock & Accounting System',
   description: 'Enterprise Sales, Purchase, Stock & Accounting Management System with Role-Based Access Control',
+  icons: {
+    icon: '/tecveq-logo.png',
+  },
 };
 
 export default function RootLayout({
