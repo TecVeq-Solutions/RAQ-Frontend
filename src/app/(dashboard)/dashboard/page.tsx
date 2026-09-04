@@ -173,8 +173,9 @@ export default function DashboardPage() {
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
-              Welcome back, <span className="text-emerald-400">{user?.name || 'Administrator'}</span>!
+            {/* padding: 10px  0px*/}
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl  font-black tracking-tight text-white">
+              Welcome back, <span className="text-emerald-400">{user?.name || 'Administrator'}</span>  !
             </h1>
             <p className="text-sm sm:text-base text-slate-300 max-w-2xl font-medium leading-relaxed">
               {roleInfo.desc}
