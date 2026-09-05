@@ -52,7 +52,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#F3F4F6] flex">
+    <div className="min-h-screen bg-[#F3F4F6] flex max-w-full overflow-x-hidden">
       {/* Sidebar Navigation */}
       <Sidebar
         user={user}
@@ -61,7 +61,7 @@ export default function DashboardLayout({
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-72">
+      <div className="flex-1 flex flex-col min-w-0 max-w-full lg:pl-72 2xl:pl-80 overflow-x-hidden transition-all duration-300">
         {/* Sticky Header */}
         <Header
           user={user}
@@ -69,7 +69,7 @@ export default function DashboardLayout({
         />
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 2xl:p-10 w-full max-w-full overflow-x-hidden">
           {children}
         </main>
       </div>
