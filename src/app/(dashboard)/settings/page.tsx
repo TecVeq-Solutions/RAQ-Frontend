@@ -136,7 +136,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fadeIn max-w-5xl mx-auto pb-16">
+    <div className="space-y-6 animate-fadeIn max-w-5xl pb-16">
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">

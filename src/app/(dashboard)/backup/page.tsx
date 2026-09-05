@@ -51,6 +51,7 @@ export default function BackupPage() {
   // Delete Modal State
   const [selectedDeleteBackup, setSelectedDeleteBackup] = useState<BackupItem | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!authService.isAdmin()) {
@@ -58,32 +59,25 @@ export default function BackupPage() {
     }
   }, []);
 
-  const fetchBackups = useCallback(async () => {
+  const fetchBackups = async () => {
     setLoading(true);
-    setActionError(null);
     try {
       const res = await apiClient.get('/backups');
-      if (res.data?.data) {
+      if (res.data?.success) {
         setBackups(res.data.data);
       }
-    } catch (err: any) {
-      if (err.response?.status === 403) {
-        setIsAuthorized(false);
-      } else {
-        setActionError(err.response?.data?.message || 'Failed to load backup history.');
-      }
+    } catch {
+      setActionError('Failed to fetch backup history.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    if (isAuthorized) {
-      fetchBackups();
-    }
-  }, [isAuthorized, fetchBackups]);
+    fetchBackups();
+  }, []);
 
-  // Handle Manual Backup Creation
+  // Handle Create Backup
   const handleCreateBackup = async () => {
     setCreating(true);
     setActionError(null);
@@ -102,21 +96,37 @@ export default function BackupPage() {
   };
 
   // Handle Download Backup
-  const handleDownload = (backup: BackupItem) => {
-    apiClient
-      .get(`/backups/${backup.id}/download`, { responseType: 'blob' })
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', backup.filename);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch(() => {
-        setActionError('Failed to download backup file. Please try again.');
+  const handleDownload = async (backup: BackupItem) => {
+    setDownloadingId(backup.id);
+    setActionError(null);
+    try {
+      const response = await apiClient.get(`/backups/${backup.id}/download`, {
+        responseType: 'blob',
       });
+      const blob = new Blob([response.data], { type: 'application/gzip' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', backup.filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+    } catch (err: any) {
+      let msg = 'Failed to download backup file. Please try again.';
+      if (err.response?.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const json = JSON.parse(text);
+          if (json.message) msg = json.message;
+        } catch { }
+      } else if (err.response?.data?.message) {
+        msg = err.response.data.message;
+      }
+      setActionError(msg);
+    } finally {
+      setDownloadingId(null);
+    }
   };
 
   // Handle Execute Restore
@@ -395,12 +405,17 @@ export default function BackupPage() {
                       <div className="inline-flex items-center gap-2 justify-end">
                         <button
                           type="button"
+                          disabled={downloadingId === b.id}
                           onClick={() => handleDownload(b)}
                           title="Download Gzip Backup (.sql.gz)"
-                          className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
+                          className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-60 text-slate-800 font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
                         >
-                          <Download className="w-4 h-4 text-slate-600" />
-                          <span>Download</span>
+                          {downloadingId === b.id ? (
+                            <Loader2 className="w-4 h-4 text-slate-600 animate-spin" />
+                          ) : (
+                            <Download className="w-4 h-4 text-slate-600" />
+                          )}
+                          <span>{downloadingId === b.id ? 'Downloading...' : 'Download'}</span>
                         </button>
 
                         <button

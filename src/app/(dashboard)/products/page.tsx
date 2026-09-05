@@ -37,8 +37,8 @@ export default function ProductsPage() {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // RBAC checks
-  const canManage = authService.isAdmin() || authService.isStaff();
+  // RBAC checks (Stock & Products is strictly View-Only for Staff)
+  const canManage = authService.isAdmin();
   const canDelete = authService.isAdmin();
 
   // Debounce search input
