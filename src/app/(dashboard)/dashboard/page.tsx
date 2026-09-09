@@ -28,9 +28,16 @@ import {
   BarChart3,
   Calendar,
   Activity,
+  Factory,
+  Layers,
+  ShieldAlert,
+  Percent,
+  ChevronRight,
+  PieChart,
 } from 'lucide-react';
 
 import StaffDashboard from '@/components/dashboard/StaffDashboard';
+import { DueAlertsData } from '@/types/ledger';
 
 interface RecentSale {
   id: number;
@@ -80,8 +87,23 @@ interface DashboardStats {
   monthly_revenue: number | null;
   customer_outstanding: number | null;
   supplier_outstanding: number | null;
+  today_gross_profit: number | null;
+  today_net_profit: number | null;
+  today_cogs?: number | null;
   today_profit: number | null;
+  monthly_gross_profit: number | null;
+  monthly_net_profit: number | null;
+  monthly_cogs?: number | null;
   monthly_profit: number | null;
+  raw_material_stock_value: number | null;
+  finished_goods_stock_value: number | null;
+  today_production_quantity: number | null;
+  today_due_receivables: number;
+  today_due_payables: number;
+  overdue_receivables: number;
+  overdue_payables: number;
+  overdue_receivables_count: number;
+  overdue_payables_count: number;
   today_sales?: number;
   today_sales_count?: number;
   today_transactions_count?: number;
@@ -96,21 +118,27 @@ interface DashboardStats {
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [dueAlerts, setDueAlerts] = useState<DueAlertsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const currentUser = authService.getUserFromCookie();
     setUser(currentUser);
 
-    apiClient
-      .get<{ success: boolean; data: DashboardStats }>('/dashboard/stats')
-      .then((res) => {
-        if (res.data.success) {
-          setStats(res.data.data);
+    Promise.all([
+      apiClient.get<{ success: boolean; data: DashboardStats }>('/dashboard/stats'),
+      apiClient.get<{ success: boolean; data: DueAlertsData }>('/dashboard/due-alerts'),
+    ])
+      .then(([statsRes, alertsRes]) => {
+        if (statsRes.data?.success) {
+          setStats(statsRes.data.data);
+        }
+        if (alertsRes.data?.success) {
+          setDueAlerts(alertsRes.data.data);
         }
       })
       .catch((err) => {
-        console.error('Failed to load dashboard stats:', err);
+        console.error('Failed to load dashboard stats / due alerts:', err);
       })
       .finally(() => {
         setLoading(false);
@@ -142,6 +170,10 @@ export default function DashboardPage() {
                 low_stock_alerts: stats.low_stock_alerts ?? 0,
                 low_stock_products: stats.low_stock_products ?? [],
                 recent_sales: stats.recent_sales ?? [],
+                today_gross_profit: stats.today_gross_profit ?? null,
+                today_net_profit: stats.today_net_profit ?? null,
+                monthly_gross_profit: stats.monthly_gross_profit ?? null,
+                monthly_net_profit: stats.monthly_net_profit ?? null,
               }
             : null
         }
@@ -154,8 +186,8 @@ export default function DashboardPage() {
     switch (role) {
       case 'admin':
         return {
-          title: 'System Administrator',
-          desc: 'Full governance: Sales, Purchases, Ledgers, Reports, User Management, and System Backups.',
+          title: 'Executive Management',
+          desc: 'Executive 360° overview: Manufacturing throughput, Stock valuation, True Net Profit, and Due financial obligations.',
           icon: ShieldCheck,
           badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
         };
@@ -180,33 +212,43 @@ export default function DashboardPage() {
   const roleInfo = getRoleHeaderDetails(user?.role);
   const RoleIcon = roleInfo.icon;
 
+  // Inventory distribution calculation
+  const rawStockVal = stats?.raw_material_stock_value ?? 0;
+  const fgStockVal = stats?.finished_goods_stock_value ?? 0;
+  const totalInvVal = rawStockVal + fgStockVal;
+  const rawRatio = totalInvVal > 0 ? (rawStockVal / totalInvVal) * 100 : 50;
+  const fgRatio = totalInvVal > 0 ? (fgStockVal / totalInvVal) * 100 : 50;
+
   // Max value calculation for bar height in Chart
   const maxChartVal = Math.max(
     ...(stats?.sales_vs_purchases_chart.flatMap((c) => [c.sales, c.purchases]) || [100])
   );
 
+  const totalOverdueCount = (stats?.overdue_receivables_count ?? 0) + (stats?.overdue_payables_count ?? 0);
+  const totalOverdueAmount = (stats?.overdue_receivables ?? 0) + (stats?.overdue_payables ?? 0);
+
   return (
-    <div className="space-y-5 sm:space-y-8 animate-fadeIn w-full max-w-full pb-16 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 animate-fadeIn w-full max-w-full pb-16 overflow-x-hidden">
       {/* SECTION A: Hero Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-7 lg:p-9 text-white shadow-xl shadow-slate-950/15 border border-slate-800">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-emerald-500/15 to-transparent pointer-events-none" />
-        <div className="absolute left-1/4 bottom-0 -mb-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-5 sm:p-8 lg:p-9 text-white shadow-xl shadow-slate-950/20 border border-slate-800">
+        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-indigo-500/15 to-transparent pointer-events-none" />
+        <div className="absolute left-1/4 bottom-0 -mb-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 sm:gap-6">
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${roleInfo.badgeColor}`}>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${roleInfo.badgeColor}`}>
                 <RoleIcon className="w-3.5 h-3.5" />
                 <span>{user?.role ? user.role.toUpperCase() : 'USER'}</span>
               </span>
-              <span className="text-slate-300 text-xs font-semibold flex items-center gap-1.5 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700/50">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Live Business ERP Data</span>
+              <span className="text-slate-300 text-xs font-semibold flex items-center gap-1.5 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700/50">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                <span>Executive Management Suite</span>
               </span>
             </div>
 
             <h1 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white break-words">
-              Welcome back, <span className="text-emerald-400">{user?.name || 'Administrator'}</span> !
+              Welcome back, <span className="text-indigo-400">{user?.name || 'Administrator'}</span> !
             </h1>
             <p className="text-xs sm:text-base text-slate-300 max-w-2xl font-medium leading-relaxed">
               {roleInfo.desc}
@@ -214,7 +256,7 @@ export default function DashboardPage() {
           </div>
 
           {/* System Status Pill */}
-          <div className="w-full lg:w-auto flex-shrink-0 bg-slate-800/80 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-slate-700/60 flex items-center gap-3 sm:gap-4 shadow-lg">
+          <div className="w-full lg:w-auto flex-shrink-0 bg-slate-800/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-slate-700/60 flex items-center gap-3 sm:gap-4 shadow-lg">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shadow-inner shrink-0">
               <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
@@ -229,13 +271,388 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* SECTION I: Quick Actions Bar (Admin/Staff) */}
+      {/* SECTION B: Executive Financial Alerts Center */}
+      {user?.role !== 'viewer' && (
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2.5 font-black text-base sm:text-lg text-[#0F172A]">
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold ${
+                totalOverdueCount > 0 ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
+              }`}>
+                {totalOverdueCount > 0 ? <AlertTriangle className="w-4.5 h-4.5" /> : <Clock className="w-4.5 h-4.5" />}
+              </div>
+              <span>Credit & Due Obligations Alert Center</span>
+            </div>
+            <Link
+              href="/reports?tab=aging"
+              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline flex items-center gap-1 transition-colors"
+            >
+              <span>View Full Aging Analysis</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 1. Today Due Receivables */}
+            <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-1.5">
+              <div className="flex items-center justify-between text-xs font-bold text-amber-900">
+                <span>Receivables Due Today</span>
+                <span className="px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-[11px] font-black">
+                  {dueAlerts?.receivables?.today_due_count ?? 0} {(dueAlerts?.receivables?.today_due_count ?? 0) === 1 ? 'invoice' : 'invoices'}
+                </span>
+              </div>
+              <div className="text-xl font-black text-amber-950">
+                {formatCurrency(stats?.today_due_receivables ?? dueAlerts?.receivables?.today_due_amount ?? 0)}
+              </div>
+              <p className="text-[11px] text-amber-800 font-medium">Customer sales maturing today</p>
+            </div>
+
+            {/* 2. Overdue Receivables */}
+            <div className={`p-4 rounded-2xl border space-y-1.5 ${
+              (stats?.overdue_receivables ?? 0) > 0
+                ? 'bg-rose-50/70 border-rose-200/80'
+                : 'bg-slate-50 border-slate-200/80'
+            }`}>
+              <div className="flex items-center justify-between text-xs font-bold text-rose-900">
+                <span className="flex items-center gap-1">
+                  {(stats?.overdue_receivables ?? 0) > 0 && <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />}
+                  Overdue Receivables
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-rose-200/80 text-rose-900 text-[11px] font-black">
+                  {stats?.overdue_receivables_count ?? dueAlerts?.receivables?.overdue_count ?? 0} {(stats?.overdue_receivables_count ?? 0) === 1 ? 'invoice' : 'invoices'}
+                </span>
+              </div>
+              <div className="text-xl font-black text-rose-950">
+                {formatCurrency(stats?.overdue_receivables ?? dueAlerts?.receivables?.overdue_amount ?? 0)}
+              </div>
+              <p className="text-[11px] text-rose-800 font-medium">Exceeded customer credit terms</p>
+            </div>
+
+            {/* 3. Today Due Payables */}
+            <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-1.5">
+              <div className="flex items-center justify-between text-xs font-bold text-blue-900">
+                <span>Payables Due Today</span>
+                <span className="px-2 py-0.5 rounded-full bg-blue-200/80 text-blue-900 text-[11px] font-black">
+                  {dueAlerts?.payables?.today_due_count ?? 0} {(dueAlerts?.payables?.today_due_count ?? 0) === 1 ? 'bill' : 'bills'}
+                </span>
+              </div>
+              <div className="text-xl font-black text-blue-950">
+                {formatCurrency(stats?.today_due_payables ?? dueAlerts?.payables?.today_due_amount ?? 0)}
+              </div>
+              <p className="text-[11px] text-blue-800 font-medium">Supplier bills maturing today</p>
+            </div>
+
+            {/* 4. Overdue Payables */}
+            <div className={`p-4 rounded-2xl border space-y-1.5 ${
+              (stats?.overdue_payables ?? 0) > 0
+                ? 'bg-purple-50/70 border-purple-200/80'
+                : 'bg-slate-50 border-slate-200/80'
+            }`}>
+              <div className="flex items-center justify-between text-xs font-bold text-purple-900">
+                <span className="flex items-center gap-1">
+                  {(stats?.overdue_payables ?? 0) > 0 && <ShieldAlert className="w-3.5 h-3.5 text-purple-600" />}
+                  Overdue Payables
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-purple-200/80 text-purple-900 text-[11px] font-black">
+                  {stats?.overdue_payables_count ?? dueAlerts?.payables?.overdue_count ?? 0} {(stats?.overdue_payables_count ?? 0) === 1 ? 'bill' : 'bills'}
+                </span>
+              </div>
+              <div className="text-xl font-black text-purple-950">
+                {formatCurrency(stats?.overdue_payables ?? dueAlerts?.payables?.overdue_amount ?? 0)}
+              </div>
+              <p className="text-[11px] text-purple-800 font-medium">Vendor credit term overdue</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION C: Primary Executive KPI Cards */}
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-0">
+          <h2 className="text-base sm:text-xl font-black text-[#0F172A] tracking-tight flex items-center gap-2">
+            <Activity className="w-5 h-5 text-indigo-600" />
+            Executive Performance KPIs
+          </h2>
+          <span className="text-[11px] sm:text-xs text-slate-500 font-semibold">Real-Time Authoritative Calculations</span>
+        </div>
+
+        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {/* 1. Today's True Net Profit (Phase 12 Core Hero Card) */}
+          {user?.role !== 'viewer' && (
+            <div className="bg-gradient-to-br from-emerald-50 via-white to-emerald-50/30 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 border-emerald-400/80 shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-emerald-800">
+                  Today Net Profit
+                </span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-bold shadow-md shadow-emerald-500/20 shrink-0">
+                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+              </div>
+              <div className="mt-3 sm:mt-4">
+                <div className={`text-xl sm:text-2xl lg:text-3xl font-black tracking-tight break-words ${(stats?.today_net_profit ?? 0) >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                  {formatCurrency(stats?.today_net_profit)}
+                </div>
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-emerald-100 text-[11px] font-bold text-emerald-800">
+                  <span>Gross: {formatCurrency(stats?.today_gross_profit)}</span>
+                  <span className="text-slate-400 font-mono text-[10px]">Sales - COGS - Exp</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 2. Month's True Net Profit */}
+          {user?.role !== 'viewer' && (
+            <div className="bg-gradient-to-br from-indigo-50 via-white to-indigo-50/30 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 border-indigo-400/80 shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-800">
+                  Month Net Profit
+                </span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-600/20 shrink-0">
+                  <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+              </div>
+              <div className="mt-3 sm:mt-4">
+                <div className={`text-xl sm:text-2xl lg:text-3xl font-black tracking-tight break-words ${(stats?.monthly_net_profit ?? 0) >= 0 ? 'text-indigo-700' : 'text-rose-600'}`}>
+                  {formatCurrency(stats?.monthly_net_profit)}
+                </div>
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-indigo-100 text-[11px] font-bold text-indigo-800">
+                  <span>Revenue: {formatCurrency(stats?.monthly_revenue)}</span>
+                  <span className="text-slate-400 font-mono text-[10px]">Net Margin</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3. Today's Completed Production Output */}
+          <Link
+            href="/manufacturing/orders"
+            className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-all group block cursor-pointer"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 group-hover:text-indigo-600 transition-colors">
+                Today Production
+              </span>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100/80 font-bold shrink-0 group-hover:scale-105 transition-transform">
+                <Factory className="w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+            </div>
+            <div className="mt-3 sm:mt-4">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-black text-purple-700 flex items-center justify-between tracking-tight">
+                <span>{Number(stats?.today_production_quantity ?? 0).toLocaleString()} <span className="text-sm font-bold text-slate-400">units</span></span>
+                <ChevronRight className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <div className="text-xs text-slate-500 mt-1 font-medium">Completed output today</div>
+            </div>
+          </Link>
+
+          {/* 4. Total Sales / Operational Volume */}
+          {user?.role !== 'viewer' ? (
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
+                  Today Sales Volume
+                </span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/80 font-bold shrink-0">
+                  <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+              </div>
+              <div className="mt-3 sm:mt-4">
+                <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] tracking-tight break-words">
+                  {formatCurrency(stats?.today_sales)}
+                </div>
+                <div className="flex items-center gap-1 text-xs font-bold text-blue-600 mt-1">
+                  <ArrowUpRight className="w-4 h-4 shrink-0" />
+                  <span>{stats?.today_sales_count ?? 0} invoices recorded</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
+                  Stock Catalog
+                </span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold shrink-0">
+                  <Boxes className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+              </div>
+              <div className="mt-3 sm:mt-4">
+                <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] tracking-tight">
+                  {stats?.stock_items ?? 0} <span className="text-sm text-slate-400 font-bold">SKUs</span>
+                </div>
+                <div className="text-xs text-slate-500 mt-1 font-semibold">Active Catalog Items</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* SECTION D: Manufacturing & Inventory Stock Valuation Overview */}
+      {user?.role !== 'viewer' && (
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div>
+              <h3 className="text-base sm:text-lg font-black text-[#0F172A] flex items-center gap-2">
+                <Boxes className="w-5 h-5 text-indigo-600" />
+                Manufacturing & Inventory Stock Valuation
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">Authoritative balance valuation across Raw Material and Finished Goods stock</p>
+            </div>
+            <Link
+              href="/reports?tab=manufacturing"
+              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline flex items-center gap-1 transition-colors self-start sm:self-auto"
+            >
+              <span>Manufacturing Reports Suite</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Raw Material Inventory Card */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Raw Material Stock</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
+                  Paper, Board & Glue
+                </span>
+              </div>
+              <div className="text-2xl font-black text-slate-900">
+                {formatCurrency(stats?.raw_material_stock_value)}
+              </div>
+              <div className="text-xs text-slate-500 font-medium">Available production inventory</div>
+            </div>
+
+            {/* Finished Goods Inventory Card */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Finished Goods Stock</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                  Registers & Books
+                </span>
+              </div>
+              <div className="text-2xl font-black text-emerald-700">
+                {formatCurrency(stats?.finished_goods_stock_value)}
+              </div>
+              <div className="text-xs text-slate-500 font-medium">Ready for distribution & sale</div>
+            </div>
+
+            {/* Inventory Ratio Split */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                <span>Inventory Value Distribution</span>
+                <span className="text-indigo-600 font-black">{formatCurrency(totalInvVal)}</span>
+              </div>
+              <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden flex">
+                <div
+                  style={{ width: `${rawRatio}%` }}
+                  className="bg-amber-500 h-full transition-all"
+                  title={`Raw Materials: ${rawRatio.toFixed(1)}%`}
+                />
+                <div
+                  style={{ width: `${fgRatio}%` }}
+                  className="bg-emerald-600 h-full transition-all"
+                  title={`Finished Goods: ${fgRatio.toFixed(1)}%`}
+                />
+              </div>
+              <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                  Raw Material: {rawRatio.toFixed(0)}%
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />
+                  Finished Goods: {fgRatio.toFixed(0)}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION E: Working Capital & Outstanding Balances */}
+      {user?.role !== 'viewer' && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          {/* Customer Receivables */}
+          <Link
+            href="/customers"
+            className="bg-white rounded-2xl sm:rounded-3xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-all group block cursor-pointer"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-purple-600 transition-colors">
+                Customer Receivables (Lena Hai)
+              </span>
+              <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition-transform">
+                <Users className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-xl sm:text-2xl font-black text-purple-700 tracking-tight">
+                {formatCurrency(stats?.customer_outstanding)}
+              </div>
+              <div className="flex items-center justify-between mt-1 text-xs text-slate-500 font-medium">
+                <span>{stats?.active_customers ?? 0} active customers</span>
+                <ChevronRight className="w-4 h-4 text-purple-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Supplier Payables */}
+          <Link
+            href="/suppliers"
+            className="bg-white rounded-2xl sm:rounded-3xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-all group block cursor-pointer"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-amber-700 transition-colors">
+                Supplier Payables (Dena Hai)
+              </span>
+              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition-transform">
+                <Building2 className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-xl sm:text-2xl font-black text-amber-800 tracking-tight">
+                {formatCurrency(stats?.supplier_outstanding)}
+              </div>
+              <div className="flex items-center justify-between mt-1 text-xs text-slate-500 font-medium">
+                <span>{stats?.active_suppliers ?? 0} active suppliers</span>
+                <ChevronRight className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Low Stock Alerts */}
+          <Link
+            href="/stock"
+            className="bg-white rounded-2xl sm:rounded-3xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-all group block cursor-pointer"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-rose-600 transition-colors">
+                Low Stock Alerts
+              </span>
+              <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition-transform">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-xl sm:text-2xl font-black text-rose-600 tracking-tight">
+                {stats?.low_stock_alerts ?? 0} <span className="text-sm text-slate-400 font-bold">items</span>
+              </div>
+              <div className="flex items-center justify-between mt-1 text-xs text-slate-500 font-medium">
+                <span>Reorder threshold alerts</span>
+                <ChevronRight className="w-4 h-4 text-rose-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </Link>
+        </div>
+      )}
+
+      {/* SECTION F: Quick Actions Bar (Admin/Staff) */}
       {user?.role !== 'viewer' && (
         <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-600" />
-              <span>Quick Action Shortcuts</span>
+              <Activity className="w-4 h-4 text-indigo-600" />
+              <span>Executive Quick Actions</span>
             </div>
           </div>
 
@@ -257,19 +674,11 @@ export default function DashboardPage() {
             </Link>
 
             <Link
-              href="/customers/new"
+              href="/manufacturing/orders"
               className="px-2 py-3 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl bg-purple-50/70 hover:bg-purple-600 text-purple-700 hover:text-white border border-purple-200/80 transition-all font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-2xs hover:scale-105 active:scale-95 group cursor-pointer text-center"
             >
-              <Users className="w-4 h-4 shrink-0" />
-              <span>+ Add Customer</span>
-            </Link>
-
-            <Link
-              href="/suppliers/new"
-              className="px-2 py-3 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl bg-amber-50/70 hover:bg-amber-600 text-amber-800 hover:text-white border border-amber-200/80 transition-all font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-2xs hover:scale-105 active:scale-95 group cursor-pointer text-center"
-            >
-              <Building2 className="w-4 h-4 shrink-0" />
-              <span>+ Add Supplier</span>
+              <Factory className="w-4 h-4 shrink-0" />
+              <span>+ Production Order</span>
             </Link>
 
             <Link
@@ -287,189 +696,19 @@ export default function DashboardPage() {
               <FileSpreadsheet className="w-4 h-4 shrink-0" />
               <span>+ Add Expense</span>
             </Link>
+
+            <Link
+              href="/reports?tab=balance-sheet"
+              className="px-2 py-3 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl bg-indigo-50/70 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200/80 transition-all font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-2xs hover:scale-105 active:scale-95 group cursor-pointer text-center"
+            >
+              <BarChart3 className="w-4 h-4 shrink-0" />
+              <span>Balance Sheet</span>
+            </Link>
           </div>
         </div>
       )}
 
-      {/* SECTION B: 4 Primary KPI Cards */}
-      <div className="space-y-3 sm:space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-0">
-          <h2 className="text-base sm:text-xl font-black text-[#0F172A] tracking-tight">
-            Key Performance Metrics
-          </h2>
-          <span className="text-[11px] sm:text-sm text-slate-500 font-semibold">Live MySQL Aggregations</span>
-        </div>
-
-        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          {/* Card 1: Total Sales */}
-          {user?.role !== 'viewer' ? (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
-              <div className="flex items-center justify-between">
-                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
-                  Total Sales
-                </span>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/80 font-bold shrink-0">
-                  <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-              </div>
-              <div className="mt-3 sm:mt-4">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] tracking-tight break-words">
-                  {formatCurrency(stats?.total_sales)}
-                </div>
-                <div className="flex items-center gap-1 text-xs sm:text-sm font-bold text-emerald-600 mt-1 sm:mt-1.5">
-                  <ArrowUpRight className="w-4 h-4 shrink-0" />
-                  <span>Gross Sales Recorded</span>
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          {/* Card 2: Total Purchases */}
-          {user?.role !== 'viewer' ? (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
-              <div className="flex items-center justify-between">
-                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
-                  Total Purchases
-                </span>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/80 font-bold shrink-0">
-                  <Receipt className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-              </div>
-              <div className="mt-3 sm:mt-4">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] tracking-tight break-words">
-                  {formatCurrency(stats?.total_purchases)}
-                </div>
-                <div className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 font-semibold">
-                  Inventory Procurement Total
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          {/* Card 3: Stock Items (All Roles) */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-all">
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
-                Stock Items
-              </span>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100/80 font-bold shrink-0">
-                <Boxes className="w-5 h-5 sm:w-6 sm:h-6" />
-              </div>
-            </div>
-            <div className="mt-3 sm:mt-4">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] tracking-tight break-words">
-                {stats?.stock_items ?? 0} <span className="text-xs sm:text-sm text-slate-400 font-bold">SKUs</span>
-              </div>
-              <div className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 font-semibold">
-                Active Product Catalog
-              </div>
-            </div>
-          </div>
-
-          {/* Card 4: Low Stock Alerts (All Roles - Clickable) */}
-          <Link
-            href="/stock"
-            className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-all group block cursor-pointer"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 group-hover:text-rose-600 transition-colors">
-                Low Stock Alerts
-              </span>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100/80 font-bold shrink-0 group-hover:scale-110 transition-transform">
-                <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6" />
-              </div>
-            </div>
-            <div className="mt-3 sm:mt-4">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-black text-rose-600 flex items-center justify-between tracking-tight">
-                <span>{stats?.low_stock_alerts ?? 0}</span>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-rose-400 group-hover:translate-x-1.5 transition-transform" />
-              </div>
-              <div className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 font-semibold">
-                Items requiring replenishment
-              </div>
-            </div>
-          </Link>
-        </div>
-      </div>
-
-      {/* SECTION C & D: Outstanding & Profit Summary Cards (Admin/Staff) */}
-      {user?.role !== 'viewer' && (
-        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          {/* Customer Outstanding */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
-                Customer Outstanding
-              </span>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold shrink-0">
-                <Users className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-            </div>
-            <div className="mt-3 sm:mt-3.5">
-              <div className="text-lg sm:text-xl lg:text-2xl font-black text-purple-700 tracking-tight break-words">
-                {formatCurrency(stats?.customer_outstanding)}
-              </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1">Receivable from Customers</p>
-            </div>
-          </div>
-
-          {/* Supplier Outstanding */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
-                Supplier Outstanding
-              </span>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold shrink-0">
-                <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-            </div>
-            <div className="mt-3 sm:mt-3.5">
-              <div className="text-lg sm:text-xl lg:text-2xl font-black text-amber-800 tracking-tight break-words">
-                {formatCurrency(stats?.supplier_outstanding)}
-              </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1">Payable to Suppliers</p>
-            </div>
-          </div>
-
-          {/* Today's Profit */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
-                Today&apos;s Net Profit
-              </span>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold shrink-0">
-                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-            </div>
-            <div className="mt-3 sm:mt-3.5">
-              <div className={`text-lg sm:text-xl lg:text-2xl font-black tracking-tight break-words ${(stats?.today_profit ?? 0) >= 0 ? 'text-[#16A34A]' : 'text-rose-600'}`}>
-                {formatCurrency(stats?.today_profit)}
-              </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1">Sales minus Expenses today</p>
-            </div>
-          </div>
-
-          {/* This Month's Profit */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">
-                This Month&apos;s Profit
-              </span>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-[#16A34A] flex items-center justify-center font-bold shrink-0">
-                <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-            </div>
-            <div className="mt-3 sm:mt-3.5">
-              <div className={`text-lg sm:text-xl lg:text-2xl font-black tracking-tight break-words ${(stats?.monthly_profit ?? 0) >= 0 ? 'text-[#16A34A]' : 'text-rose-600'}`}>
-                {formatCurrency(stats?.monthly_profit)}
-              </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1">Fiscal Month Net Earnings</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* SECTION E: Sales vs Purchases Overview Chart */}
+      {/* SECTION G: Sales vs Purchases Overview Chart */}
       {user?.role !== 'viewer' && stats?.sales_vs_purchases_chart && stats.sales_vs_purchases_chart.length > 0 && (
         <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 border border-slate-200/90 shadow-xs space-y-4 sm:space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -529,7 +768,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* SECTION F & G: Recent Sales & Recent Purchases Tables */}
+      {/* SECTION H: Recent Sales & Recent Purchases Tables */}
       {user?.role !== 'viewer' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
           {/* Recent Sales Table */}
@@ -650,7 +889,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* SECTION H: Low Stock Products Detailed Section */}
+      {/* SECTION I: Low Stock Products Detailed Section */}
       <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 border border-slate-200/90 shadow-xs space-y-3.5 sm:space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
@@ -709,51 +948,6 @@ export default function DashboardPage() {
               )}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      {/* SECTION J: Role Permission Matrix Card */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 border border-slate-200/90 shadow-xs space-y-4">
-        <h3 className="text-base sm:text-lg font-black text-[#0F172A]">
-          Active Role Access Privileges
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5">
-          <div className={`p-4 sm:p-5 rounded-xl sm:rounded-2xl border ${user?.role === 'admin' ? 'border-emerald-300 bg-emerald-50/50 shadow-xs' : 'border-slate-200 bg-slate-50/80 opacity-70'}`}>
-            <div className="flex items-center justify-between mb-2.5">
-              <span className="font-black text-sm sm:text-base text-slate-900">Administrator</span>
-              {user?.role === 'admin' && <span className="text-[10px] sm:text-xs font-black text-[#16A34A] bg-emerald-100 px-2 sm:px-2.5 py-0.5 rounded-full">Active Session</span>}
-            </div>
-            <ul className="text-xs sm:text-sm space-y-1.5 sm:space-y-2 text-slate-600 font-medium">
-              <li>• Full system module access (Sales, Purchases, Ledgers)</li>
-              <li>• User management & role governance</li>
-              <li>• Database backups & system restores</li>
-              <li>• Comprehensive financial audit reports</li>
-            </ul>
-          </div>
-
-          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-200 bg-slate-50/80 opacity-70">
-            <div className="flex items-center justify-between mb-2.5">
-              <span className="font-black text-sm sm:text-base text-slate-900">Staff Member</span>
-            </div>
-            <ul className="text-xs sm:text-sm space-y-1.5 sm:space-y-2 text-slate-600 font-medium">
-              <li>• Point-of-Sale operations & collections</li>
-              <li>• Create and manage Sales & Purchase orders</li>
-              <li>• Live inventory stock inspection</li>
-              <li>• Operational financial reports</li>
-            </ul>
-          </div>
-
-          <div className={`p-4 sm:p-5 rounded-xl sm:rounded-2xl border ${user?.role === 'viewer' ? 'border-purple-300 bg-purple-50/50 shadow-xs' : 'border-slate-200 bg-slate-50/80 opacity-70'}`}>
-            <div className="flex items-center justify-between mb-2.5">
-              <span className="font-black text-sm sm:text-base text-slate-900">Viewer</span>
-              {user?.role === 'viewer' && <span className="text-[10px] sm:text-xs font-black text-purple-600 bg-purple-100 px-2 sm:px-2.5 py-0.5 rounded-full">Active Session</span>}
-            </div>
-            <ul className="text-xs sm:text-sm space-y-1.5 sm:space-y-2 text-slate-600 font-medium">
-              <li>• Read-only inspection of stock catalog</li>
-              <li>• View summary & financial reports</li>
-              <li>• Strict read-only boundaries (No transaction mutations)</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>

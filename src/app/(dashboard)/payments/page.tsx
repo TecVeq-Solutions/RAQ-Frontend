@@ -19,6 +19,7 @@ import {
   Loader2,
   RefreshCw,
   Wallet,
+  Landmark,
   FileCheck2,
   CheckCircle2,
   AlertCircle,
@@ -46,6 +47,7 @@ interface PaymentRecord {
   sale_id?: number | null;
   purchase_id?: number | null;
   payment_method: string;
+  financial_account_id?: number | null;
   amount: number;
   payment_date: string;
   reference_number?: string | null;
@@ -55,6 +57,7 @@ interface PaymentRecord {
   supplier?: { id: number; name: string; phone?: string; address?: string; current_balance: number };
   sale?: { id: number; invoice_no: string; grand_total: number };
   purchase?: { id: number; purchase_no: string; grand_total: number };
+  financial_account?: { id: number; name: string; account_type: string; bank_name?: string };
 }
 
 const PAYMENT_METHODS = [
@@ -72,6 +75,7 @@ export default function PaymentsPage() {
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [customers, setCustomers] = useState<Party[]>([]);
   const [suppliers, setSuppliers] = useState<Party[]>([]);
+  const [financialAccounts, setFinancialAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState({
     total_count: 0,
@@ -97,6 +101,7 @@ export default function PaymentsPage() {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [customerAmount, setCustomerAmount] = useState<string>('');
   const [customerMethod, setCustomerMethod] = useState<string>('cash');
+  const [customerFinancialAccountId, setCustomerFinancialAccountId] = useState<string>('');
   const [customerDate, setCustomerDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [customerRef, setCustomerRef] = useState<string>('');
   const [customerNotes, setCustomerNotes] = useState<string>('');
@@ -107,6 +112,7 @@ export default function PaymentsPage() {
   const [selectedSupplierId, setSelectedSupplierId] = useState<string>('');
   const [supplierAmount, setSupplierAmount] = useState<string>('');
   const [supplierMethod, setSupplierMethod] = useState<string>('bank');
+  const [supplierFinancialAccountId, setSupplierFinancialAccountId] = useState<string>('');
   const [supplierDate, setSupplierDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [supplierRef, setSupplierRef] = useState<string>('');
   const [supplierNotes, setSupplierNotes] = useState<string>('');
@@ -115,14 +121,16 @@ export default function PaymentsPage() {
 
   const fetchParties = useCallback(async () => {
     try {
-      const [custRes, suppRes] = await Promise.all([
+      const [custRes, suppRes, accRes] = await Promise.all([
         apiClient.get('/customers'),
         apiClient.get('/suppliers'),
+        apiClient.get('/financial-accounts?is_active=1&per_page=100').catch(() => ({ data: { data: [] } })),
       ]);
       if (custRes.data?.data) setCustomers(custRes.data.data);
       if (suppRes.data?.data) setSuppliers(suppRes.data.data);
+      if (accRes.data?.data) setFinancialAccounts(accRes.data.data);
     } catch (err) {
-      console.error('Failed to load customers/suppliers', err);
+      console.error('Failed to load customers/suppliers/accounts', err);
     }
   }, []);
 
@@ -211,6 +219,7 @@ export default function PaymentsPage() {
         customer_id: Number(selectedCustomerId),
         amount: amt,
         payment_method: customerMethod,
+        financial_account_id: customerFinancialAccountId ? Number(customerFinancialAccountId) : null,
         payment_date: customerDate,
         reference_number: customerRef.trim() || null,
         notes: customerNotes.trim() || null,
@@ -223,6 +232,7 @@ export default function PaymentsPage() {
         // Reset form
         setSelectedCustomerId('');
         setCustomerAmount('');
+        setCustomerFinancialAccountId('');
         setCustomerRef('');
         setCustomerNotes('');
         fetchPayments();
@@ -262,6 +272,7 @@ export default function PaymentsPage() {
         supplier_id: Number(selectedSupplierId),
         amount: amt,
         payment_method: supplierMethod,
+        financial_account_id: supplierFinancialAccountId ? Number(supplierFinancialAccountId) : null,
         payment_date: supplierDate,
         reference_number: supplierRef.trim() || null,
         notes: supplierNotes.trim() || null,
@@ -274,6 +285,7 @@ export default function PaymentsPage() {
         // Reset form
         setSelectedSupplierId('');
         setSupplierAmount('');
+        setSupplierFinancialAccountId('');
         setSupplierRef('');
         setSupplierNotes('');
         fetchPayments();
@@ -531,6 +543,12 @@ export default function PaymentsPage() {
                       </td>
                       <td className="px-5 py-3.5">
                         <div className="font-bold uppercase text-[11px] text-slate-800">{p.payment_method}</div>
+                        {p.financial_account && (
+                          <div className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md mt-0.5">
+                            <Landmark className="w-2.5 h-2.5" />
+                            <span>{p.financial_account.name}</span>
+                          </div>
+                        )}
                         {p.reference_number && (
                           <div className="text-[10px] font-mono text-slate-500">Ref: {p.reference_number}</div>
                         )}
@@ -673,6 +691,27 @@ export default function PaymentsPage() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* Financial Account Selector (Optional) */}
+              <div>
+                <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  Deposit to Financial Account (Optional)
+                </label>
+                <select
+                  value={customerFinancialAccountId}
+                  onChange={(e) => setCustomerFinancialAccountId(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/25 focus:border-[#16A34A]"
+                >
+                  <option value="">-- No Dedicated Account (Legacy Method Only) --</option>
+                  {financialAccounts
+                    .filter((a) => a.is_active)
+                    .map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.name} ({a.account_type.replace('_', ' ')}) — Bal: Rs. {Number(a.current_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </option>
+                    ))}
+                </select>
               </div>
 
               {/* Date & Reference */}
@@ -853,6 +892,27 @@ export default function PaymentsPage() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* Financial Account Selector (Optional) */}
+              <div>
+                <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  Deduct from Financial Account (Optional)
+                </label>
+                <select
+                  value={supplierFinancialAccountId}
+                  onChange={(e) => setSupplierFinancialAccountId(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900"
+                >
+                  <option value="">-- No Dedicated Account (Legacy Method Only) --</option>
+                  {financialAccounts
+                    .filter((a) => a.is_active)
+                    .map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.name} ({a.account_type.replace('_', ' ')}) — Bal: Rs. {Number(a.current_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </option>
+                    ))}
+                </select>
               </div>
 
               {/* Date & Reference */}

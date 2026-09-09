@@ -71,10 +71,34 @@ export default function NewPurchasePage() {
   const [purchaseDate, setPurchaseDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
+  const [paymentTerms, setPaymentTerms] = useState<
+    'immediate' | '15_days' | '30_days' | '45_days' | '60_days' | 'custom'
+  >('immediate');
+  const [dueDate, setDueDate] = useState<string>(
+    new Date().toISOString().split('T')[0]
+  );
   const [purchaseNo, setPurchaseNo] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [discount, setDiscount] = useState<number>(0);
   const [tax, setTax] = useState<number>(0);
+
+  // Auto-sync due date
+  const computeDueDate = (baseDate: string, terms: string, customDate: string) => {
+    if (terms === 'custom') return customDate;
+    const d = new Date(baseDate);
+    if (isNaN(d.getTime())) return baseDate;
+    if (terms === '15_days') d.setDate(d.getDate() + 15);
+    else if (terms === '30_days') d.setDate(d.getDate() + 30);
+    else if (terms === '45_days') d.setDate(d.getDate() + 45);
+    else if (terms === '60_days') d.setDate(d.getDate() + 60);
+    return d.toISOString().split('T')[0];
+  };
+
+  useEffect(() => {
+    if (paymentTerms !== 'custom') {
+      setDueDate(computeDueDate(purchaseDate, paymentTerms, dueDate));
+    }
+  }, [purchaseDate, paymentTerms]);
 
   // Dynamic Line Items
   const [items, setItems] = useState<PurchaseItemRow[]>([
@@ -245,6 +269,8 @@ export default function NewPurchasePage() {
       const payload = {
         supplier_id: Number(supplierId),
         purchase_date: purchaseDate,
+        payment_terms: paymentTerms,
+        due_date: paymentTerms === 'custom' ? dueDate : undefined,
         purchase_no: purchaseNo.trim() || undefined,
         discount: Number(discount) || 0,
         tax: Number(tax) || 0,
@@ -396,6 +422,50 @@ export default function NewPurchasePage() {
                 value={purchaseNo}
                 onChange={(e) => setPurchaseNo(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all font-mono"
+              />
+            </div>
+          </div>
+
+          {/* Payment Terms & Due Date Row */}
+          <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-[#16A34A]" />
+                  Payment Terms
+                </label>
+                <span className="text-xs font-bold text-slate-500">
+                  {paymentTerms === 'immediate' ? 'Immediate' : paymentTerms === 'custom' ? 'Custom' : `${paymentTerms.replace('_', ' ')}`}
+                </span>
+              </div>
+              <select
+                value={paymentTerms}
+                onChange={(e) => setPaymentTerms(e.target.value as any)}
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all shadow-2xs"
+              >
+                <option value="immediate">Immediate (Due on Purchase Date)</option>
+                <option value="15_days">15 Days (Net 15)</option>
+                <option value="30_days">30 Days (Net 30)</option>
+                <option value="45_days">45 Days (Net 45)</option>
+                <option value="60_days">60 Days (Net 60)</option>
+                <option value="custom">Custom Due Date</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                Due Date {paymentTerms !== 'custom' && <span className="text-emerald-600 font-normal lowercase">(auto-calculated)</span>}
+              </label>
+              <input
+                type="date"
+                value={dueDate}
+                disabled={paymentTerms !== 'custom'}
+                onChange={(e) => setDueDate(e.target.value)}
+                className={`w-full px-3.5 py-2.5 border rounded-xl text-sm font-semibold shadow-2xs transition-all ${
+                  paymentTerms === 'custom'
+                    ? 'bg-white border-emerald-300 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]'
+                    : 'bg-slate-100 border-slate-200 text-slate-600 cursor-not-allowed'
+                }`}
               />
             </div>
           </div>

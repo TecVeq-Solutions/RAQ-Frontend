@@ -27,6 +27,9 @@ import {
   Sparkles,
   CheckCircle2,
   X,
+  Factory,
+  Wrench,
+  Wallet,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -93,6 +96,24 @@ const MENU_ITEMS: MenuItem[] = [
     ],
   },
   {
+    name: 'Manufacturing',
+    icon: Factory,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'operations',
+    children: [
+      { name: 'Production Orders', href: '/manufacturing/orders' },
+      { name: 'Launch Order', href: '/manufacturing/orders/new' },
+      { name: 'Bill of Materials (BOM)', href: '/manufacturing/boms' },
+    ],
+  },
+  {
+    name: 'Assets & Machinery',
+    href: '/assets',
+    icon: Wrench,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'operations',
+  },
+  {
     name: 'Customers',
     icon: Users,
     roles: ['admin'],
@@ -113,6 +134,13 @@ const MENU_ITEMS: MenuItem[] = [
       { name: 'Add New Supplier', href: '/suppliers/new' },
       { name: 'Supplier Ledger (Khata)', href: '/suppliers/ledger' },
     ],
+  },
+  {
+    name: 'Cash & Bank Accounts',
+    href: '/accounts',
+    icon: Wallet,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'operations',
   },
   {
     name: 'Payments',
@@ -303,6 +331,11 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
                       />
                       <span className="truncate tracking-tight">{child.name}</span>
                     </div>
+
+
+
+
+
                     {child.badge && (
                       <span
                         className={`text-[9px] 2xl:text-[10px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider ${isChildActive
@@ -378,6 +411,7 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
         className={`fixed top-0 bottom-0 left-0 z-50 w-72 2xl:w-80 max-w-[85vw] sm:max-w-xs 2xl:max-w-sm bg-white border-r border-slate-200/90 flex flex-col transition-all duration-300 ease-in-out shadow-lg lg:shadow-none lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
       >
+
         {/* Brand Header */}
         <div className="h-16 2xl:h-20 px-5 2xl:px-6 border-b border-slate-100 flex items-center justify-between flex-shrink-0 bg-white">
           <Link href="/dashboard" className="flex items-center gap-3 group">

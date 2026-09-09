@@ -27,6 +27,8 @@ export interface StockDisplay {
   status: 'normal' | 'low_stock' | 'out_of_stock';
 }
 
+export type ProductType = 'raw_material' | 'finished_good' | 'consumable' | 'machinery';
+
 export interface Product {
   id: number;
   category_id?: number | null;
@@ -36,6 +38,12 @@ export interface Product {
   name: string;
   sku: string;
   barcode?: string | null;
+  product_type?: ProductType;
+  paper_size?: string | null;
+  gsm?: number | null;
+  sheets_per_unit?: number | null;
+  pages_count?: number | null;
+  material_type?: string | null;
   description?: string | null;
   purchase_price: number;
   selling_price: number;

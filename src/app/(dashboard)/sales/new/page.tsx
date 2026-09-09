@@ -53,6 +53,7 @@ interface Product {
   name: string;
   sku: string;
   barcode?: string | null;
+  product_type?: string;
   purchase_price: number;
   selling_price: number;
   stock_quantity: number;
@@ -113,10 +114,33 @@ export default function PosBillingPage() {
   >('cash');
   const [paymentReference, setPaymentReference] = useState<string>('');
   const [saleDate, setSaleDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [paymentTerms, setPaymentTerms] = useState<
+    'immediate' | '15_days' | '30_days' | '45_days' | '60_days' | 'custom'
+  >('immediate');
+  const [dueDate, setDueDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [invoiceNo, setInvoiceNo] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [discount, setDiscount] = useState<number>(0);
   const [tax, setTax] = useState<number>(0);
+
+  // Helper to calculate due date
+  const computeDueDate = (baseDate: string, terms: string, customDate: string) => {
+    if (terms === 'custom') return customDate;
+    const d = new Date(baseDate);
+    if (isNaN(d.getTime())) return baseDate;
+    if (terms === '15_days') d.setDate(d.getDate() + 15);
+    else if (terms === '30_days') d.setDate(d.getDate() + 30);
+    else if (terms === '45_days') d.setDate(d.getDate() + 45);
+    else if (terms === '60_days') d.setDate(d.getDate() + 60);
+    return d.toISOString().split('T')[0];
+  };
+
+  // Sync due date when terms or sale date changes
+  useEffect(() => {
+    if (paymentTerms !== 'custom') {
+      setDueDate(computeDueDate(saleDate, paymentTerms, dueDate));
+    }
+  }, [saleDate, paymentTerms]);
 
   // Cash Tender State
   const [cashReceived, setCashReceived] = useState<number | ''>('');
@@ -146,7 +170,7 @@ export default function PosBillingPage() {
         setLoadingInitial(true);
         const [custRes, prodRes] = await Promise.all([
           apiClient.get('/customers', { params: { is_active: true } }),
-          apiClient.get('/products', { params: { is_active: true } }),
+          apiClient.get('/products', { params: { is_active: true, sellable: true } }),
         ]);
 
         if (custRes.data?.data) {
@@ -166,7 +190,7 @@ export default function PosBillingPage() {
     loadData();
   }, []);
 
-  // Product search and barcode filter
+  // Product search and barcode filter (Sellable products only)
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
@@ -175,12 +199,14 @@ export default function PosBillingPage() {
     }
 
     const query = searchQuery.toLowerCase().trim();
-    const matched = products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(query) ||
-        p.sku.toLowerCase().includes(query) ||
-        (p.barcode && p.barcode.toLowerCase().includes(query))
-    );
+    const matched = products
+      .filter((p) => p.product_type !== 'raw_material' && p.product_type !== 'machinery')
+      .filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          p.sku.toLowerCase().includes(query) ||
+          (p.barcode && p.barcode.toLowerCase().includes(query))
+      );
 
     setSearchResults(matched.slice(0, 8));
     setIsSearchOpen(true);
@@ -424,6 +450,8 @@ export default function PosBillingPage() {
         sale_date: saleDate,
         invoice_no: invoiceNo.trim() || undefined,
         payment_type: saleType,
+        payment_terms: saleType === 'credit' ? paymentTerms : 'immediate',
+        due_date: saleType === 'credit' ? (paymentTerms === 'custom' ? dueDate : undefined) : undefined,
         payment_method: saleType === 'cash' ? paymentMethod : undefined,
         payment_reference: saleType === 'cash' && paymentReference.trim() ? paymentReference.trim() : undefined,
         discount: Number(discount) || 0,
@@ -904,6 +932,58 @@ export default function PosBillingPage() {
                   <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div>
                     <span className="font-bold">Customer Required for Credit:</span> This sale has an outstanding balance. Please select or add a customer before completing the sale.
+                  </div>
+                </div>
+              )}
+
+              {/* Payment Terms & Due Date Configuration for Credit */}
+              {saleType === 'credit' && (
+                <div className="p-4 bg-purple-50/70 rounded-2xl border border-purple-200/80 space-y-3.5 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-purple-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <Calendar className="w-4 h-4 text-purple-600" />
+                      Payment Terms & Due Date
+                    </span>
+                    <span className="text-xs font-bold text-purple-700 bg-purple-100/80 px-2.5 py-0.5 rounded-lg">
+                      {paymentTerms === 'immediate' ? 'Due Immediately' : paymentTerms === 'custom' ? 'Custom Date' : `${paymentTerms.replace('_', ' ')}`}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Terms
+                      </label>
+                      <select
+                        value={paymentTerms}
+                        onChange={(e) => setPaymentTerms(e.target.value as any)}
+                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 shadow-2xs"
+                      >
+                        <option value="immediate">Immediate (Due on Sale Date)</option>
+                        <option value="15_days">15 Days (Net 15)</option>
+                        <option value="30_days">30 Days (Net 30)</option>
+                        <option value="45_days">45 Days (Net 45)</option>
+                        <option value="60_days">60 Days (Net 60)</option>
+                        <option value="custom">Custom Due Date</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Due Date {paymentTerms !== 'custom' && <span className="text-purple-600 font-normal">(Auto-calculated)</span>}
+                      </label>
+                      <input
+                        type="date"
+                        value={dueDate}
+                        disabled={paymentTerms !== 'custom'}
+                        onChange={(e) => setDueDate(e.target.value)}
+                        className={`w-full px-3 py-2 border rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-all ${
+                          paymentTerms === 'custom'
+                            ? 'bg-white border-purple-300 text-purple-950 focus:outline-none focus:ring-2 focus:ring-purple-500/25 focus:border-purple-600'
+                            : 'bg-purple-100/50 border-purple-200 text-purple-900 cursor-not-allowed'
+                        }`}
+                      />
+                    </div>
                   </div>
                 </div>
               )}

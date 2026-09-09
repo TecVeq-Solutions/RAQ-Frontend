@@ -149,18 +149,19 @@ export default function SupplierKhataPage() {
           <table className="w-full text-left text-sm text-slate-600 print:text-xs">
             <thead className="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-100 print:bg-transparent">
               <tr>
-                <th className="px-6 py-3">Date</th>
-                <th className="px-6 py-3">Ref</th>
-                <th className="px-6 py-3">Description</th>
-                <th className="px-6 py-3 text-right">Debit (Payment -)</th>
-                <th className="px-6 py-3 text-right">Credit (Payable +)</th>
-                <th className="px-6 py-3 text-right">Running Balance</th>
+                <th className="px-5 py-3">Date</th>
+                <th className="px-4 py-3">Ref</th>
+                <th className="px-5 py-3">Description</th>
+                <th className="px-4 py-3">Due Date & Status</th>
+                <th className="px-5 py-3 text-right">Debit (Payment -)</th>
+                <th className="px-5 py-3 text-right">Credit (Payable +)</th>
+                <th className="px-5 py-3 text-right">Running Balance</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
               {loading ? (
                 <tr className="print:hidden">
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                     <div className="flex flex-col items-center gap-2">
                       <Loader2 className="w-6 h-6 animate-spin text-[#16A34A]" />
                       <span>Fetching Khata statement...</span>
@@ -172,12 +173,13 @@ export default function SupplierKhataPage() {
                   {/* Carry Forward Row */}
                   {startDate && (
                     <tr className="bg-slate-50/50 italic text-slate-500 print:bg-transparent">
-                      <td className="px-6 py-4 font-mono">{startDate}</td>
-                      <td className="px-6 py-4">-</td>
-                      <td className="px-6 py-4 font-bold text-slate-700">Carry Forward Balance</td>
-                      <td className="px-6 py-4 text-right">-</td>
-                      <td className="px-6 py-4 text-right">-</td>
-                      <td className="px-6 py-4 text-right font-bold text-slate-700">
+                      <td className="px-5 py-4 font-mono">{startDate}</td>
+                      <td className="px-4 py-4">-</td>
+                      <td className="px-5 py-4 font-bold text-slate-700">Carry Forward Balance</td>
+                      <td className="px-4 py-4">-</td>
+                      <td className="px-5 py-4 text-right">-</td>
+                      <td className="px-5 py-4 text-right">-</td>
+                      <td className="px-5 py-4 text-right font-bold text-slate-700">
                         Rs. {Number(statement.carry_forward).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
                     </tr>
@@ -186,29 +188,70 @@ export default function SupplierKhataPage() {
                   {statement.statement.length > 0 ? (
                     statement.statement.map((entry) => (
                       <tr key={entry.id} className="hover:bg-slate-50/30 transition-colors">
-                        <td className="px-6 py-4 font-mono text-xs text-slate-500">{entry.date}</td>
-                        <td className="px-6 py-4 font-mono text-xs text-slate-700 uppercase">
+                        <td className="px-5 py-4 font-mono text-xs text-slate-500">{entry.date}</td>
+                        <td className="px-4 py-4 font-mono text-xs text-slate-700 uppercase">
                           {entry.reference_type === 'opening_balance' ? `OPENING-${entry.id}` : `${entry.reference_type}-${entry.reference_id}`}
                         </td>
-                        <td className="px-6 py-4 text-slate-700">{entry.description}</td>
-                        <td className="px-6 py-4 text-right text-slate-500">
+                        <td className="px-5 py-4 text-slate-700">
+                          <div>{entry.description}</div>
+                          {entry.payment_terms && (
+                            <span className="text-[11px] text-slate-400 font-normal">
+                              Terms: {entry.payment_terms.replace('_', ' ')}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-4">
+                          {entry.due_date ? (
+                            <div className="space-y-1">
+                              <div className="text-xs font-mono text-slate-600 font-semibold">{entry.due_date}</div>
+                              {entry.due_status === 'overdue' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-black bg-rose-50 text-rose-700 border border-rose-200">
+                                  Overdue {entry.overdue_days ? `(${entry.overdue_days}d)` : ''}
+                                </span>
+                              )}
+                              {entry.due_status === 'due_today' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-black bg-amber-50 text-amber-800 border border-amber-200">
+                                  Due Today
+                                </span>
+                              )}
+                              {entry.due_status === 'due_soon' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                                  Due Soon
+                                </span>
+                              )}
+                              {entry.due_status === 'current' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Current
+                                </span>
+                              )}
+                              {entry.due_status === 'paid' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-600">
+                                  Settled
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-slate-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 text-right text-slate-500">
                           {entry.debit > 0
                             ? `Rs. ${Number(entry.debit).toLocaleString(undefined, { minimumFractionDigits: 2 })}`
                             : '-'}
                         </td>
-                        <td className="px-6 py-4 text-right text-[#0F172A]">
+                        <td className="px-5 py-4 text-right text-[#0F172A]">
                           {entry.credit > 0
                             ? `Rs. ${Number(entry.credit).toLocaleString(undefined, { minimumFractionDigits: 2 })}`
                             : '-'}
                         </td>
-                        <td className="px-6 py-4 text-right font-extrabold text-[#0F172A]">
+                        <td className="px-5 py-4 text-right font-extrabold text-[#0F172A]">
                           Rs. {Number(entry.running_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                         No transactions found inside selected date range.
                       </td>
                     </tr>
@@ -216,16 +259,16 @@ export default function SupplierKhataPage() {
 
                   {/* Summary Totals Row */}
                   <tr className="bg-slate-50 font-bold text-slate-700 border-t border-slate-200 print:bg-transparent">
-                    <td className="px-6 py-4" colSpan={3}>
+                    <td className="px-5 py-4" colSpan={4}>
                       Total Debits / Credits Inside Date Range
                     </td>
-                    <td className="px-6 py-4 text-right text-slate-600">
+                    <td className="px-5 py-4 text-right text-slate-600">
                       Rs. {Number(statement.totals.total_debit).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="px-6 py-4 text-right text-[#16A34A]">
+                    <td className="px-5 py-4 text-right text-[#16A34A]">
                       Rs. {Number(statement.totals.total_credit).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="px-6 py-4 text-right font-extrabold text-[#0F172A]">
+                    <td className="px-5 py-4 text-right font-extrabold text-[#0F172A]">
                       -
                     </td>
                   </tr>
