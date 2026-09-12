@@ -114,6 +114,23 @@ export default function ProductsPage() {
     }
   };
 
+  const handleDeleteCategory = async (category: Category) => {
+    if (!confirm(`Are you sure you want to delete category "${category.name}"?`)) {
+      return;
+    }
+
+    try {
+      await apiClient.delete(`/categories/${category.id}`);
+      if (String(selectedCategory) === String(category.id)) {
+        setSelectedCategory('');
+      }
+      await fetchCategories();
+      await fetchProducts();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to delete category. Make sure no products are assigned.');
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Page Header */}
@@ -129,16 +146,16 @@ export default function ProductsPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsCategoryModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all shadow-xs text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all shadow-xs text-sm cursor-pointer"
             >
-              <Tag className="w-4 h-4 text-[#16A34A]" /> Add Category
+              <Tag className="w-4 h-4 text-[#16A34A]" /> Manage Categories
             </button>
             <button
               onClick={() => {
                 setEditingProduct(null);
                 setIsProductModalOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16A34A] text-white font-semibold hover:bg-[#059669] transition-all shadow-sm text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16A34A] text-white font-semibold hover:bg-[#059669] transition-all shadow-sm text-sm cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Add Product
             </button>
@@ -191,9 +208,9 @@ export default function ProductsPage() {
 
         {/* Filters & Refresh */}
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-          {/* Category Dropdown */}
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-slate-400" />
+          {/* Category Dropdown & Delete Icon */}
+          <div className="flex items-center gap-1.5">
+            <Filter className="w-4 h-4 text-slate-400 shrink-0" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -202,10 +219,23 @@ export default function ProductsPage() {
               <option value="">All Categories</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}
+                  {c.name} {c.products_count !== undefined ? `(${c.products_count})` : ''}
                 </option>
               ))}
             </select>
+            {canDelete && selectedCategory && (
+              <button
+                type="button"
+                onClick={() => {
+                  const cat = categories.find((c) => String(c.id) === String(selectedCategory));
+                  if (cat) handleDeleteCategory(cat);
+                }}
+                className="p-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700 transition-colors shadow-xs cursor-pointer"
+                title="Delete selected category"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
           {/* Stock Status Tab Buttons */}
@@ -314,7 +344,7 @@ export default function ProductsPage() {
                       <td className="px-6 py-4">
                         <div className="font-bold text-[#0F172A]">{p.name}</div>
                         {(p.paper_size || p.gsm || p.sheets_per_unit || p.pages_count || p.material_type) && (
-                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 mt-1">
+                          <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-1">
                             {p.material_type && (
                               <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-700 font-medium">
                                 {p.material_type}
@@ -350,7 +380,7 @@ export default function ProductsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="font-mono text-xs text-slate-600">{p.sku}</div>
-                        {p.barcode && <div className="text-[11px] text-slate-400">{p.barcode}</div>}
+                        {p.barcode && <div className="text-xs text-slate-400">{p.barcode}</div>}
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
@@ -363,7 +393,7 @@ export default function ProductsPage() {
                           Rs. {Number(p.purchase_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </div>
                         {pType === 'finished_good' && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 mt-1">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 mt-1">
                             Unit Mfg Cost
                           </span>
                         )}
@@ -375,7 +405,7 @@ export default function ProductsPage() {
                         <div className="font-extrabold text-slate-900">
                           {p.stock_display?.full_display || `${p.stock_quantity} ${p.unit?.short_name || ''}`}
                         </div>
-                        <div className="text-[11px] text-slate-400">
+                        <div className="text-xs text-slate-400">
                           Alert Limit: {p.alert_quantity} {p.unit?.short_name || ''}
                         </div>
                       </td>

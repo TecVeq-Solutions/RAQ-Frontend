@@ -433,7 +433,7 @@ export default function PurchasesPage() {
                       <tr key={item.id}>
                         <td className="px-4 py-3 font-semibold text-slate-800">
                           {item.product?.name || 'Product'}
-                          <span className="block text-[11px] text-slate-400 font-mono">
+                          <span className="block text-xs text-slate-400 font-mono">
                             {item.product?.sku || ''}
                           </span>
                         </td>

@@ -107,7 +107,7 @@ export default function AddSupplierPage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Master Rice Mills Ltd."
+              placeholder="e.g. Lahore Paper & Board Mills / Premier Paper Mart"
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all"
             />
           </div>

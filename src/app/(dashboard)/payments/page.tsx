@@ -345,11 +345,11 @@ export default function PaymentsPage() {
         {/* Total Collections */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Total Customer Inflow</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Customer Inflow</div>
             <div className="text-xl sm:text-2xl font-black text-[#16A34A] mt-1">
               Rs. {summary.total_received.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
-            <div className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+            <div className="text-xs text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
               <TrendingUp className="w-3.5 h-3.5" /> Collections
             </div>
           </div>
@@ -361,11 +361,11 @@ export default function PaymentsPage() {
         {/* Total Disbursements */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Supplier Outflow</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Supplier Outflow</div>
             <div className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
               Rs. {summary.total_sent.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
-            <div className="text-[11px] text-slate-500 font-semibold flex items-center gap-1 mt-0.5">
+            <div className="text-xs text-slate-500 font-semibold flex items-center gap-1 mt-0.5">
               <TrendingDown className="w-3.5 h-3.5 text-rose-500" /> Paid to Suppliers
             </div>
           </div>
@@ -377,11 +377,11 @@ export default function PaymentsPage() {
         {/* Net Flow */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Net Cash Flow</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Net Cash Flow</div>
             <div className={`text-xl sm:text-2xl font-black mt-1 ${summary.net_flow >= 0 ? 'text-[#16A34A]' : 'text-rose-600'}`}>
               Rs. {summary.net_flow.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
-            <div className="text-[11px] text-slate-400 font-medium mt-0.5">Inflow minus Outflow</div>
+            <div className="text-xs text-slate-400 font-medium mt-0.5">Inflow minus Outflow</div>
           </div>
           <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
             <Wallet className="w-5 h-5" />
@@ -391,9 +391,9 @@ export default function PaymentsPage() {
         {/* Total Records */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Vouchers Count</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Vouchers Count</div>
             <div className="text-xl sm:text-2xl font-black text-[#0F172A] mt-1">{summary.total_count}</div>
-            <div className="text-[11px] text-slate-400 font-medium mt-0.5">Recorded Transactions</div>
+            <div className="text-xs text-slate-400 font-medium mt-0.5">Recorded Transactions</div>
           </div>
           <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
             <FileCheck2 className="w-5 h-5" />
@@ -486,7 +486,7 @@ export default function PaymentsPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-600">
-            <thead className="bg-slate-50/80 text-[11px] uppercase font-bold text-slate-500 border-b border-slate-100">
+            <thead className="bg-slate-50/80 text-xs uppercase font-bold text-slate-500 border-b border-slate-100">
               <tr>
                 <th className="px-5 py-3.5">Voucher #</th>
                 <th className="px-5 py-3.5">Date</th>
@@ -528,29 +528,29 @@ export default function PaymentsPage() {
                           )}
                           <span>{partyName}</span>
                         </div>
-                        {partyPhone && <div className="text-[10px] text-slate-400">{partyPhone}</div>}
+                        {partyPhone && <div className="text-xs text-slate-400">{partyPhone}</div>}
                       </td>
                       <td className="px-5 py-3.5">
                         {isReceived ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-[#16A34A] border border-emerald-200">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-[#16A34A] border border-emerald-200">
                             <ArrowDownLeft className="w-3 h-3" /> Received (Inflow)
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-800 border border-slate-200">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200">
                             <ArrowUpRight className="w-3 h-3 text-rose-500" /> Paid Out (Voucher)
                           </span>
                         )}
                       </td>
                       <td className="px-5 py-3.5">
-                        <div className="font-bold uppercase text-[11px] text-slate-800">{p.payment_method}</div>
+                        <div className="font-bold uppercase text-xs text-slate-800">{p.payment_method}</div>
                         {p.financial_account && (
-                          <div className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md mt-0.5">
+                          <div className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md mt-0.5">
                             <Landmark className="w-2.5 h-2.5" />
                             <span>{p.financial_account.name}</span>
                           </div>
                         )}
                         {p.reference_number && (
-                          <div className="text-[10px] font-mono text-slate-500">Ref: {p.reference_number}</div>
+                          <div className="text-xs font-mono text-slate-500">Ref: {p.reference_number}</div>
                         )}
                       </td>
                       <td className="px-5 py-3.5 text-right font-black text-sm">
@@ -562,7 +562,7 @@ export default function PaymentsPage() {
                         <button
                           type="button"
                           onClick={() => setActiveReceiptPayment(p)}
-                          className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-[#16A34A] hover:text-white text-slate-700 font-bold text-[11px] transition-all flex items-center gap-1 mx-auto cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-[#16A34A] hover:text-white text-slate-700 font-bold text-xs transition-all flex items-center gap-1 mx-auto cursor-pointer"
                         >
                           <Printer className="w-3.5 h-3.5" />
                           <span>Print</span>
@@ -598,7 +598,7 @@ export default function PaymentsPage() {
                 </div>
                 <div>
                   <h3 className="font-black text-sm text-[#0F172A]">Receive Customer Payment</h3>
-                  <p className="text-[11px] text-slate-500">Credits customer ledger & lowers receivable</p>
+                  <p className="text-xs text-slate-500">Credits customer ledger & lowers receivable</p>
                 </div>
               </div>
               <button
@@ -619,7 +619,7 @@ export default function PaymentsPage() {
 
               {/* Customer Select */}
               <div>
-                <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Select Customer <span className="text-rose-500">*</span>
                 </label>
                 <select
@@ -643,13 +643,13 @@ export default function PaymentsPage() {
               {activeSelectedCustomer && (
                 <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200/80">
                   <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Outstanding Balance</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Outstanding Balance</span>
                     <div className="font-black text-rose-600 text-sm">
                       Rs. {Number(activeSelectedCustomer.current_balance).toFixed(2)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Remaining After Pay</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Remaining After Pay</span>
                     <div className="font-black text-[#16A34A] text-sm">
                       Rs. {customerRemainingBalance.toFixed(2)}
                     </div>
@@ -660,7 +660,7 @@ export default function PaymentsPage() {
               {/* Payment Amount & Method */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
                     Amount Received (PKR) <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -676,7 +676,7 @@ export default function PaymentsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
                     Payment Method <span className="text-rose-500">*</span>
                   </label>
                   <select
@@ -695,7 +695,7 @@ export default function PaymentsPage() {
 
               {/* Financial Account Selector (Optional) */}
               <div>
-                <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Deposit to Financial Account (Optional)
                 </label>
                 <select
@@ -717,7 +717,7 @@ export default function PaymentsPage() {
               {/* Date & Reference */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
                     Payment Date <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -730,7 +730,7 @@ export default function PaymentsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
                     Transaction / Reference #
                   </label>
                   <input
@@ -745,7 +745,7 @@ export default function PaymentsPage() {
 
               {/* Notes */}
               <div>
-                <label className="block text-[11px] font-black text-slate-700 mb-1.5">Notes / Memo</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">Notes / Memo</label>
                 <input
                   type="text"
                   placeholder="Optional payment remarks..."
@@ -799,7 +799,7 @@ export default function PaymentsPage() {
                 </div>
                 <div>
                   <h3 className="font-black text-sm text-[#0F172A]">Pay Supplier Voucher</h3>
-                  <p className="text-[11px] text-slate-500">Debits supplier ledger & reduces payable liability</p>
+                  <p className="text-xs text-slate-500">Debits supplier ledger & reduces payable liability</p>
                 </div>
               </div>
               <button
@@ -820,7 +820,7 @@ export default function PaymentsPage() {
 
               {/* Supplier Select */}
               <div>
-                <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Select Supplier <span className="text-rose-500">*</span>
                 </label>
                 <select
@@ -844,13 +844,13 @@ export default function PaymentsPage() {
               {activeSelectedSupplier && (
                 <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200/80">
                   <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Outstanding Payable</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Outstanding Payable</span>
                     <div className="font-black text-slate-900 text-sm">
                       Rs. {Number(activeSelectedSupplier.current_balance).toFixed(2)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Remaining Payable</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Remaining Payable</span>
                     <div className="font-black text-emerald-600 text-sm">
                       Rs. {supplierRemainingPayable.toFixed(2)}
                     </div>
@@ -861,7 +861,7 @@ export default function PaymentsPage() {
               {/* Payment Amount & Method */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
                     Payment Amount (PKR) <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -877,7 +877,7 @@ export default function PaymentsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
                     Payment Method <span className="text-rose-500">*</span>
                   </label>
                   <select
@@ -896,7 +896,7 @@ export default function PaymentsPage() {
 
               {/* Financial Account Selector (Optional) */}
               <div>
-                <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Deduct from Financial Account (Optional)
                 </label>
                 <select
@@ -918,7 +918,7 @@ export default function PaymentsPage() {
               {/* Date & Reference */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
                     Payment Date <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -931,7 +931,7 @@ export default function PaymentsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
                     Reference / Cheque #
                   </label>
                   <input
@@ -946,7 +946,7 @@ export default function PaymentsPage() {
 
               {/* Notes */}
               <div>
-                <label className="block text-[11px] font-black text-slate-700 mb-1.5">Notes / Memo</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">Notes / Memo</label>
                 <input
                   type="text"
                   placeholder="Optional voucher remarks..."
@@ -1003,7 +1003,7 @@ export default function PaymentsPage() {
                   <h3 className="font-black text-sm text-[#0F172A]">
                     {activeReceiptPayment.party_type === 'customer' ? 'Customer Payment Receipt' : 'Supplier Payment Voucher'}
                   </h3>
-                  <p className="text-[11px] text-slate-400 font-mono">{activeReceiptPayment.payment_no}</p>
+                  <p className="text-xs text-slate-400 font-mono">{activeReceiptPayment.payment_no}</p>
                 </div>
               </div>
 
@@ -1036,17 +1036,17 @@ export default function PaymentsPage() {
                 /* Thermal 80mm Preview */
                 <div
                   id="printable-payment-receipt"
-                  className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 max-w-[320px] mx-auto text-slate-800 font-mono text-[11px] leading-relaxed space-y-3"
+                  className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 max-w-[320px] mx-auto text-slate-800 font-mono text-xs leading-relaxed space-y-3"
                 >
                   <div className="text-center pb-3 border-b border-dashed border-slate-300">
                     <h2 className="text-sm font-black text-slate-900 uppercase">SALES & ACCOUNTING ERP</h2>
-                    <p className="text-[10px] text-slate-500">
+                    <p className="text-xs text-slate-500">
                       {activeReceiptPayment.party_type === 'customer' ? 'OFFICIAL PAYMENT RECEIPT' : 'OFFICIAL PAYMENT VOUCHER'}
                     </p>
                     <div className="font-bold text-slate-700 mt-1">{activeReceiptPayment.payment_no}</div>
                   </div>
 
-                  <div className="space-y-1 text-[10px]">
+                  <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Date:</span>
                       <span className="font-bold">{activeReceiptPayment.payment_date}</span>
@@ -1075,13 +1075,13 @@ export default function PaymentsPage() {
                       <span className="text-[#16A34A]">Rs. {Number(activeReceiptPayment.amount).toFixed(2)}</span>
                     </div>
                     {activeReceiptPayment.customer && (
-                      <div className="flex justify-between text-[10px] text-slate-500">
+                      <div className="flex justify-between text-xs text-slate-500">
                         <span>Current Khata Balance:</span>
                         <span className="font-bold">Rs. {Number(activeReceiptPayment.customer.current_balance).toFixed(2)}</span>
                       </div>
                     )}
                     {activeReceiptPayment.supplier && (
-                      <div className="flex justify-between text-[10px] text-slate-500">
+                      <div className="flex justify-between text-xs text-slate-500">
                         <span>Current Payable Balance:</span>
                         <span className="font-bold">Rs. {Number(activeReceiptPayment.supplier.current_balance).toFixed(2)}</span>
                       </div>
@@ -1089,12 +1089,12 @@ export default function PaymentsPage() {
                   </div>
 
                   {activeReceiptPayment.notes && (
-                    <div className="text-[10px] text-slate-500 italic">
+                    <div className="text-xs text-slate-500 italic">
                       Remarks: {activeReceiptPayment.notes}
                     </div>
                   )}
 
-                  <div className="text-center pt-2 text-[9px] text-slate-400">
+                  <div className="text-center pt-2 text-xs text-slate-400">
                     <p>Computer Generated Accounting Voucher</p>
                     <p>Authorized Signature: __________________</p>
                   </div>
@@ -1108,39 +1108,39 @@ export default function PaymentsPage() {
                   <div className="flex items-start justify-between pb-3 border-b border-slate-200">
                     <div>
                       <h2 className="text-base font-black text-[#0F172A]">SALES & ACCOUNTING ERP</h2>
-                      <p className="text-slate-500 text-[11px]">Financial & Cash Flow Management</p>
+                      <p className="text-slate-500 text-xs">Financial & Cash Flow Management</p>
                     </div>
                     <div className="text-right">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-[#16A34A] border border-emerald-200">
+                      <span className="px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-[#16A34A] border border-emerald-200">
                         {activeReceiptPayment.party_type === 'customer' ? 'PAYMENT RECEIPT' : 'PAYMENT VOUCHER'}
                       </span>
                       <div className="font-mono font-bold text-xs text-[#0F172A] mt-1">{activeReceiptPayment.payment_no}</div>
-                      <div className="text-slate-400 text-[10px]">Date: {activeReceiptPayment.payment_date}</div>
+                      <div className="text-slate-400 text-xs">Date: {activeReceiptPayment.payment_date}</div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200/80">
                     <div>
-                      <div className="text-[10px] font-bold uppercase text-slate-400">Party Details</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Party Details</div>
                       <div className="font-bold text-slate-800 text-xs">
                         {activeReceiptPayment.customer?.name || activeReceiptPayment.supplier?.name || 'General Party'}
                       </div>
-                      <div className="text-slate-500 text-[11px]">
+                      <div className="text-slate-500 text-xs">
                         {activeReceiptPayment.customer?.phone || activeReceiptPayment.supplier?.phone || ''}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] font-bold uppercase text-slate-400">Transaction Details</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Transaction Details</div>
                       <div className="font-bold text-slate-800 text-xs">Method: {activeReceiptPayment.payment_method?.toUpperCase()}</div>
                       {activeReceiptPayment.reference_number && (
-                        <div className="text-slate-500 text-[10px]">Txn Ref: {activeReceiptPayment.reference_number}</div>
+                        <div className="text-slate-500 text-xs">Txn Ref: {activeReceiptPayment.reference_number}</div>
                       )}
                     </div>
                   </div>
 
                   <div className="p-4 bg-emerald-50/50 rounded-xl border border-emerald-200/70 flex justify-between items-center">
                     <div>
-                      <div className="text-[10px] font-bold uppercase text-emerald-800">Net Amount Paid / Received</div>
+                      <div className="text-xs font-bold uppercase text-emerald-800">Net Amount Paid / Received</div>
                       <div className="text-xs text-slate-500">Atomic ledger transaction completed</div>
                     </div>
                     <div className="text-xl font-black text-[#16A34A]">
@@ -1148,7 +1148,7 @@ export default function PaymentsPage() {
                     </div>
                   </div>
 
-                  <div className="pt-8 border-t border-slate-200 flex justify-between text-[11px] text-slate-400">
+                  <div className="pt-8 border-t border-slate-200 flex justify-between text-xs text-slate-400">
                     <div>Prepared By: ______________</div>
                     <div>Authorized Stamp: ______________</div>
                   </div>

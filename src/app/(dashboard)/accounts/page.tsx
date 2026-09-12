@@ -208,11 +208,11 @@ export default function AccountsPage() {
         {/* Total Net Liquid Funds */}
         <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl shadow-md flex items-center justify-between border border-slate-800">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Total Liquid Funds</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Liquid Funds</div>
             <div className="text-xl sm:text-2xl font-black text-emerald-400 mt-1">
               Rs. {metrics.netLiquid.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
-            <div className="text-[11px] text-slate-400 font-semibold flex items-center gap-1 mt-0.5">
+            <div className="text-xs text-slate-400 font-semibold flex items-center gap-1 mt-0.5">
               Across {metrics.count} financial accounts
             </div>
           </div>
@@ -224,11 +224,11 @@ export default function AccountsPage() {
         {/* Cash in Hand */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Cash in Hand</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Cash in Hand</div>
             <div className="text-xl sm:text-2xl font-black text-[#16A34A] mt-1">
               Rs. {metrics.totalCash.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
-            <div className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+            <div className="text-xs text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
               <Wallet className="w-3.5 h-3.5" /> Physical tills & cash registers
             </div>
           </div>
@@ -240,11 +240,11 @@ export default function AccountsPage() {
         {/* Bank Balances */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Bank Accounts</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Bank Accounts</div>
             <div className="text-xl sm:text-2xl font-black text-blue-600 mt-1">
               Rs. {metrics.totalBank.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
-            <div className="text-[11px] text-blue-600 font-semibold flex items-center gap-1 mt-0.5">
+            <div className="text-xs text-blue-600 font-semibold flex items-center gap-1 mt-0.5">
               <Landmark className="w-3.5 h-3.5" /> Commercial bank deposits
             </div>
           </div>
@@ -256,11 +256,11 @@ export default function AccountsPage() {
         {/* Mobile Wallets */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Mobile Wallets</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Mobile Wallets</div>
             <div className="text-xl sm:text-2xl font-black text-amber-600 mt-1">
               Rs. {metrics.totalWallet.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
-            <div className="text-[11px] text-amber-600 font-semibold flex items-center gap-1 mt-0.5">
+            <div className="text-xs text-amber-600 font-semibold flex items-center gap-1 mt-0.5">
               <Smartphone className="w-3.5 h-3.5" /> JazzCash & Easypaisa
             </div>
           </div>
@@ -368,7 +368,7 @@ export default function AccountsPage() {
                       <div>
                         <h3 className="text-sm font-bold text-slate-900 leading-snug">{acc.name}</h3>
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold border mt-0.5 ${cfg.badgeColor}`}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border mt-0.5 ${cfg.badgeColor}`}
                         >
                           {ACCOUNT_TYPE_LABELS[acc.account_type] || acc.account_type}
                         </span>
@@ -376,7 +376,7 @@ export default function AccountsPage() {
                     </div>
 
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${
+                      className={`px-2 py-0.5 rounded-full text-xs font-bold border ${
                         acc.is_active
                           ? 'bg-emerald-50 text-[#16A34A] border-emerald-200'
                           : 'bg-rose-50 text-rose-600 border-rose-200'
@@ -388,7 +388,7 @@ export default function AccountsPage() {
 
                   {/* Bank & Account Number details */}
                   {(acc.bank_name || acc.account_number) && (
-                    <div className="bg-slate-50/80 rounded-xl p-2.5 border border-slate-100 text-[11px] font-medium text-slate-600 space-y-1 mb-4">
+                    <div className="bg-slate-50/80 rounded-xl p-2.5 border border-slate-100 text-xs font-medium text-slate-600 space-y-1 mb-4">
                       {acc.bank_name && (
                         <div className="flex items-center justify-between">
                           <span className="text-slate-400">Institution:</span>
@@ -406,11 +406,11 @@ export default function AccountsPage() {
 
                   {/* Balance Section */}
                   <div className="pt-2 border-t border-slate-100">
-                    <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Current Balance</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Current Balance</div>
                     <div className="text-2xl font-black text-slate-900 mt-0.5">
                       Rs. {currentBal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </div>
-                    <div className="text-[11px] text-slate-400 font-semibold mt-0.5">
+                    <div className="text-xs text-slate-400 font-semibold mt-0.5">
                       Opening: Rs. {openBal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </div>
                   </div>

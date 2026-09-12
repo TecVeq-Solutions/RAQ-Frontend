@@ -80,15 +80,15 @@ export default function UsersManagementPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#0F172A]">User Management</h1>
+            <h1 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-[#0F172A] tracking-tight">User Management</h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-              <ShieldCheck className="w-3 h-3" /> Admin Exclusive
+              <ShieldCheck className="w-3.5 h-3.5" /> Admin Exclusive
             </span>
           </div>
-          <p className="text-sm text-slate-500 mt-0.5">Control staff credentials, roles, and active statuses</p>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Control staff credentials, roles, and active statuses</p>
         </div>
 
-        <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16A34A] text-white font-semibold hover:bg-[#059669] transition-all shadow-sm text-sm">
+        <button className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#059669] text-white font-bold text-xs sm:text-sm transition-all shadow-sm">
           <UserPlus className="w-4 h-4" /> Add System User
         </button>
       </div>

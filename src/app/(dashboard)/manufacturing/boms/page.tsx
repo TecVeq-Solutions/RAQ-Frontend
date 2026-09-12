@@ -331,11 +331,11 @@ export default function BomsPage() {
                               return (
                                 <span
                                   key={idx}
-                                  className="inline-flex items-center rounded-md bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                                  className="inline-flex items-center rounded-md bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                                 >
                                   {rawProd?.name || 'Item'}: {item.quantity} {itemUnit?.short_name || ''}
                                   {Number(item.wastage_allowance_percent) > 0 && (
-                                    <span className="ml-1 text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
+                                    <span className="ml-1 text-xs text-amber-600 dark:text-amber-400 font-semibold">
                                       (+{item.wastage_allowance_percent}%)
                                     </span>
                                   )}
@@ -343,7 +343,7 @@ export default function BomsPage() {
                               );
                             })}
                             {items.length > 3 && (
-                              <span className="text-[11px] text-slate-400 font-medium self-center">
+                              <span className="text-xs text-slate-400 font-medium self-center">
                                 +{items.length - 3} more
                               </span>
                             )}

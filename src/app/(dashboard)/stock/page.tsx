@@ -222,7 +222,7 @@ export default function StockPage() {
                       <td className="px-6 py-4">
                         <div className="font-bold text-[#0F172A]">{item.name}</div>
                         {(item.paper_size || item.gsm || item.sheets_per_unit || item.pages_count || item.material_type) && (
-                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 mt-1">
+                          <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-1">
                             {item.material_type && (
                               <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-700 font-medium">
                                 {item.material_type}
@@ -268,7 +268,7 @@ export default function StockPage() {
                           Rs. {Number(item.selling_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </div>
                         {pType === 'finished_good' && Number(item.purchase_price || 0) > 0 && (
-                          <div className="text-[10px] text-blue-600 font-semibold mt-0.5">
+                          <div className="text-xs text-blue-600 font-semibold mt-0.5">
                             Mfg Cost: Rs. {Number(item.purchase_price || 0).toFixed(2)}
                           </div>
                         )}
@@ -277,7 +277,7 @@ export default function StockPage() {
                         <div className="font-extrabold text-slate-900">
                           {item.stock_display?.full_display}
                         </div>
-                        <div className="text-[11px] text-slate-400">
+                        <div className="text-xs text-slate-400">
                           Alert Limit: {item.alert_quantity} {item.stock_display?.base_unit}
                         </div>
                       </td>

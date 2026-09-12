@@ -33,14 +33,14 @@ export default function Header({ user, onMenuToggle }: HeaderProps) {
           />
           <div className="min-w-0 truncate">
             <div className="flex items-center gap-1.5 truncate">
-              <span className="text-[13.5px] sm:text-[15px] 2xl:text-base font-bold text-slate-900 tracking-tight leading-tight truncate">
+              <span className="text-sm sm:text-base 2xl:text-lg font-bold text-slate-900 tracking-tight leading-tight truncate">
                 Tecveq Suite
               </span>
-              <span className="hidden xs:inline-flex items-center px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">
+              <span className="hidden xs:inline-flex items-center px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded">
                 ERP
               </span>
             </div>
-            <div className="text-[11px] 2xl:text-xs font-medium text-slate-500 truncate leading-tight flex items-center gap-1.5">
+            <div className="text-xs font-medium text-slate-500 truncate leading-tight flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 hidden sm:inline-block animate-pulse" />
               <span className="truncate">Sales & Accounting ERP</span>
             </div>
@@ -59,15 +59,15 @@ export default function Header({ user, onMenuToggle }: HeaderProps) {
         {/* User Badge Info */}
         <div className="flex items-center gap-2.5 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200">
           <div className="text-right hidden sm:block">
-            <div className="text-xs 2xl:text-sm font-bold text-slate-900 leading-tight truncate max-w-[150px]">
+            <div className="text-sm font-bold text-slate-900 leading-tight truncate max-w-[150px]">
               {user?.name || 'User'}
             </div>
-            <div className="text-[11px] 2xl:text-xs text-slate-400 capitalize font-medium">
+            <div className="text-xs text-slate-400 capitalize font-medium">
               {user?.role ? `${user.role} role` : 'Authenticated'}
             </div>
           </div>
 
-          <div className="w-8 h-8 sm:w-9 sm:h-9 2xl:w-10 2xl:h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs 2xl:text-sm shadow-xs shrink-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 2xl:w-10 2xl:h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs shrink-0">
             {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
 

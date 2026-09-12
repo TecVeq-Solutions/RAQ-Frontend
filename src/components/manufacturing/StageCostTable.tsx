@@ -233,7 +233,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
             <DollarSign className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             Stage 2 — Assembly, Binding & Finishing Costs
           </h4>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Direct labor wages, binding contractor charges, electricity & stage consumables.
           </p>
         </div>
@@ -262,7 +262,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
           <div className="rounded-xl border border-teal-200 bg-teal-50/40 p-2.5 dark:border-teal-900/60 dark:bg-teal-950/20">
             <div className="flex items-center justify-between text-teal-700 dark:text-teal-400">
-              <span className="text-[10px] font-bold uppercase tracking-wider">Labor</span>
+              <span className="text-xs font-bold uppercase tracking-wider">Labor</span>
               <Users className="h-3.5 w-3.5 opacity-70" />
             </div>
             <p className="mt-1 text-xs font-bold text-slate-900 dark:text-white">
@@ -272,7 +272,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
 
           <div className="rounded-xl border border-violet-200 bg-violet-50/40 p-2.5 dark:border-violet-900/60 dark:bg-violet-950/20">
             <div className="flex items-center justify-between text-violet-700 dark:text-violet-400">
-              <span className="text-[10px] font-bold uppercase tracking-wider">Binding Cont.</span>
+              <span className="text-xs font-bold uppercase tracking-wider">Binding Cont.</span>
               <BookOpenIcon className="h-3.5 w-3.5 opacity-70" />
             </div>
             <p className="mt-1 text-xs font-bold text-slate-900 dark:text-white">
@@ -282,7 +282,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
 
           <div className="rounded-xl border border-yellow-200 bg-yellow-50/40 p-2.5 dark:border-yellow-900/60 dark:bg-yellow-950/20">
             <div className="flex items-center justify-between text-yellow-800 dark:text-yellow-400">
-              <span className="text-[10px] font-bold uppercase tracking-wider">Electricity</span>
+              <span className="text-xs font-bold uppercase tracking-wider">Electricity</span>
               <Zap className="h-3.5 w-3.5 opacity-70" />
             </div>
             <p className="mt-1 text-xs font-bold text-slate-900 dark:text-white">
@@ -292,7 +292,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
 
           <div className="rounded-xl border border-cyan-200 bg-cyan-50/40 p-2.5 dark:border-cyan-900/60 dark:bg-cyan-950/20">
             <div className="flex items-center justify-between text-cyan-700 dark:text-cyan-400">
-              <span className="text-[10px] font-bold uppercase tracking-wider">Consumables</span>
+              <span className="text-xs font-bold uppercase tracking-wider">Consumables</span>
               <PackageCheck className="h-3.5 w-3.5 opacity-70" />
             </div>
             <p className="mt-1 text-xs font-bold text-slate-900 dark:text-white">
@@ -302,7 +302,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
 
           <div className="rounded-xl border border-rose-200 bg-rose-50/40 p-2.5 dark:border-rose-900/60 dark:bg-rose-950/20">
             <div className="flex items-center justify-between text-rose-700 dark:text-rose-400">
-              <span className="text-[10px] font-bold uppercase tracking-wider">Overhead</span>
+              <span className="text-xs font-bold uppercase tracking-wider">Overhead</span>
               <Building className="h-3.5 w-3.5 opacity-70" />
             </div>
             <p className="mt-1 text-xs font-bold text-slate-900 dark:text-white">
@@ -312,7 +312,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
 
           <div className="rounded-xl border border-emerald-300 bg-emerald-500/10 p-2.5 dark:border-emerald-700 dark:bg-emerald-950/40">
             <div className="flex items-center justify-between text-emerald-700 dark:text-emerald-300">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider">Total Stage Cost</span>
+              <span className="text-xs font-extrabold uppercase tracking-wider">Total Stage Cost</span>
               <DollarSign className="h-3.5 w-3.5 opacity-80" />
             </div>
             <p className="mt-1 text-xs font-extrabold text-emerald-700 dark:text-emerald-300">
@@ -333,7 +333,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
           <div className="py-8 text-center text-xs text-slate-400">
             <p>No stage costs recorded for this production order yet.</p>
             {canAdd && (
-              <p className="mt-1 text-[11px] text-slate-500">
+              <p className="mt-1 text-xs text-slate-500">
                 Click <span className="font-semibold text-emerald-600">"Add Stage Cost"</span> to record labor, binding, or overhead expenses.
               </p>
             )}
@@ -341,7 +341,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-600 dark:text-slate-300">
-              <thead className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:bg-slate-800/80">
+              <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500 dark:bg-slate-800/80">
                 <tr>
                   <th className="px-4 py-2.5">Stage</th>
                   <th className="px-4 py-2.5">Cost Type</th>
@@ -356,7 +356,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
                   <tr key={cost.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="px-4 py-2.5 whitespace-nowrap">
                       <span
-                        className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold capitalize ${getStageBadgeColor(
+                        className={`inline-block rounded-md border px-2 py-0.5 text-xs font-bold capitalize ${getStageBadgeColor(
                           cost.stage_name
                         )}`}
                       >
@@ -365,7 +365,7 @@ export default function StageCostTable({ order, onCostUpdated }: StageCostTableP
                     </td>
                     <td className="px-4 py-2.5 whitespace-nowrap">
                       <span
-                        className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold capitalize ${getCostTypeBadgeColor(
+                        className={`inline-block rounded-md border px-2 py-0.5 text-xs font-bold capitalize ${getCostTypeBadgeColor(
                           cost.cost_type
                         )}`}
                       >

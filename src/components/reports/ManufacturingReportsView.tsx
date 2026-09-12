@@ -295,19 +295,19 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setQuickRange('today')}
-                className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[11px] font-bold"
+                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-xs font-bold"
               >
                 Today
               </button>
               <button
                 onClick={() => setQuickRange('this_month')}
-                className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[11px] font-bold"
+                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-xs font-bold"
               >
                 This Month
               </button>
               <button
                 onClick={() => setQuickRange('last_month')}
-                className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[11px] font-bold"
+                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-xs font-bold"
               >
                 Last Month
               </button>
@@ -383,7 +383,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-slate-900">
                     {prodSummaryData.summary.total_orders}
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] font-medium text-slate-500">
+                  <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
                     <span className="text-emerald-600 font-bold">{prodSummaryData.summary.completed_orders} Completed</span>
                     <span>•</span>
                     <span className="text-amber-600 font-bold">{prodSummaryData.summary.in_progress_orders} In Progress</span>
@@ -398,7 +398,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-slate-900">
                     {Number(prodSummaryData.summary.target_quantity).toLocaleString()}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">Planned units across all orders</div>
+                  <div className="text-xs text-slate-500 font-medium">Planned units across all orders</div>
                 </div>
 
                 <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-1">
@@ -409,7 +409,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-emerald-600">
                     {Number(prodSummaryData.summary.completed_quantity).toLocaleString()}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     Remaining: {Number(prodSummaryData.summary.remaining_quantity).toLocaleString()} units
                   </div>
                 </div>
@@ -460,7 +460,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                         {prodSummaryData.by_product.map((p) => (
                           <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
                             <td className="px-5 py-3 font-bold text-slate-900">{p.name}</td>
-                            <td className="px-4 py-3 text-slate-500 font-mono text-[11px]">{p.sku || '-'}</td>
+                            <td className="px-4 py-3 text-slate-500 font-mono text-xs">{p.sku || '-'}</td>
                             <td className="px-4 py-3 text-right font-medium text-slate-700">{p.orders_count}</td>
                             <td className="px-4 py-3 text-right font-medium text-slate-700">
                               {Number(p.planned_quantity).toLocaleString()} {p.unit_name}
@@ -479,7 +479,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             </td>
                             <td className="px-5 py-3 text-right">
                               <span
-                                className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold ${
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
                                   p.achievement_percentage >= 100
                                     ? 'bg-emerald-100 text-emerald-800'
                                     : p.achievement_percentage >= 75
@@ -544,7 +544,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             <td className="px-5 py-3 font-bold font-mono text-indigo-600">{row.order_no}</td>
                             <td className="px-4 py-3">
                               <div className="font-bold text-slate-900">{row.finished_product.name}</div>
-                              <div className="text-[10px] text-slate-400 font-mono">{row.finished_product.sku}</div>
+                              <div className="text-xs text-slate-400 font-mono">{row.finished_product.sku}</div>
                             </td>
                             <td className="px-4 py-3 text-slate-600">{row.bom_name}</td>
                             <td className="px-4 py-3 text-right font-medium text-slate-700">
@@ -564,7 +564,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             </td>
                             <td className="px-4 py-3 text-right">
                               <span
-                                className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold ${
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
                                   row.achievement_percentage >= 100
                                     ? 'bg-emerald-100 text-emerald-800'
                                     : row.achievement_percentage >= 75
@@ -577,7 +577,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             </td>
                             <td className="px-4 py-3 text-center">
                               <span
-                                className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${
                                   row.status === 'completed'
                                     ? 'bg-emerald-100 text-emerald-800'
                                     : row.status === 'in_progress'
@@ -672,7 +672,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                           <td className="px-5 py-3 font-bold font-mono text-indigo-600">{row.order_no}</td>
                           <td className="px-4 py-3">
                             <div className="font-bold text-slate-900">{row.finished_product.name}</div>
-                            <div className="text-[10px] text-slate-400">{row.finished_product.unit_name}</div>
+                            <div className="text-xs text-slate-400">{row.finished_product.unit_name}</div>
                           </td>
                           <td className="px-4 py-3 text-right font-medium text-slate-700">
                             {Number(row.planned_quantity).toLocaleString()}
@@ -698,24 +698,24 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                           </td>
                           <td className="px-4 py-3 text-center">
                             {row.performance_status === 'over_production' && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">
                                 <ArrowUpRight className="w-3 h-3" /> Over Target
                               </span>
                             )}
                             {row.performance_status === 'under_production' && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs font-bold">
                                 <ArrowDownRight className="w-3 h-3" /> Under Target
                               </span>
                             )}
                             {row.performance_status === 'on_target' && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold">
                                 <CheckCircle2 className="w-3 h-3" /> On Target
                               </span>
                             )}
                           </td>
                           <td className="px-5 py-3 text-center">
                             <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${
                                 row.status === 'completed'
                                   ? 'bg-emerald-100 text-emerald-800'
                                   : 'bg-slate-100 text-slate-700'
@@ -748,7 +748,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-slate-900">
                     {consumptionData.summary.total_orders_count}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     {consumptionData.summary.total_materials_count} Material types consumed
                   </div>
                 </div>
@@ -761,7 +761,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-blue-600">
                     {Number(consumptionData.summary.paper_reams_consumed).toLocaleString()} <span className="text-xs font-normal text-slate-500">Reams</span>
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     ~{Number(consumptionData.summary.paper_sheets_consumed).toLocaleString()} parent sheets
                   </div>
                 </div>
@@ -774,7 +774,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-emerald-600">
                     {formatCurrency(consumptionData.summary.total_materials_cost)}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">Actual consumed inventory value</div>
+                  <div className="text-xs text-slate-500 font-medium">Actual consumed inventory value</div>
                 </div>
 
                 <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-1">
@@ -793,7 +793,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                       ? `+${consumptionData.summary.total_variance_quantity}`
                       : consumptionData.summary.total_variance_quantity}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">Actual vs planned quantity variance</div>
+                  <div className="text-xs text-slate-500 font-medium">Actual vs planned quantity variance</div>
                 </div>
               </div>
 
@@ -822,7 +822,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                         {consumptionData.by_material.map((mat) => (
                           <tr key={mat.id} className="hover:bg-slate-50/70 transition-colors">
                             <td className="px-5 py-3 font-bold text-slate-900">{mat.name}</td>
-                            <td className="px-4 py-3 text-slate-500 font-mono text-[11px]">{mat.sku || '-'}</td>
+                            <td className="px-4 py-3 text-slate-500 font-mono text-xs">{mat.sku || '-'}</td>
                             <td className="px-4 py-3 text-right font-medium text-slate-700">{mat.orders_count}</td>
                             <td className="px-4 py-3 text-right font-medium text-slate-700">
                               {Number(mat.planned_quantity).toLocaleString()} {mat.unit_name}
@@ -897,7 +897,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             <td className="px-4 py-3 text-slate-700 font-medium">{row.finished_product.name}</td>
                             <td className="px-4 py-3">
                               <div className="font-bold text-slate-900">{row.raw_material.name}</div>
-                              <div className="text-[10px] text-slate-400 font-mono">{row.raw_material.sku}</div>
+                              <div className="text-xs text-slate-400 font-mono">{row.raw_material.sku}</div>
                             </td>
                             <td className="px-4 py-3 text-right font-medium text-slate-700">
                               {Number(row.planned_quantity).toLocaleString()} {row.unit_name}
@@ -949,7 +949,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-slate-900">
                     {wastageData.summary.total_cutting_operations}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     Input: {Number(wastageData.summary.total_input_quantity).toLocaleString()} Reams/Units
                   </div>
                 </div>
@@ -962,7 +962,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-emerald-600">
                     {Number(wastageData.summary.total_usable_sheets).toLocaleString()} <span className="text-xs font-normal text-slate-500">Sheets</span>
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     Expected: {Number(wastageData.summary.total_expected_sheets).toLocaleString()}
                   </div>
                 </div>
@@ -975,7 +975,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-rose-600">
                     {Number(wastageData.summary.total_wastage_sheets).toLocaleString()} <span className="text-xs font-normal text-slate-500">Sheets</span>
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     Est. Scrap Cost: {formatCurrency(wastageData.summary.total_scrap_cost)}
                   </div>
                 </div>
@@ -994,7 +994,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   >
                     {wastageData.summary.overall_wastage_percentage}%
                   </div>
-                  <div className="text-[11px] font-bold text-rose-600">
+                  <div className="text-xs font-bold text-rose-600">
                     {wastageData.summary.high_wastage_count > 0 && (
                       <span>⚠️ {wastageData.summary.high_wastage_count} high-wastage runs (&gt;10%)</span>
                     )}
@@ -1067,7 +1067,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             <td className="px-5 py-3 font-bold font-mono text-indigo-600">{row.order_no}</td>
                             <td className="px-4 py-3">
                               <div className="font-bold text-slate-900">{row.raw_material?.name || 'Paper Ream'}</div>
-                              <div className="text-[10px] text-slate-400 font-mono">{row.raw_material?.sku}</div>
+                              <div className="text-xs text-slate-400 font-mono">{row.raw_material?.sku}</div>
                             </td>
                             <td className="px-4 py-3 text-right font-medium text-slate-700">
                               {row.input_quantity} {row.raw_material?.unit_name || 'Reams'}
@@ -1092,11 +1092,11 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             </td>
                             <td className="px-4 py-3 text-center">
                               {row.is_high_wastage ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-100 text-rose-800 text-[10px] font-bold">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-100 text-rose-800 text-xs font-bold">
                                   ⚠️ High Wastage
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">
                                   Normal
                                 </span>
                               )}
@@ -1127,7 +1127,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-slate-900">
                     {formatCurrency(costData.summary.total_manufacturing_cost)}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     Materials: {formatCurrency(costData.summary.total_material_cost)}
                   </div>
                 </div>
@@ -1140,7 +1140,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-blue-600">
                     {formatCurrency(costData.summary.total_stage_costs)}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     Labor: {formatCurrency(costData.summary.total_labor_cost)} • Binding: {formatCurrency(costData.summary.total_binding_cost)}
                   </div>
                 </div>
@@ -1153,7 +1153,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-purple-600">
                     {formatCurrency(costData.summary.average_unit_cost)}
                   </div>
-                  <div className="text-[11px] text-slate-500 font-medium">
+                  <div className="text-xs text-slate-500 font-medium">
                     Across {Number(costData.summary.total_output_quantity).toLocaleString()} output units
                   </div>
                 </div>
@@ -1166,7 +1166,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                   <div className="text-2xl font-black text-emerald-600">
                     {costData.summary.manufacturing_margin_percentage}%
                   </div>
-                  <div className="text-[11px] font-bold text-emerald-700">
+                  <div className="text-xs font-bold text-emerald-700">
                     Est. Profit: {formatCurrency(costData.summary.manufacturing_gross_profit)}
                   </div>
                 </div>
@@ -1218,7 +1218,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             <td className="px-5 py-3 font-bold font-mono text-indigo-600">{row.order_no}</td>
                             <td className="px-4 py-3">
                               <div className="font-bold text-slate-900">{row.finished_product.name}</div>
-                              <div className="text-[10px] text-slate-400 font-mono">{row.finished_product.sku}</div>
+                              <div className="text-xs text-slate-400 font-mono">{row.finished_product.sku}</div>
                             </td>
                             <td className="px-4 py-3 text-right font-bold text-slate-900">
                               {Number(row.output_quantity).toLocaleString()} {row.finished_product.unit_name}
@@ -1243,7 +1243,7 @@ export default function ManufacturingReportsView({ formatCurrency }: Manufacturi
                             </td>
                             <td className="px-5 py-3 text-right">
                               <span
-                                className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold ${
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
                                   row.margin_percentage >= 30
                                     ? 'bg-emerald-100 text-emerald-800'
                                     : row.margin_percentage > 0

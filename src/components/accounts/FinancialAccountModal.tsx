@@ -234,7 +234,7 @@ export default function FinancialAccountModal({
                   className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-[#16A34A]/30 focus:border-[#16A34A]"
                 />
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-xs text-slate-400 mt-1">
                 Sets the initial current balance. Future transactions will adjust this running balance.
               </p>
             </div>

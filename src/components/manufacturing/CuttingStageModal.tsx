@@ -243,7 +243,7 @@ export default function CuttingStageModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
                   Expected Sheets <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -259,7 +259,7 @@ export default function CuttingStageModal({
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
                   Actual Usable Sheets <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -275,7 +275,7 @@ export default function CuttingStageModal({
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
                   Wastage / Scrap Sheets <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -304,7 +304,7 @@ export default function CuttingStageModal({
                   <TrendingDown className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                     Calculated Wastage Rate:
                   </span>
                   <div className="flex items-baseline gap-2">
@@ -317,7 +317,7 @@ export default function CuttingStageModal({
                     >
                       {liveWastagePercent}%
                     </span>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-xs text-slate-400">
                       ({wastageSheets} scrap / {expectedSheets} expected)
                     </span>
                   </div>
@@ -326,7 +326,7 @@ export default function CuttingStageModal({
 
               <div className="text-xs text-slate-500 dark:text-slate-400 sm:text-right">
                 <div>Total Cut: <span className="font-bold text-slate-800 dark:text-slate-200">{totalCutSheets}</span> sheets</div>
-                <div className="text-[10px] text-slate-400">Usable ({actualSheets}) + Scrap ({wastageSheets})</div>
+                <div className="text-xs text-slate-400">Usable ({actualSheets}) + Scrap ({wastageSheets})</div>
               </div>
             </div>
 
@@ -336,7 +336,7 @@ export default function CuttingStageModal({
                 <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
                 <div>
                   <span className="font-bold">Warning: Wastage is above 10% ({liveWastagePercent}%).</span>
-                  <p className="mt-0.5 text-[11px] text-amber-700 dark:text-amber-400">
+                  <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
                     This cutting run will be flagged for supervisor review due to high trimming loss.
                   </p>
                 </div>

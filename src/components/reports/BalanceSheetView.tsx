@@ -113,48 +113,48 @@ export default function BalanceSheetView({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 items-center">
             {/* Box 1: Total Assets */}
             <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-4 border border-slate-700/80 space-y-1">
-              <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
                 <span>Total Assets</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
+                <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
                   Owns
                 </span>
               </div>
               <div className="text-xl sm:text-2xl font-black text-emerald-400">
                 {formatCurrency(summary.total_assets)}
               </div>
-              <div className="text-[11px] text-slate-400">
+              <div className="text-xs text-slate-400">
                 Current ({formatCurrency(summary.total_current_assets)}) + Fixed ({formatCurrency(summary.total_fixed_assets)})
               </div>
             </div>
 
             {/* Box 2: Total Liabilities */}
             <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-4 border border-slate-700/80 space-y-1">
-              <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
                 <span>Total Liabilities</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">
+                <span className="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">
                   Owes
                 </span>
               </div>
               <div className="text-xl sm:text-2xl font-black text-blue-400">
                 {formatCurrency(summary.total_liabilities)}
               </div>
-              <div className="text-[11px] text-slate-400">
+              <div className="text-xs text-slate-400">
                 Trade payables owed to suppliers
               </div>
             </div>
 
             {/* Box 3: Owner Equity */}
             <div className="bg-slate-800/80 backdrop-blur-md rounded-2xl p-4 border border-slate-700/80 space-y-1">
-              <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
                 <span>Owner Equity / Net Worth</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">
+                <span className="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">
                   Net Worth
                 </span>
               </div>
               <div className="text-xl sm:text-2xl font-black text-purple-300">
                 {formatCurrency(summary.equity)}
               </div>
-              <div className="text-[11px] text-slate-400">
+              <div className="text-xs text-slate-400">
                 Residual: Assets minus Liabilities
               </div>
             </div>
@@ -171,7 +171,7 @@ export default function BalanceSheetView({
           <div className="flex items-center justify-between pb-3 border-b border-slate-200">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                <Building2 className="w-4.5 h-4.5" />
+                <Building2 className="w-4 h-4" />
               </div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
                 ASSETS (What Business Owns)
@@ -201,7 +201,7 @@ export default function BalanceSheetView({
                       <div className="text-xs font-bold text-slate-800">
                         Cash & Cash Equivalents
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-xs text-slate-500">
                         {currentAssets.accounts_count} active accounts (Cash, Bank & Wallets)
                       </div>
                     </div>
@@ -213,7 +213,7 @@ export default function BalanceSheetView({
                     <button
                       type="button"
                       onClick={() => setShowAccountsDetail(!showAccountsDetail)}
-                      className="text-[10px] font-bold text-[#16A34A] hover:underline inline-flex items-center gap-0.5 cursor-pointer"
+                      className="text-xs font-bold text-[#16A34A] hover:underline inline-flex items-center gap-0.5 cursor-pointer"
                     >
                       <span>{showAccountsDetail ? 'Hide breakdown' : 'View accounts'}</span>
                       {showAccountsDetail ? (
@@ -234,12 +234,12 @@ export default function BalanceSheetView({
                         className="flex items-center justify-between text-xs py-1 px-2 rounded-lg bg-white border border-slate-100"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                          <span className="text-xs uppercase font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
                             {acc.account_type}
                           </span>
                           <span className="font-semibold text-slate-700">{acc.name}</span>
                           {acc.bank_name && (
-                            <span className="text-[11px] text-slate-400">({acc.bank_name})</span>
+                            <span className="text-xs text-slate-400">({acc.bank_name})</span>
                           )}
                         </div>
                         <span className="font-bold text-slate-900 font-mono">
@@ -259,7 +259,7 @@ export default function BalanceSheetView({
                     <div className="text-xs font-bold text-slate-800">
                       Accounts Receivable (Trade Debtors)
                     </div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-xs text-slate-500">
                       {currentAssets.active_customers_with_due} customers with outstanding balance (Lena Hai)
                     </div>
                   </div>
@@ -277,7 +277,7 @@ export default function BalanceSheetView({
                     <div className="text-xs font-bold text-slate-800">
                       Raw Materials Stock
                     </div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-xs text-slate-500">
                       Paper reams, board sheets & binding supplies
                     </div>
                   </div>
@@ -295,7 +295,7 @@ export default function BalanceSheetView({
                     <div className="text-xs font-bold text-slate-800">
                       Finished Goods Stock
                     </div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-xs text-slate-500">
                       Manufactured registers, notebooks & commercial stock
                     </div>
                   </div>
@@ -314,7 +314,7 @@ export default function BalanceSheetView({
                       <div className="text-xs font-bold text-slate-800">
                         Consumables & Merchandise
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-xs text-slate-500">
                         Glue, inks, thread & auxiliary inventory
                       </div>
                     </div>
@@ -348,7 +348,7 @@ export default function BalanceSheetView({
                       <div className="text-xs font-bold text-slate-800">
                         Machinery & Capital Equipment
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-xs text-slate-500">
                         {fixedAssets.assets_count} active assets (Net Book Value after depreciation)
                       </div>
                     </div>
@@ -361,7 +361,7 @@ export default function BalanceSheetView({
                       <button
                         type="button"
                         onClick={() => setShowAssetsDetail(!showAssetsDetail)}
-                        className="text-[10px] font-bold text-purple-600 hover:underline inline-flex items-center gap-0.5 cursor-pointer"
+                        className="text-xs font-bold text-purple-600 hover:underline inline-flex items-center gap-0.5 cursor-pointer"
                       >
                         <span>{showAssetsDetail ? 'Hide asset list' : 'View assets'}</span>
                         {showAssetsDetail ? (
@@ -384,7 +384,7 @@ export default function BalanceSheetView({
                       >
                         <div>
                           <span className="font-semibold text-slate-800">{ast.name}</span>
-                          <span className="text-[10px] text-slate-400 font-mono ml-1.5">
+                          <span className="text-xs text-slate-400 font-mono ml-1.5">
                             ({ast.asset_code})
                           </span>
                         </div>
@@ -405,7 +405,7 @@ export default function BalanceSheetView({
               <div className="text-xs font-bold uppercase tracking-wider text-emerald-100">
                 TOTAL ASSETS
               </div>
-              <div className="text-[11px] text-emerald-100/90">
+              <div className="text-xs text-emerald-100/90">
                 Current Assets + Capital Assets
               </div>
             </div>
@@ -422,7 +422,7 @@ export default function BalanceSheetView({
           <div className="flex items-center justify-between pb-3 border-b border-slate-200">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-                <Landmark className="w-4.5 h-4.5" />
+                <Landmark className="w-4 h-4" />
               </div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
                 LIABILITIES & EQUITY (What Business Owes & Net Worth)
@@ -451,7 +451,7 @@ export default function BalanceSheetView({
                     <div className="text-xs font-bold text-slate-800">
                       Accounts Payable (Trade Creditors)
                     </div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-xs text-slate-500">
                       {currentLiabilities.active_suppliers_with_due} suppliers with outstanding balance (Dena Hai)
                     </div>
                   </div>
@@ -487,7 +487,7 @@ export default function BalanceSheetView({
                       <div className="text-xs font-bold text-slate-800">
                         Owner Net Worth / Retained Equity
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-xs text-slate-500">
                         Residual claim of owners (Total Assets − Total Liabilities)
                       </div>
                     </div>
@@ -512,7 +512,7 @@ export default function BalanceSheetView({
               <div className="text-xs font-bold uppercase tracking-wider text-slate-300">
                 TOTAL LIABILITIES & EQUITY
               </div>
-              <div className="text-[11px] text-slate-400">
+              <div className="text-xs text-slate-400">
                 Total Liabilities ({formatCurrency(liabilities.total_liabilities)}) + Equity ({formatCurrency(equity.total_equity)})
               </div>
             </div>
@@ -532,7 +532,7 @@ export default function BalanceSheetView({
             Total Liabilities ({formatCurrency(summary.total_liabilities)}) + Owner Equity ({formatCurrency(summary.equity)}).
           </span>
         </div>
-        <div className="font-mono font-bold text-[11px] text-slate-500">
+        <div className="font-mono font-bold text-xs text-slate-500">
           Precision Status: {summary.is_balanced ? 'Exact match (0.00 difference)' : `Discrepancy: ${formatCurrency(summary.balance_difference)}`}
         </div>
       </div>

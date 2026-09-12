@@ -89,7 +89,7 @@ export default function NewProductionOrderPage() {
         setMaterials([]);
         setError(
           err.response?.data?.message ||
-            'No active Bill of Materials formula configured for this finished product.'
+          'No active Bill of Materials formula configured for this finished product.'
         );
       } finally {
         setLoadingBom(false);
@@ -192,8 +192,9 @@ export default function NewProductionOrderPage() {
     }
   };
 
+
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+    <div className="max-w-5xl space-y-6 pb-12">
       {/* Navigation & Header */}
       <div className="flex items-center gap-4">
         <Link
@@ -285,13 +286,13 @@ export default function NewProductionOrderPage() {
                       <div className="text-xs font-bold text-blue-900 dark:text-blue-200">
                         BOM Formula: {activeBom.bom_code} — {activeBom.name}
                       </div>
-                      <div className="text-[11px] text-blue-700 dark:text-blue-400">
+                      <div className="text-xs text-blue-700 dark:text-blue-400">
                         Standard Batch: {parseFloat(String(activeBom.batch_quantity)).toLocaleString()}{' '}
                         {activeBom.unit?.short_name || 'Units'}
                       </div>
                     </div>
                   </div>
-                  <span className="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-[10px] font-bold text-blue-700 dark:text-blue-300">
+                  <span className="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-xs font-bold text-blue-700 dark:text-blue-300">
                     BOM Linked
                   </span>
                 </div>
@@ -320,7 +321,7 @@ export default function NewProductionOrderPage() {
               ) : (
                 <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
                   <table className="w-full text-left text-xs text-slate-600 dark:text-slate-300">
-                    <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 dark:bg-slate-800/80 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                    <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-500 dark:bg-slate-800/80 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                       <tr>
                         <th className="px-4 py-3 font-semibold">Raw Material</th>
                         <th className="px-4 py-3 font-semibold text-right">Required (Gross)</th>
@@ -341,12 +342,12 @@ export default function NewProductionOrderPage() {
                               <div className="font-semibold text-slate-900 dark:text-white">
                                 {m.product_name}
                               </div>
-                              <div className="text-[11px] text-slate-400">SKU: {m.sku}</div>
+                              <div className="text-xs text-slate-400">SKU: {m.sku}</div>
                             </td>
                             <td className="px-4 py-3 text-right font-bold text-slate-900 dark:text-white">
                               {m.planned_quantity} {m.unit_name}
                               {Number(m.wastage_allowance_percent) > 0 && (
-                                <span className="block text-[10px] text-slate-400 font-normal">
+                                <span className="block text-xs text-slate-400 font-normal">
                                   incl. {m.wastage_allowance_percent}% scrap
                                 </span>
                               )}
@@ -356,12 +357,12 @@ export default function NewProductionOrderPage() {
                             </td>
                             <td className="px-4 py-3 text-center">
                               {isShort ? (
-                                <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-1 text-[11px] font-bold text-rose-700 dark:bg-rose-950/60 dark:text-rose-300">
+                                <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700 dark:bg-rose-950/60 dark:text-rose-300">
                                   <AlertTriangle className="h-3 w-3" />
                                   Shortage ({shortage} {m.unit_name})
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
                                   <CheckCircle2 className="h-3 w-3" />
                                   Sufficient
                                 </span>
@@ -453,7 +454,7 @@ export default function NewProductionOrderPage() {
                 </button>
 
                 {hasShortages && (
-                  <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium text-center">
+                  <p className="text-xs text-amber-600 dark:text-amber-400 font-medium text-center">
                     Direct start is disabled due to raw material shortages. Save as Draft to allocate materials.
                   </p>
                 )}

@@ -941,7 +941,7 @@ export default function PurchasesReportPage() {
 
                   <div className="text-center border-t border-dashed border-slate-400 pt-3 space-y-1">
                     <div className="text-xs font-bold text-slate-800">Inventory Stock Received Verified</div>
-                    <div className="text-[11px] text-slate-500">Software by Sales, Purchase & Accounting ERP</div>
+                    <div className="text-xs text-slate-500">Software by Sales, Purchase & Accounting ERP</div>
                   </div>
                 </div>
               ) : (

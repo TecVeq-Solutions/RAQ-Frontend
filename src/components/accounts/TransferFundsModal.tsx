@@ -148,11 +148,11 @@ export default function TransferFundsModal({
         <div className="bg-slate-50 px-6 py-4 border-b border-slate-200/80 flex items-center justify-between gap-4">
           {/* Source Account Preview */}
           <div className="flex-1 bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">From Account</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">From Account</div>
             <div className="text-xs font-bold text-slate-900 truncate mt-0.5">
               {sourceAccount?.name || 'Select Source'}
             </div>
-            <div className="text-[11px] font-semibold text-slate-500 mt-1">
+            <div className="text-xs font-semibold text-slate-500 mt-1">
               Available: <span className="font-bold text-slate-800">Rs. {sourceBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
             </div>
           </div>
@@ -163,11 +163,11 @@ export default function TransferFundsModal({
 
           {/* Destination Account Preview */}
           <div className="flex-1 bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">To Account</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">To Account</div>
             <div className="text-xs font-bold text-slate-900 truncate mt-0.5">
               {destinationAccount?.name || 'Select Destination'}
             </div>
-            <div className="text-[11px] font-semibold text-slate-500 mt-1">
+            <div className="text-xs font-semibold text-slate-500 mt-1">
               Current: <span className="font-bold text-slate-800">Rs. {(destinationAccount ? Number(destinationAccount.current_balance) : 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function TransferFundsModal({
                 />
               </div>
               {isInsufficient && (
-                <p className="text-[11px] text-rose-600 font-semibold mt-1 flex items-center gap-1">
+                <p className="text-xs text-rose-600 font-semibold mt-1 flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Exceeds source account available balance
                 </p>
               )}

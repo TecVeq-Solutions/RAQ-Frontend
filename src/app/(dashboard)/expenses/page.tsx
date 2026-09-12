@@ -446,7 +446,7 @@ export default function ExpensesPage() {
                         {exp.payment_method}
                       </div>
                       {exp.financial_account && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 mt-1">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 mt-1">
                           <Building className="w-2.5 h-2.5" />
                           {exp.financial_account.name}
                         </span>

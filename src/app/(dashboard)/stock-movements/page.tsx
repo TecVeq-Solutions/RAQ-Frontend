@@ -240,7 +240,7 @@ export default function StockMovementsPage() {
                       <td className="px-6 py-4 text-xs text-slate-500">
                         <div className="font-medium text-slate-700">{m.notes || '-'}</div>
                         {m.user && (
-                          <div className="text-[11px] text-slate-400">By: {m.user.name}</div>
+                          <div className="text-xs text-slate-400">By: {m.user.name}</div>
                         )}
                       </td>
                     </tr>

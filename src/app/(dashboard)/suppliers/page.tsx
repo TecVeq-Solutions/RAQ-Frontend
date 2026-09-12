@@ -154,7 +154,7 @@ export default function SuppliersPage() {
                     </td>
                     <td className="px-6 py-4 text-xs font-semibold text-slate-600">
                       <div>{s.contact_person || '-'}</div>
-                      <div className="text-[11px] text-slate-400">{s.phone}</div>
+                      <div className="text-xs text-slate-400">{s.phone}</div>
                     </td>
                     <td className="px-6 py-4 text-slate-600 font-medium">
                       Rs. {Number(s.opening_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}

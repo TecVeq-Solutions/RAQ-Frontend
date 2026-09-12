@@ -259,25 +259,26 @@ export default function ProductionOrdersPage() {
         </div>
       )}
 
+
       {/* Filter Toolbar */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col sm:flex-row gap-3 items-center justify-between">
-        <div className="relative w-full sm:w-80">
+      <div className="rounded-2xl border border-slate-200 bg-white p-3 sm:p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col gap-3">
+        <div className="relative w-full">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search Order #, finished good..."
-            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-white"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-4 py-2.5 sm:py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-white"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full">
           {/* Status filter */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs font-semibold text-slate-700 focus:border-blue-500 focus:outline-none dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-300"
+            className="flex-1 min-w-[130px] rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs font-semibold text-slate-700 focus:border-blue-500 focus:outline-none dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-300"
           >
             <option value="all">All Statuses</option>
             <option value="draft">Drafts Only</option>
@@ -286,11 +287,13 @@ export default function ProductionOrdersPage() {
             <option value="cancelled">Cancelled</option>
           </select>
 
+
+
           {/* Stage filter */}
           <select
             value={stageFilter}
             onChange={(e) => setStageFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs font-semibold text-slate-700 focus:border-blue-500 focus:outline-none dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-300"
+            className="flex-1 min-w-[120px] rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs font-semibold text-slate-700 focus:border-blue-500 focus:outline-none dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-300"
           >
             <option value="all">All Stages</option>
             <option value="planning">Planning</option>
@@ -302,7 +305,7 @@ export default function ProductionOrdersPage() {
 
           <button
             onClick={fetchOrders}
-            className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+            className="rounded-xl border border-slate-200 p-2.5 sm:p-2 text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors shrink-0"
             title="Refresh Orders"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
@@ -311,7 +314,7 @@ export default function ProductionOrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 overflow-hidden">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 overflow-hidden min-w-0">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16 text-slate-400">
             <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-2" />
@@ -521,8 +524,8 @@ export default function ProductionOrdersPage() {
 
       {/* Inspect Order Modal */}
       {inspectingOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm">
-          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl transition-all dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-6">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center overflow-y-auto bg-slate-900/60 p-3 sm:p-4 backdrop-blur-sm">
+          <div className="relative w-[95%] sm:w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-2xl bg-white p-4 sm:p-6 shadow-2xl transition-all dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4 sm:space-y-6 mt-4 sm:mt-0">
             <div className="flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-800">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl bg-blue-50 p-2.5 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
@@ -589,11 +592,10 @@ export default function ProductionOrdersPage() {
                   </h4>
                   {inspectingOrder.cuttingLog?.wastage_percentage !== undefined && (
                     <span
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold ${
-                        Number(inspectingOrder.cuttingLog.wastage_percentage) > 10.0
-                          ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-300'
-                          : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300'
-                      }`}
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold ${Number(inspectingOrder.cuttingLog.wastage_percentage) > 10.0
+                        ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-300'
+                        : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300'
+                        }`}
                     >
                       {Number(inspectingOrder.cuttingLog.wastage_percentage) > 10.0 && (
                         <AlertTriangle className="h-3.5 w-3.5 text-rose-600" />
@@ -702,8 +704,8 @@ export default function ProductionOrdersPage() {
               </div>
             )}
 
-            <div className="flex justify-between items-center pt-2">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {canManage && inspectingOrder.status === 'in_progress' && inspectingOrder.current_stage === 'cutting' && (
                   <button
                     type="button"

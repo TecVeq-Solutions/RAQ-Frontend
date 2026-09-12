@@ -159,7 +159,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
             <PieChart className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             Manufacturing Cost Analysis & Unit Cost Breakdown
           </h4>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Authoritative production order costing combining raw material consumption, cutting scrap, and stage costs.
           </p>
         </div>
@@ -181,49 +181,49 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
       {/* KPI Top Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 dark:border-emerald-900/60 dark:bg-emerald-950/20">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
             Total Production Cost
           </span>
           <p className="mt-1 text-sm font-extrabold text-emerald-700 dark:text-emerald-300">
             {formatCurrency(totalCost)}
           </p>
-          <span className="text-[10px] text-emerald-600/80 dark:text-emerald-400">
+          <span className="text-xs text-emerald-600/80 dark:text-emerald-400">
             Material + Stage Overheads
           </span>
         </div>
 
         <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-3 dark:border-blue-900/60 dark:bg-blue-950/20">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300">
+          <span className="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300">
             Unit Manufacturing Cost
           </span>
           <p className="mt-1 text-sm font-extrabold text-blue-700 dark:text-blue-300">
             {formatCurrency(breakdown.unit_manufacturing_cost)}
           </p>
-          <span className="text-[10px] text-blue-600/80 dark:text-blue-400">
+          <span className="text-xs text-blue-600/80 dark:text-blue-400">
             Per {breakdown.finished_product?.unit_name || 'Register'} ({breakdown.effective_quantity} Units)
           </span>
         </div>
 
         <div className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-3 dark:border-indigo-900/60 dark:bg-indigo-950/20">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 dark:text-indigo-300">
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-800 dark:text-indigo-300">
             Raw Material Subtotal
           </span>
           <p className="mt-1 text-sm font-extrabold text-indigo-700 dark:text-indigo-300">
             {formatCurrency(materialCost)}
           </p>
-          <span className="text-[10px] text-indigo-600/80 dark:text-indigo-400">
+          <span className="text-xs text-indigo-600/80 dark:text-indigo-400">
             {totalCost > 0 ? ((materialCost / totalCost) * 100).toFixed(1) : 0}% of Total Cost
           </span>
         </div>
 
         <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-3 dark:border-purple-900/60 dark:bg-purple-950/20">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-800 dark:text-purple-300">
+          <span className="text-xs font-bold uppercase tracking-wider text-purple-800 dark:text-purple-300">
             Labor & Binding Subtotal
           </span>
           <p className="mt-1 text-sm font-extrabold text-purple-700 dark:text-purple-300">
             {formatCurrency(breakdown.labor_and_binding_subtotal)}
           </p>
-          <span className="text-[10px] text-purple-600/80 dark:text-purple-400">
+          <span className="text-xs text-purple-600/80 dark:text-purple-400">
             Direct Wages & Contracts
           </span>
         </div>
@@ -250,7 +250,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
             )}
           </svg>
           <div className="absolute flex flex-col items-center justify-center pointer-events-none text-center">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Cost/Unit</span>
+            <span className="text-xs font-bold text-slate-400 uppercase">Cost/Unit</span>
             <span className="text-xs font-black text-slate-900 dark:text-white">
               {formatCurrency(breakdown.unit_manufacturing_cost)}
             </span>
@@ -259,7 +259,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
 
         {/* Legend Breakdown */}
         <div className="md:col-span-7 space-y-2">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
             Cost Proportions & Categories
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -293,7 +293,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
           </div>
 
           {wastageCost > 0 && (
-            <div className="mt-2 rounded-xl bg-amber-50 p-2.5 text-[11px] text-amber-800 border border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800/60 flex items-center justify-between">
+            <div className="mt-2 rounded-xl bg-amber-50 p-2.5 text-xs text-amber-800 border border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800/60 flex items-center justify-between">
               <span className="font-semibold flex items-center gap-1">
                 <Scissors className="h-3.5 w-3.5 text-amber-600" />
                 Cutting Stage Scrap Loss:
@@ -305,9 +305,9 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
       </div>
 
       {/* Comprehensive Cost Breakdown Table */}
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
         <table className="w-full text-left text-xs text-slate-600 dark:text-slate-300">
-          <thead className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:bg-slate-800/80">
+          <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500 dark:bg-slate-800/80">
             <tr>
               <th className="px-4 py-2.5">Cost Category / Element</th>
               <th className="px-4 py-2.5 text-right">Quantity / Factor</th>
@@ -319,7 +319,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
           <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
             {/* Raw Materials Section */}
             <tr className="bg-slate-100/50 font-bold text-slate-800 dark:bg-slate-800/50 dark:text-slate-200">
-              <td colSpan={5} className="px-4 py-1.5 text-[11px] uppercase tracking-wider text-blue-800 dark:text-blue-300">
+              <td colSpan={5} className="px-4 py-1.5 text-xs uppercase tracking-wider text-blue-800 dark:text-blue-300">
                 1. Direct Raw Materials & Substrates
               </td>
             </tr>
@@ -329,7 +329,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
                 <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                   <td className="px-4 py-2 pl-6">
                     <span className="font-semibold text-slate-900 dark:text-white">{mat.name}</span>
-                    <span className="ml-1 text-[10px] text-slate-400 font-mono">({mat.sku})</span>
+                    <span className="ml-1 text-xs text-slate-400 font-mono">({mat.sku})</span>
                   </td>
                   <td className="px-4 py-2 text-right">
                     {mat.quantity} {mat.unit_name}
@@ -349,7 +349,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
 
             {/* Stage Costs Section */}
             <tr className="bg-slate-100/50 font-bold text-slate-800 dark:bg-slate-800/50 dark:text-slate-200">
-              <td colSpan={5} className="px-4 py-1.5 text-[11px] uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+              <td colSpan={5} className="px-4 py-1.5 text-xs uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
                 2. Direct Labor, Binding & Stage Overheads
               </td>
             </tr>
@@ -369,7 +369,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
                       <span className="font-semibold capitalize text-slate-900 dark:text-white">
                         {sc.cost_type.replace('_', ' ')}
                       </span>
-                      <span className="ml-2 text-[10px] text-slate-400 capitalize">
+                      <span className="ml-2 text-xs text-slate-400 capitalize">
                         ({sc.stage_name} stage{sc.vendor_or_worker_name ? ` — ${sc.vendor_or_worker_name}` : ''})
                       </span>
                     </td>
@@ -405,7 +405,7 @@ export default function ProductionCostBreakdownCard({ orderId, onRefresh }: Prod
               <td className="px-4 py-2 text-right font-black text-emerald-700 dark:text-emerald-300 text-sm">
                 {formatCurrency(breakdown.unit_manufacturing_cost)}
               </td>
-              <td className="px-4 py-2 text-right text-[10px] text-emerald-700 dark:text-emerald-300">
+              <td className="px-4 py-2 text-right text-xs text-emerald-700 dark:text-emerald-300">
                 per register
               </td>
             </tr>

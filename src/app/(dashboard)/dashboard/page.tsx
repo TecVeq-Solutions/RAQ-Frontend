@@ -261,11 +261,11 @@ export default function DashboardPage() {
               <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Database & System Status</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Database & System Status</div>
               <div className="text-sm sm:text-base font-black text-emerald-300">
                 Connected (MySQL 8+)
               </div>
-              <div className="text-[11px] sm:text-xs text-slate-400 font-mono mt-0.5">Base Currency: PKR (Rs.)</div>
+              <div className="text-xs text-slate-400 font-mono mt-0.5">Base Currency: PKR (Rs.)</div>
             </div>
           </div>
         </div>
@@ -297,14 +297,14 @@ export default function DashboardPage() {
             <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-1.5">
               <div className="flex items-center justify-between text-xs font-bold text-amber-900">
                 <span>Receivables Due Today</span>
-                <span className="px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-[11px] font-black">
+                <span className="px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-xs font-black">
                   {dueAlerts?.receivables?.today_due_count ?? 0} {(dueAlerts?.receivables?.today_due_count ?? 0) === 1 ? 'invoice' : 'invoices'}
                 </span>
               </div>
               <div className="text-xl font-black text-amber-950">
                 {formatCurrency(stats?.today_due_receivables ?? dueAlerts?.receivables?.today_due_amount ?? 0)}
               </div>
-              <p className="text-[11px] text-amber-800 font-medium">Customer sales maturing today</p>
+              <p className="text-xs text-amber-800 font-medium">Customer sales maturing today</p>
             </div>
 
             {/* 2. Overdue Receivables */}
@@ -318,28 +318,28 @@ export default function DashboardPage() {
                   {(stats?.overdue_receivables ?? 0) > 0 && <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />}
                   Overdue Receivables
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-rose-200/80 text-rose-900 text-[11px] font-black">
+                <span className="px-2 py-0.5 rounded-full bg-rose-200/80 text-rose-900 text-xs font-black">
                   {stats?.overdue_receivables_count ?? dueAlerts?.receivables?.overdue_count ?? 0} {(stats?.overdue_receivables_count ?? 0) === 1 ? 'invoice' : 'invoices'}
                 </span>
               </div>
               <div className="text-xl font-black text-rose-950">
                 {formatCurrency(stats?.overdue_receivables ?? dueAlerts?.receivables?.overdue_amount ?? 0)}
               </div>
-              <p className="text-[11px] text-rose-800 font-medium">Exceeded customer credit terms</p>
+              <p className="text-xs text-rose-800 font-medium">Exceeded customer credit terms</p>
             </div>
 
             {/* 3. Today Due Payables */}
             <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-1.5">
               <div className="flex items-center justify-between text-xs font-bold text-blue-900">
                 <span>Payables Due Today</span>
-                <span className="px-2 py-0.5 rounded-full bg-blue-200/80 text-blue-900 text-[11px] font-black">
+                <span className="px-2 py-0.5 rounded-full bg-blue-200/80 text-blue-900 text-xs font-black">
                   {dueAlerts?.payables?.today_due_count ?? 0} {(dueAlerts?.payables?.today_due_count ?? 0) === 1 ? 'bill' : 'bills'}
                 </span>
               </div>
               <div className="text-xl font-black text-blue-950">
                 {formatCurrency(stats?.today_due_payables ?? dueAlerts?.payables?.today_due_amount ?? 0)}
               </div>
-              <p className="text-[11px] text-blue-800 font-medium">Supplier bills maturing today</p>
+              <p className="text-xs text-blue-800 font-medium">Supplier bills maturing today</p>
             </div>
 
             {/* 4. Overdue Payables */}
@@ -353,14 +353,14 @@ export default function DashboardPage() {
                   {(stats?.overdue_payables ?? 0) > 0 && <ShieldAlert className="w-3.5 h-3.5 text-purple-600" />}
                   Overdue Payables
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-purple-200/80 text-purple-900 text-[11px] font-black">
+                <span className="px-2 py-0.5 rounded-full bg-purple-200/80 text-purple-900 text-xs font-black">
                   {stats?.overdue_payables_count ?? dueAlerts?.payables?.overdue_count ?? 0} {(stats?.overdue_payables_count ?? 0) === 1 ? 'bill' : 'bills'}
                 </span>
               </div>
               <div className="text-xl font-black text-purple-950">
                 {formatCurrency(stats?.overdue_payables ?? dueAlerts?.payables?.overdue_amount ?? 0)}
               </div>
-              <p className="text-[11px] text-purple-800 font-medium">Vendor credit term overdue</p>
+              <p className="text-xs text-purple-800 font-medium">Vendor credit term overdue</p>
             </div>
           </div>
         </div>
@@ -373,7 +373,7 @@ export default function DashboardPage() {
             <Activity className="w-5 h-5 text-indigo-600" />
             Executive Performance KPIs
           </h2>
-          <span className="text-[11px] sm:text-xs text-slate-500 font-semibold">Real-Time Authoritative Calculations</span>
+          <span className="text-xs text-slate-500 font-semibold">Real-Time Authoritative Calculations</span>
         </div>
 
         <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
@@ -392,9 +392,9 @@ export default function DashboardPage() {
                 <div className={`text-xl sm:text-2xl lg:text-3xl font-black tracking-tight break-words ${(stats?.today_net_profit ?? 0) >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
                   {formatCurrency(stats?.today_net_profit)}
                 </div>
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-emerald-100 text-[11px] font-bold text-emerald-800">
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-emerald-100 text-xs font-bold text-emerald-800">
                   <span>Gross: {formatCurrency(stats?.today_gross_profit)}</span>
-                  <span className="text-slate-400 font-mono text-[10px]">Sales - COGS - Exp</span>
+                  <span className="text-slate-400 font-mono text-xs">Sales - COGS - Exp</span>
                 </div>
               </div>
             </div>
@@ -415,9 +415,9 @@ export default function DashboardPage() {
                 <div className={`text-xl sm:text-2xl lg:text-3xl font-black tracking-tight break-words ${(stats?.monthly_net_profit ?? 0) >= 0 ? 'text-indigo-700' : 'text-rose-600'}`}>
                   {formatCurrency(stats?.monthly_net_profit)}
                 </div>
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-indigo-100 text-[11px] font-bold text-indigo-800">
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-indigo-100 text-xs font-bold text-indigo-800">
                   <span>Revenue: {formatCurrency(stats?.monthly_revenue)}</span>
-                  <span className="text-slate-400 font-mono text-[10px]">Net Margin</span>
+                  <span className="text-slate-400 font-mono text-xs">Net Margin</span>
                 </div>
               </div>
             </div>
@@ -512,7 +512,7 @@ export default function DashboardPage() {
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Raw Material Stock</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
+                <span className="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">
                   Paper, Board & Glue
                 </span>
               </div>
@@ -526,7 +526,7 @@ export default function DashboardPage() {
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Finished Goods Stock</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                <span className="px-2 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800">
                   Registers & Books
                 </span>
               </div>
@@ -554,7 +554,7 @@ export default function DashboardPage() {
                   title={`Finished Goods: ${fgRatio.toFixed(1)}%`}
                 />
               </div>
-              <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                   Raw Material: {rawRatio.toFixed(0)}%
@@ -744,7 +744,7 @@ export default function DashboardPage() {
                         style={{ height: `${Math.max(salesPercent, 4)}%` }}
                         className="w-1/2 max-w-[24px] sm:max-w-[28px] bg-gradient-to-t from-emerald-600 to-[#16A34A] rounded-t-lg transition-all group-hover:brightness-110 relative shadow-xs"
                       >
-                        <div className="opacity-0 group-hover:opacity-100 absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[11px] sm:text-xs font-bold py-1 px-2 rounded-lg pointer-events-none whitespace-nowrap z-20 shadow-md">
+                        <div className="opacity-0 group-hover:opacity-100 absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-2 rounded-lg pointer-events-none whitespace-nowrap z-20 shadow-md">
                           {formatCurrency(c.sales)}
                         </div>
                       </div>
@@ -754,12 +754,12 @@ export default function DashboardPage() {
                         style={{ height: `${Math.max(purchasesPercent, 4)}%` }}
                         className="w-1/2 max-w-[24px] sm:max-w-[28px] bg-gradient-to-t from-blue-600 to-blue-500 rounded-t-lg transition-all group-hover:brightness-110 relative shadow-xs"
                       >
-                        <div className="opacity-0 group-hover:opacity-100 absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[11px] sm:text-xs font-bold py-1 px-2 rounded-lg pointer-events-none whitespace-nowrap z-20 shadow-md">
+                        <div className="opacity-0 group-hover:opacity-100 absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-2 rounded-lg pointer-events-none whitespace-nowrap z-20 shadow-md">
                           {formatCurrency(c.purchases)}
                         </div>
                       </div>
                     </div>
-                    <span className="text-[11px] sm:text-xs font-bold text-slate-600 truncate max-w-full">{c.month}</span>
+                    <span className="text-xs font-bold text-slate-600 truncate max-w-full">{c.month}</span>
                   </div>
                 );
               })}
@@ -791,7 +791,7 @@ export default function DashboardPage() {
               <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-thin">
                 <table className="w-full text-left text-xs sm:text-sm text-slate-700 min-w-[340px]">
                   <thead>
-                    <tr className="border-b border-slate-200/80 text-slate-600 font-bold text-[11px] sm:text-xs uppercase tracking-wider bg-slate-50/70">
+                    <tr className="border-b border-slate-200/80 text-slate-600 font-bold text-xs uppercase tracking-wider bg-slate-50/70">
                       <th className="py-2.5 sm:py-3.5 px-2.5 sm:px-3">Invoice</th>
                       <th className="py-2.5 sm:py-3.5 px-2.5 sm:px-3">Customer</th>
                       <th className="py-2.5 sm:py-3.5 px-2.5 sm:px-3">Date</th>
@@ -849,7 +849,7 @@ export default function DashboardPage() {
               <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-thin">
                 <table className="w-full text-left text-xs sm:text-sm text-slate-700 min-w-[340px]">
                   <thead>
-                    <tr className="border-b border-slate-200/80 text-slate-600 font-bold text-[11px] sm:text-xs uppercase tracking-wider bg-slate-50/70">
+                    <tr className="border-b border-slate-200/80 text-slate-600 font-bold text-xs uppercase tracking-wider bg-slate-50/70">
                       <th className="py-2.5 sm:py-3.5 px-2.5 sm:px-3">Purchase #</th>
                       <th className="py-2.5 sm:py-3.5 px-2.5 sm:px-3">Supplier</th>
                       <th className="py-2.5 sm:py-3.5 px-2.5 sm:px-3">Date</th>
@@ -908,7 +908,7 @@ export default function DashboardPage() {
         <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-thin">
           <table className="w-full text-left text-xs sm:text-sm text-slate-700 min-w-[420px]">
             <thead>
-              <tr className="border-b border-slate-200/80 text-slate-600 font-bold text-[11px] sm:text-xs uppercase tracking-wider bg-slate-50/70">
+              <tr className="border-b border-slate-200/80 text-slate-600 font-bold text-xs uppercase tracking-wider bg-slate-50/70">
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-4">Product Name</th>
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-4">SKU</th>
                 <th className="py-2.5 sm:py-3.5 px-3 sm:px-4 text-center">Current Stock</th>
@@ -923,7 +923,7 @@ export default function DashboardPage() {
                     <td className="py-2.5 sm:py-3.5 px-3 sm:px-4 font-bold text-slate-900 text-xs sm:text-sm">
                       {item.name}
                     </td>
-                    <td className="py-2.5 sm:py-3.5 px-3 sm:px-4 font-mono font-medium text-slate-500 text-[11px] sm:text-xs">
+                    <td className="py-2.5 sm:py-3.5 px-3 sm:px-4 font-mono font-medium text-slate-500 text-xs">
                       {item.sku}
                     </td>
                     <td className="py-2.5 sm:py-3.5 px-3 sm:px-4 text-center font-black text-rose-600 text-xs sm:text-sm">
@@ -933,7 +933,7 @@ export default function DashboardPage() {
                       {item.alert_quantity} {item.unit?.short_name || 'units'}
                     </td>
                     <td className="py-2.5 sm:py-3.5 px-3 sm:px-4 text-right">
-                      <span className="inline-flex items-center gap-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black bg-rose-50 text-rose-700 border border-rose-200">
+                      <span className="inline-flex items-center gap-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
                         <AlertTriangle className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Low Stock
                       </span>
                     </td>

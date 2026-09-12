@@ -127,66 +127,66 @@ export default function AssetDisposalModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto animate-fade-in">
-      <div className="relative w-full max-w-2xl my-8 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto animate-fadeIn">
+      <div className="relative w-full max-w-2xl my-8 bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/70 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400">
+            <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold">
               <Trash2 className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-100">
+              <h2 className="text-lg font-bold text-[#0F172A]">
                 Asset Disposal & Sale Settlement
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Process asset derecognition, compute Net Book Value, and record Gain/Loss journal entries
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Target Asset Financials Banner */}
-        <div className="px-6 py-3.5 bg-slate-950/70 border-b border-slate-800/80 grid grid-cols-3 gap-3 text-xs">
+        <div className="px-6 py-3.5 bg-slate-50 border-b border-slate-100 grid grid-cols-3 gap-3 text-xs shrink-0">
           <div>
-            <span className="text-slate-500 block">Original Cost:</span>
-            <span className="text-slate-100 font-mono font-semibold">
+            <span className="text-slate-500 font-medium block">Original Cost:</span>
+            <span className="text-slate-900 font-mono font-bold">
               PKR {cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </span>
           </div>
           <div>
-            <span className="text-slate-500 block">Accumulated Deprec:</span>
-            <span className="text-amber-400 font-mono font-semibold">
+            <span className="text-slate-500 font-medium block">Accumulated Deprec:</span>
+            <span className="text-purple-700 font-mono font-bold">
               PKR {accDep.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </span>
           </div>
           <div>
-            <span className="text-slate-500 block">Net Book Value (NBV):</span>
-            <span className="text-emerald-400 font-mono font-bold">
+            <span className="text-slate-500 font-medium block">Net Book Value (NBV):</span>
+            <span className="text-emerald-700 font-mono font-bold">
               PKR {netBookValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </span>
           </div>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1">
           {error && (
-            <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-start gap-3 text-sm">
-              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-start gap-3 text-sm font-medium">
+              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Disposal Type Selection */}
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">
-              Disposal Classification <span className="text-rose-400">*</span>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Disposal Classification <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {[
@@ -199,10 +199,10 @@ export default function AssetDisposalModal({
                   key={t.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, disposal_type: t.value as DisposalType })}
-                  className={`px-3 py-2.5 rounded-xl border text-xs font-medium transition-all text-center ${
+                  className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer ${
                     formData.disposal_type === t.value
-                      ? 'border-rose-500/50 bg-rose-500/10 text-rose-300 ring-1 ring-rose-500/30 font-semibold'
-                      : 'border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-300'
+                      ? 'border-rose-300 bg-rose-50 text-rose-800 ring-2 ring-rose-400/20 shadow-xs'
+                      : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   }`}
                 >
                   {t.label}
@@ -214,29 +214,29 @@ export default function AssetDisposalModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Disposal Date */}
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                Settlement / Disposal Date <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-amber-600" />
+                Settlement / Disposal Date <span className="text-rose-500">*</span>
               </label>
               <input
                 type="date"
                 value={formData.disposal_date}
                 onChange={(e) => setFormData({ ...formData, disposal_date: e.target.value })}
-                className={`w-full px-3.5 py-2.5 bg-slate-950 border rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all ${
-                  fieldErrors.disposal_date ? 'border-rose-500' : 'border-slate-800'
+                className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all ${
+                  fieldErrors.disposal_date ? 'border-rose-500' : 'border-slate-200'
                 }`}
               />
               {fieldErrors.disposal_date && (
-                <p className="mt-1 text-xs text-rose-400">{fieldErrors.disposal_date}</p>
+                <p className="mt-1 text-xs text-rose-600 font-medium">{fieldErrors.disposal_date}</p>
               )}
             </div>
 
             {/* Sale Proceeds (if sold) */}
             {formData.disposal_type === 'sold' && (
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-                  Sale Proceeds / Realized Amount (PKR) <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5">
+                  <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                  Sale Proceeds / Realized Amount (PKR) <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -245,12 +245,12 @@ export default function AssetDisposalModal({
                   value={formData.sale_proceeds}
                   onChange={(e) => setFormData({ ...formData, sale_proceeds: e.target.value })}
                   placeholder="0.00"
-                  className={`w-full px-3.5 py-2.5 bg-slate-950 border rounded-xl text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all ${
-                    fieldErrors.sale_proceeds ? 'border-rose-500' : 'border-slate-800'
+                  className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-slate-900 text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all ${
+                    fieldErrors.sale_proceeds ? 'border-rose-500' : 'border-slate-200'
                   }`}
                 />
                 {fieldErrors.sale_proceeds && (
-                  <p className="mt-1 text-xs text-rose-400">{fieldErrors.sale_proceeds}</p>
+                  <p className="mt-1 text-xs text-rose-600 font-medium">{fieldErrors.sale_proceeds}</p>
                 )}
               </div>
             )}
@@ -258,8 +258,8 @@ export default function AssetDisposalModal({
             {/* Buyer Name (if sold) */}
             {formData.disposal_type === 'sold' && (
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-blue-400" />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-blue-600" />
                   Buyer / Customer Name
                 </label>
                 <input
@@ -267,34 +267,34 @@ export default function AssetDisposalModal({
                   value={formData.buyer_name || ''}
                   onChange={(e) => setFormData({ ...formData, buyer_name: e.target.value })}
                   placeholder="e.g. Lahore Machinery Traders / Mr. Aslam"
-                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all"
                 />
               </div>
             )}
 
             {/* Reason */}
             <div className="md:col-span-2">
-              <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5 text-amber-400" />
-                Reason for Disposal / Retirement <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-amber-600" />
+                Reason for Disposal / Retirement <span className="text-rose-500">*</span>
               </label>
               <textarea
                 rows={2}
                 value={formData.reason}
                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                 placeholder="Explain the operational reason for scrapping, selling, or writing off this equipment..."
-                className={`w-full px-3.5 py-2.5 bg-slate-950 border rounded-xl text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all resize-none ${
-                  fieldErrors.reason ? 'border-rose-500' : 'border-slate-800'
+                className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-slate-900 text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all resize-none ${
+                  fieldErrors.reason ? 'border-rose-500' : 'border-slate-200'
                 }`}
               />
               {fieldErrors.reason && (
-                <p className="mt-1 text-xs text-rose-400">{fieldErrors.reason}</p>
+                <p className="mt-1 text-xs text-rose-600 font-medium">{fieldErrors.reason}</p>
               )}
             </div>
 
             {/* Notes */}
             <div className="md:col-span-2">
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                 Internal Notes / Approval Reference
               </label>
               <input
@@ -302,46 +302,46 @@ export default function AssetDisposalModal({
                 value={formData.notes || ''}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="e.g. Board resolution ref #2026/04, inspected by chief engineer"
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all"
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] transition-all"
               />
             </div>
           </div>
 
           {/* Gain / Loss Settlement Calculation Preview */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-2">
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 font-medium">Net Book Value at Disposal:</span>
-              <span className="font-mono text-slate-200">
+              <span className="text-slate-500 font-medium">Net Book Value at Disposal:</span>
+              <span className="font-mono text-slate-800 font-bold">
                 PKR {netBookValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </span>
             </div>
             {formData.disposal_type === 'sold' && (
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-medium">Realized Sale Proceeds:</span>
-                <span className="font-mono text-slate-200">
+                <span className="text-slate-500 font-medium">Realized Sale Proceeds:</span>
+                <span className="font-mono text-slate-800 font-bold">
                   PKR {proceeds.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </span>
               </div>
             )}
-            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
-              <div className="flex items-center gap-1.5 font-semibold">
+            <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-1.5 font-bold">
                 {isGain ? (
                   <>
-                    <TrendingUp className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-400">Recognized Capital Gain on Sale:</span>
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                    <span className="text-emerald-700">Recognized Capital Gain on Sale:</span>
                   </>
                 ) : isLoss ? (
                   <>
-                    <TrendingDown className="w-4 h-4 text-rose-400" />
-                    <span className="text-rose-400">Recognized Loss on Disposal:</span>
+                    <TrendingDown className="w-4 h-4 text-rose-600" />
+                    <span className="text-rose-700">Recognized Loss on Disposal:</span>
                   </>
                 ) : (
-                  <span className="text-slate-300">Net Disposal Impact:</span>
+                  <span className="text-slate-700">Net Disposal Impact:</span>
                 )}
               </div>
               <span
                 className={`font-mono font-bold text-sm ${
-                  isGain ? 'text-emerald-400' : isLoss ? 'text-rose-400' : 'text-slate-300'
+                  isGain ? 'text-emerald-700' : isLoss ? 'text-rose-700' : 'text-slate-700'
                 }`}
               >
                 PKR {Math.abs(gainLossAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -350,36 +350,36 @@ export default function AssetDisposalModal({
           </div>
 
           {/* Warning Banner */}
-          <div className="p-3.5 rounded-xl bg-rose-500/5 border border-rose-500/20 text-xs text-slate-400 flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start gap-2.5 font-medium">
+            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <span>
               Disposing this asset will cancel any future unposted depreciation schedule periods and permanently update the asset status to <strong>Disposed</strong>.
             </span>
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-slate-800 text-slate-300 hover:bg-slate-800 text-sm font-medium transition-colors"
+              className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-sm font-semibold transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white font-semibold text-sm shadow-lg shadow-rose-600/20 disabled:opacity-50 flex items-center gap-2 transition-all"
+              className="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm shadow-sm disabled:opacity-50 flex items-center gap-2 transition-all cursor-pointer"
             >
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Processing Disposal...
+                  <span>Processing Disposal...</span>
                 </>
               ) : (
                 <>
                   <Trash2 className="w-4 h-4" />
-                  Confirm & Process Disposal
+                  <span>Confirm & Process Disposal</span>
                 </>
               )}
             </button>

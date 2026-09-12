@@ -201,7 +201,15 @@ export default function ProductModal({
               <input
                 type="text"
                 required
-                placeholder="e.g. Super Basmati Rice"
+                placeholder={
+                  productType === 'finished_good'
+                    ? 'e.g. A4 Copy 100 Pages'
+                    : productType === 'raw_material'
+                    ? 'e.g. A4 Offset Paper 80 GSM'
+                    : productType === 'consumable'
+                    ? 'e.g. Packing Tape'
+                    : 'e.g. Paper Cutting Machine'
+                }
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
@@ -215,7 +223,15 @@ export default function ProductModal({
               <input
                 type="text"
                 required
-                placeholder="e.g. RICE-001"
+                placeholder={
+                  productType === 'finished_good'
+                    ? 'e.g. COPY-A4-100'
+                    : productType === 'raw_material'
+                    ? 'e.g. RAW-PPR-80'
+                    : productType === 'consumable'
+                    ? 'e.g. CONS-TAPE'
+                    : 'e.g. MACH-CUT-01'
+                }
                 value={sku}
                 onChange={(e) => setSku(e.target.value)}
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-medium font-mono focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
@@ -230,10 +246,10 @@ export default function ProductModal({
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
-                { type: 'finished_good', label: 'Finished Good', desc: 'Registers, Notebooks, Copies' },
-                { type: 'raw_material', label: 'Raw Material', desc: 'Paper, Grey Board, Glue, Thread' },
-                { type: 'consumable', label: 'Consumable', desc: 'Packaging, Operational supplies' },
-                { type: 'machinery', label: 'Machinery', desc: 'Cutters, Binding Machines' },
+                { type: 'finished_good', label: 'Finished Good', desc: 'Registers, Copies, Notebooks, School Copies, A4 Registers' },
+                { type: 'raw_material', label: 'Raw Material', desc: 'Paper, Card / Grey Board, Glue, Binding Thread' },
+                { type: 'consumable', label: 'Consumable', desc: 'Packaging Material, Packing Tape, Operational Supplies' },
+                { type: 'machinery', label: 'Machinery', desc: 'Paper Cutting Machine, Binding Machine, Production Machines' },
               ].map((item) => (
                 <button
                   type="button"
@@ -248,7 +264,7 @@ export default function ProductModal({
                   <div className={`text-xs font-bold ${productType === item.type ? 'text-[#16A34A]' : 'text-slate-800'}`}>
                     {item.label}
                   </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5 leading-tight">{item.desc}</div>
+                  <div className="text-xs text-slate-400 mt-0.5 leading-tight">{item.desc}</div>
                 </button>
               ))}
             </div>
@@ -263,37 +279,37 @@ export default function ProductModal({
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Material / Paper Type
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Offset Paper, Grey Board"
+                    placeholder="e.g. Offset Paper, Art Card, Grey Board"
                     value={materialType}
                     onChange={(e) => setMaterialType(e.target.value)}
                     className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Paper Size
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. A4, A5, Legal, 23x36"
+                    placeholder="e.g. A4, A5, Legal"
                     value={paperSize}
                     onChange={(e) => setPaperSize(e.target.value)}
                     className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
                     GSM (Weight)
                   </label>
                   <input
                     type="number"
                     min="1"
-                    placeholder="e.g. 68, 70, 80"
+                    placeholder="e.g. 70, 80, 100, 120"
                     value={gsm}
                     onChange={(e) => setGsm(e.target.value)}
                     className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
@@ -302,26 +318,26 @@ export default function ProductModal({
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Sheets Per Unit (e.g. 500/Ream)
                   </label>
                   <input
                     type="number"
                     min="1"
-                    placeholder="e.g. 500"
+                    placeholder="e.g. 50, 100, 500"
                     value={sheetsPerUnit}
                     onChange={(e) => setSheetsPerUnit(e.target.value)}
                     className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Pages Count (for Finished Books)
                   </label>
                   <input
                     type="number"
                     min="1"
-                    placeholder="e.g. 120, 160, 200"
+                    placeholder="e.g. 80, 100, 120, 160"
                     value={pagesCount}
                     onChange={(e) => setPagesCount(e.target.value)}
                     className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
@@ -357,7 +373,7 @@ export default function ProductModal({
               </label>
               <input
                 type="text"
-                placeholder="e.g. 890123456789"
+                placeholder="e.g. 8901234567890"
                 value={barcode}
                 onChange={(e) => setBarcode(e.target.value)}
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
@@ -402,7 +418,7 @@ export default function ProductModal({
                   className="w-4 h-4 rounded text-[#16A34A] focus:ring-[#16A34A]"
                 />
                 <span className="text-xs font-bold text-slate-800">
-                  Enable Secondary Unit (e.g. 1 Bag = 25 KG)
+                  Enable Secondary Unit (e.g. 1 Box = 50 Pieces or 1 Pack = 500 Sheets)
                 </span>
               </label>
             </div>
@@ -440,7 +456,7 @@ export default function ProductModal({
                     type="number"
                     step="0.0001"
                     min="0.0001"
-                    placeholder="e.g. 25.00"
+                    placeholder="e.g. 50.00 or 500.00"
                     value={conversionRatio}
                     onChange={(e) => setConversionRatio(e.target.value)}
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
