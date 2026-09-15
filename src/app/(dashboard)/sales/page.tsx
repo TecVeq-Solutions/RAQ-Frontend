@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import apiClient from '@/lib/api';
+import { formatInvoiceNumber, formatQuantity } from '@/lib/formatters';
 import {
   ShoppingCart,
   Plus,
@@ -297,21 +298,24 @@ export default function SalesPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
-                    <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="w-6 h-6 animate-spin text-[#16A34A]" />
-                      <span>Loading sales records...</span>
-                    </div>
-                  </td>
-                </tr>
+                Array.from({ length: 6 }).map((_, rIdx) => (
+                  <tr key={rIdx}>
+                    <td className="px-6 py-4"><div className="h-4 w-20 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-24 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-32 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-24 skeleton-shimmer rounded-md ml-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-6 w-20 skeleton-shimmer rounded-full mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-8 w-16 skeleton-shimmer rounded-xl mx-auto" /></td>
+                  </tr>
+                ))
               ) : sales.length > 0 ? (
                 sales.map((sale) => {
                   const itemCount = sale.items?.length || 0;
                   return (
                     <tr key={sale.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="px-6 py-4 font-mono font-bold text-[#0F172A]">
-                        {sale.invoice_no}
+                        {formatInvoiceNumber(sale.invoice_no)}
                       </td>
                       <td className="px-6 py-4 text-slate-600 font-medium">{sale.sale_date}</td>
                       <td className="px-6 py-4">
@@ -383,7 +387,7 @@ export default function SalesPage() {
                   <Receipt className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm text-[#0F172A]">Sale Invoice #{activeSale.invoice_no}</h3>
+                  <h3 className="font-extrabold text-sm text-[#0F172A]">Sale Invoice #{formatInvoiceNumber(activeSale.invoice_no)}</h3>
                   <p className="text-xs text-slate-400">Date: {activeSale.sale_date}</p>
                 </div>
               </div>
@@ -435,7 +439,7 @@ export default function SalesPage() {
                   <div className="space-y-0.5 text-xs">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Invoice:</span>
-                      <span className="font-bold">{activeSale.invoice_no}</span>
+                      <span className="font-bold">{formatInvoiceNumber(activeSale.invoice_no)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Date:</span>
@@ -456,7 +460,7 @@ export default function SalesPage() {
                       <div key={idx} className="space-y-0.5">
                         <div className="font-bold text-slate-900 truncate">{itm.product?.name}</div>
                         <div className="flex justify-between text-xs text-slate-600">
-                          <span>{itm.quantity} x Rs. {Number(itm.unit_price).toFixed(2)}</span>
+                          <span>{formatQuantity(itm.quantity)} x Rs. {Number(itm.unit_price).toFixed(2)}</span>
                           <span className="font-bold text-slate-900">Rs. {Number(itm.subtotal).toFixed(2)}</span>
                         </div>
                       </div>
@@ -503,7 +507,7 @@ export default function SalesPage() {
                       <span className="px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-[#16A34A] border border-emerald-200">
                         TAX INVOICE
                       </span>
-                      <div className="font-mono font-bold text-sm text-[#0F172A] mt-1">{activeSale.invoice_no}</div>
+                      <div className="font-mono font-bold text-sm text-[#0F172A] mt-1">{formatInvoiceNumber(activeSale.invoice_no)}</div>
                       <div className="text-slate-400 text-xs">Date: {activeSale.sale_date}</div>
                     </div>
                   </div>
@@ -539,7 +543,7 @@ export default function SalesPage() {
                             {item.product?.name}
                             <span className="block font-mono text-xs text-slate-400">{item.product?.sku}</span>
                           </td>
-                          <td className="p-2 text-center font-semibold">{item.quantity} {item.product?.unit?.short_name || 'Units'}</td>
+                          <td className="p-2 text-center font-semibold">{formatQuantity(item.quantity)} {item.product?.unit?.short_name || 'Units'}</td>
                           <td className="p-2 text-right">Rs. {Number(item.unit_price).toFixed(2)}</td>
                           <td className="p-2 text-right font-bold text-slate-900">Rs. {Number(item.subtotal).toFixed(2)}</td>
                         </tr>

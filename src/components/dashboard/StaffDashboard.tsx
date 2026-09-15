@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { User } from '@/types/auth';
+import { formatInvoiceNumber } from '@/lib/formatters';
 import {
   TrendingUp,
   Boxes,
@@ -423,7 +424,7 @@ export default function StaffDashboard({
                     stats.recent_sales.map((s) => (
                       <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
                         <td className="py-3.5 px-3 font-bold font-mono text-slate-900 text-sm">
-                          {s.invoice_no}
+                          {formatInvoiceNumber(s.invoice_no)}
                         </td>
                         <td className="py-3.5 px-3 font-semibold text-slate-800 text-sm">
                           {s.customer?.name || 'Walk-in Customer'}

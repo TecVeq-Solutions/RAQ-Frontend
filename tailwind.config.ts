@@ -34,7 +34,21 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ["var(--font-poppins)", "Poppins", "sans-serif"],
+      },
+      keyframes: {
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.45" },
+        },
+      },
+      animation: {
+        pulse: "pulse 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        shimmer: "shimmer 1.25s cubic-bezier(0.4, 0, 0.2, 1) infinite",
       },
     },
   },

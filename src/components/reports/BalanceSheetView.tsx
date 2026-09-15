@@ -41,13 +41,13 @@ export default function BalanceSheetView({
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-pulse">
+      <div className="space-y-6">
         {/* Skeleton equation banner */}
-        <div className="h-24 bg-slate-200/80 rounded-2xl w-full" />
+        <div className="h-24 skeleton-shimmer rounded-2xl w-full" />
         {/* Skeleton two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="h-96 bg-slate-200/80 rounded-2xl" />
-          <div className="h-96 bg-slate-200/80 rounded-2xl" />
+          <div className="h-96 skeleton-shimmer rounded-2xl" />
+          <div className="h-96 skeleton-shimmer rounded-2xl" />
         </div>
       </div>
     );

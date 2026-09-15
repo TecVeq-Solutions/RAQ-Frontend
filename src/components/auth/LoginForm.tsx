@@ -78,10 +78,11 @@ export default function LoginForm() {
             <input
               type="email"
               required
+              disabled={loading}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@tecveq.com"
-              className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[#0F172A] placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all text-sm font-medium"
+              className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[#0F172A] placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all text-sm font-medium disabled:opacity-75 disabled:cursor-not-allowed"
             />
           </div>
         </div>
@@ -100,15 +101,17 @@ export default function LoginForm() {
             <input
               type={showPassword ? 'text' : 'password'}
               required
+              disabled={loading}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full pl-11 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[#0F172A] placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all text-sm font-medium"
+              className="w-full pl-11 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[#0F172A] placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all text-sm font-medium disabled:opacity-75 disabled:cursor-not-allowed"
             />
             <button
               type="button"
+              disabled={loading}
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors disabled:opacity-50"
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -119,12 +122,12 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full mt-2 py-3 px-4 rounded-xl text-white font-semibold bg-[#16A34A] hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:ring-offset-2 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full mt-2 py-3 px-4 rounded-xl text-white font-semibold bg-[#16A34A] hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:ring-offset-2 transition-all shadow-md hover:shadow-lg disabled:opacity-85 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 relative overflow-hidden group cursor-pointer"
         >
           {loading ? (
             <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Authenticating...</span>
+              <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              <span className="tracking-wide text-sm font-medium">Authenticating...</span>
             </>
           ) : (
             <>

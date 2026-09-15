@@ -5,7 +5,9 @@ import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import { authService } from '@/lib/auth';
 import { User } from '@/types/auth';
-import { Loader2 } from 'lucide-react';
+import { WorkspaceSkeleton } from '@/components/ui/Skeleton';
+import AiAssistantDrawer from '@/components/ai/AiAssistantDrawer';
+import { Sparkles } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -14,6 +16,7 @@ export default function DashboardLayout({
 }) {
   const [user, setUser] = useState<User | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAiDrawerOpen, setIsAiDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,12 +46,7 @@ export default function DashboardLayout({
   }, []);
 
   if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-brand-gray flex flex-col items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-[#16A34A] mb-3" />
-        <p className="text-sm font-medium text-slate-500">Loading your workspace...</p>
-      </div>
-    );
+    return <WorkspaceSkeleton />;
   }
 
   return (
@@ -66,6 +64,7 @@ export default function DashboardLayout({
         <Header
           user={user}
           onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+          onAiToggle={() => setIsAiDrawerOpen(!isAiDrawerOpen)}
         />
 
         {/* Dynamic Page Content */}
@@ -73,6 +72,25 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+
+      {/* Floating AI Assistant Launcher Button */}
+      <button
+        type="button"
+        onClick={() => setIsAiDrawerOpen(true)}
+        className="fixed bottom-5 right-5 z-40 p-3 sm:px-4 sm:py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-bold text-xs sm:text-sm cursor-pointer border border-emerald-400/30"
+        title="Open Tecveq AI Assistant"
+      >
+        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200 animate-pulse" />
+        <span className="hidden sm:inline">Tecveq AI</span>
+      </button>
+
+      {/* Slide-over AI Assistant Chat Drawer */}
+      <AiAssistantDrawer
+        isOpen={isAiDrawerOpen}
+        onClose={() => setIsAiDrawerOpen(false)}
+        user={user}
+      />
     </div>
   );
 }
+

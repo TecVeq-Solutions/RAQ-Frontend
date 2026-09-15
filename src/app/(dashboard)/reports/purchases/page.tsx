@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import apiClient from '@/lib/api';
+import { formatQuantity } from '@/lib/formatters';
 import {
   Receipt,
   DollarSign,
@@ -898,7 +899,7 @@ export default function PurchasesReportPage() {
                         <div className="font-bold text-slate-950 text-sm truncate">{itm.product?.name}</div>
                         <div className="flex justify-between text-xs text-slate-700">
                           <span>
-                            {itm.quantity} x Rs. {Number(itm.unit_price).toFixed(2)}
+                            {formatQuantity(itm.quantity)} x Rs. {Number(itm.unit_price).toFixed(2)}
                           </span>
                           <span className="font-bold text-slate-950">Rs. {Number(itm.subtotal).toFixed(2)}</span>
                         </div>
@@ -932,15 +933,15 @@ export default function PurchasesReportPage() {
                       <span>Rs. {Number(activePurchase.paid_amount).toFixed(2)}</span>
                     </div>
                     {Number(activePurchase.due_amount) > 0 && (
-                      <div className="flex justify-between text-amber-600 font-bold text-sm">
-                        <span>Due to Supplier:</span>
+                      <div className="flex justify-between text-rose-600 font-bold text-sm">
+                        <span>Due Balance:</span>
                         <span>Rs. {Number(activePurchase.due_amount).toFixed(2)}</span>
                       </div>
                     )}
                   </div>
 
                   <div className="text-center border-t border-dashed border-slate-400 pt-3 space-y-1">
-                    <div className="text-xs font-bold text-slate-800">Inventory Stock Received Verified</div>
+                    <div className="text-xs font-bold text-slate-800">Thank you for your business!</div>
                     <div className="text-xs text-slate-500">Software by Sales, Purchase & Accounting ERP</div>
                   </div>
                 </div>
@@ -949,13 +950,13 @@ export default function PurchasesReportPage() {
                 <div className="w-full bg-white p-7 border border-slate-300 shadow-xs rounded-2xl space-y-5 text-sm">
                   <div className="flex justify-between items-start border-b border-slate-200 pb-5">
                     <div>
-                      <h2 className="text-lg font-black text-slate-950">SALES & INVENTORY ERP</h2>
-                      <p className="text-slate-600 text-xs mt-0.5">Procurement, Stock Inward & Supplier Management</p>
+                      <h2 className="text-lg font-black text-slate-950">PURCHASE ORDER & INVENTORY RECEIPT</h2>
+                      <p className="text-slate-600 text-xs mt-0.5">Procurement & Warehouse Goods Received Note</p>
                       <p className="text-slate-500 text-xs">Phone: +92 300 1234567 | Email: info@saleserp.com</p>
                     </div>
                     <div className="text-right">
-                      <span className="px-3.5 py-1.5 rounded-full text-xs font-black uppercase bg-blue-100 text-blue-800 border border-blue-300">
-                        PURCHASE ORDER VOUCHER
+                      <span className="px-3.5 py-1.5 rounded-full text-xs font-black uppercase bg-blue-100 text-blue-700 border border-blue-300">
+                        PURCHASE ORDER
                       </span>
                       <div className="font-mono font-bold text-base text-slate-950 mt-2">{activePurchase.purchase_no}</div>
                       <div className="text-slate-500 text-xs mt-0.5">Date: {activePurchase.purchase_date.split('T')[0]}</div>
@@ -964,9 +965,9 @@ export default function PurchasesReportPage() {
 
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <div>
-                      <div className="text-xs font-bold uppercase text-slate-500">Supplier</div>
+                      <div className="text-xs font-bold uppercase text-slate-500">Supplier Vendor</div>
                       <div className="font-bold text-slate-900 text-sm mt-0.5">
-                        {activePurchase.supplier?.name || 'Supplier'}
+                        {activePurchase.supplier?.name || 'Primary Supplier'}
                       </div>
                       <div className="text-slate-600 text-xs">{activePurchase.supplier?.phone || ''}</div>
                       <div className="text-slate-600 text-xs">{activePurchase.supplier?.address || ''}</div>
@@ -996,7 +997,7 @@ export default function PurchasesReportPage() {
                             <span className="block font-mono text-xs text-slate-500 font-medium">{item.product?.sku}</span>
                           </td>
                           <td className="p-3 text-center font-bold text-slate-800">
-                            {item.quantity} {item.product?.unit?.short_name || 'Units'}
+                            {formatQuantity(item.quantity)} {item.product?.unit?.short_name || 'Units'}
                           </td>
                           <td className="p-3 text-right font-medium">Rs. {Number(item.unit_price).toFixed(2)}</td>
                           <td className="p-3 text-right font-black text-slate-950">

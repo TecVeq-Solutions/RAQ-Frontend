@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import apiClient from '@/lib/api';
+import apiClient, { getCachedData, invalidateCache } from '@/lib/api';
 import { authService } from '@/lib/auth';
 import { Category, Product, ProductType, ProductUnit } from '@/types/inventory';
 import ProductModal from '@/components/inventory/ProductModal';
@@ -54,19 +54,19 @@ export default function ProductsPage() {
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  const fetchCategories = useCallback(async () => {
+  const fetchCategories = useCallback(async (forceFresh = false) => {
     try {
-      const res = await apiClient.get('/categories');
-      if (res.data?.data) setCategories(res.data.data);
+      const data = await getCachedData<Category[]>('/categories', forceFresh);
+      if (data) setCategories(data);
     } catch (err) {
       console.error('Failed to load categories', err);
     }
   }, []);
 
-  const fetchUnits = useCallback(async () => {
+  const fetchUnits = useCallback(async (forceFresh = false) => {
     try {
-      const res = await apiClient.get('/product-units');
-      if (res.data?.data) setUnits(res.data.data);
+      const data = await getCachedData<ProductUnit[]>('/product-units', forceFresh);
+      if (data) setUnits(data);
     } catch (err) {
       console.error('Failed to load product units', err);
     }
@@ -93,8 +93,8 @@ export default function ProductsPage() {
   }, [debouncedSearch, selectedCategory, productTypeTab, stockStatusTab]);
 
   useEffect(() => {
-    fetchCategories();
-    fetchUnits();
+    // Parallel non-blocking master data load
+    Promise.all([fetchCategories(), fetchUnits()]);
   }, [fetchCategories, fetchUnits]);
 
   useEffect(() => {
@@ -121,10 +121,11 @@ export default function ProductsPage() {
 
     try {
       await apiClient.delete(`/categories/${category.id}`);
+      invalidateCache('/categories');
       if (String(selectedCategory) === String(category.id)) {
         setSelectedCategory('');
       }
-      await fetchCategories();
+      await fetchCategories(true);
       await fetchProducts();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to delete category. Make sure no products are assigned.');

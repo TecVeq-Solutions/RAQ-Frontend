@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import apiClient from '@/lib/api';
+import { formatInvoiceNumber, formatQuantity } from '@/lib/formatters';
 import { AgingReportData } from '@/types/ledger';
 import { BalanceSheetData } from '@/types/reports';
 import BalanceSheetView from '@/components/reports/BalanceSheetView';
@@ -784,7 +785,7 @@ export default function ReportsPage() {
                           <td className="p-2.5 font-bold text-slate-800 dark:text-slate-200">
                             {p.name} <span className="text-xs font-mono text-slate-400">({p.sku})</span>
                           </td>
-                          <td className="p-2.5 text-center font-bold text-slate-700 dark:text-slate-300">{p.quantity_sold}</td>
+                          <td className="p-2.5 text-center font-bold text-slate-700 dark:text-slate-300">{formatQuantity(p.quantity_sold)}</td>
                           <td className="p-2.5 text-right font-mono font-bold text-slate-900 dark:text-slate-100">
                             Rs. {p.total_revenue.toFixed(2)}
                           </td>
@@ -1191,7 +1192,7 @@ export default function ReportsPage() {
                                           <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
                                             {c.invoices.map((inv) => (
                                               <tr key={inv.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                                <td className="px-3 py-2 font-mono font-bold text-slate-900 dark:text-slate-100">{inv.invoice_no}</td>
+                                                <td className="px-3 py-2 font-mono font-bold text-slate-900 dark:text-slate-100">{formatInvoiceNumber(inv.invoice_no)}</td>
                                                 <td className="px-3 py-2 font-mono text-slate-500 dark:text-slate-400">{inv.date}</td>
                                                 <td className="px-3 py-2 font-mono text-slate-700 dark:text-slate-300 font-bold">{inv.due_date || '-'}</td>
                                                 <td className="px-3 py-2 text-slate-600 dark:text-slate-300">{inv.payment_terms ? inv.payment_terms.replace('_', ' ') : '-'}</td>

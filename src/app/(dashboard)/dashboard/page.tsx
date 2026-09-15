@@ -38,6 +38,8 @@ import {
 
 import StaffDashboard from '@/components/dashboard/StaffDashboard';
 import { DueAlertsData } from '@/types/ledger';
+import { formatInvoiceNumber } from '@/lib/formatters';
+import { DashboardSkeleton } from '@/components/ui/Skeleton';
 
 interface RecentSale {
   id: number;
@@ -152,6 +154,10 @@ export default function DashboardPage() {
       maximumFractionDigits: 2,
     })}`;
   };
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
 
   // Dedicated Staff Dashboard branch
   if (user?.role === 'staff') {
@@ -803,7 +809,7 @@ export default function DashboardPage() {
                       stats.recent_sales.map((s) => (
                         <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
                           <td className="py-2.5 sm:py-3.5 px-2.5 sm:px-3 font-bold font-mono text-slate-900 text-xs sm:text-sm">
-                            {s.invoice_no}
+                            {formatInvoiceNumber(s.invoice_no)}
                           </td>
                           <td className="py-2.5 sm:py-3.5 px-2.5 sm:px-3 font-semibold text-slate-800 text-xs sm:text-sm truncate max-w-[120px]">
                             {s.customer?.name || 'Walk-in Customer'}

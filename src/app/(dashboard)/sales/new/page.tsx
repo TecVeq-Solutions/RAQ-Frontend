@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import apiClient from '@/lib/api';
+import { formatInvoiceNumber, formatQuantity } from '@/lib/formatters';
+import { POSBillingSkeleton } from '@/components/ui/Skeleton';
 import {
   ArrowLeft,
   ShoppingCart,
@@ -513,12 +515,7 @@ export default function PosBillingPage() {
   };
 
   if (loadingInitial) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <Loader2 className="w-9 h-9 animate-spin text-[#16A34A]" />
-        <p className="text-sm font-semibold text-slate-500">Initializing Fast POS Counter Billing Engine...</p>
-      </div>
-    );
+    return <POSBillingSkeleton />;
   }
 
   return (
@@ -1247,7 +1244,7 @@ export default function PosBillingPage() {
                 </div>
                 <div>
                   <h3 className="font-black text-base text-[#0F172A]">Sale Completed</h3>
-                  <p className="text-xs text-slate-500 font-mono">Invoice #{completedSale.invoice_no}</p>
+                  <p className="text-xs text-slate-500 font-mono">Invoice #{formatInvoiceNumber(completedSale.invoice_no)}</p>
                 </div>
               </div>
 
@@ -1299,7 +1296,7 @@ export default function PosBillingPage() {
                   <div className="space-y-0.5 text-xs">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Invoice:</span>
-                      <span className="font-bold">{completedSale.invoice_no}</span>
+                      <span className="font-bold">{formatInvoiceNumber(completedSale.invoice_no)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Date:</span>
@@ -1329,7 +1326,7 @@ export default function PosBillingPage() {
                       <div key={idx} className="space-y-0.5">
                         <div className="font-bold text-slate-900 truncate">{itm.product?.name || 'Item'}</div>
                         <div className="flex justify-between text-xs text-slate-600">
-                          <span>{itm.quantity} x Rs. {Number(itm.unit_price).toFixed(2)}</span>
+                          <span>{formatQuantity(itm.quantity)} x Rs. {Number(itm.unit_price).toFixed(2)}</span>
                           <span className="font-bold text-slate-900">Rs. {Number(itm.subtotal).toFixed(2)}</span>
                         </div>
                       </div>
@@ -1392,7 +1389,7 @@ export default function PosBillingPage() {
                       <span className="px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-[#16A34A] border border-emerald-200">
                         TAX INVOICE
                       </span>
-                      <div className="font-mono font-bold text-sm text-[#0F172A] mt-1">{completedSale.invoice_no}</div>
+                      <div className="font-mono font-bold text-sm text-[#0F172A] mt-1">{formatInvoiceNumber(completedSale.invoice_no)}</div>
                       <div className="text-slate-400 text-xs">Date: {completedSale.sale_date}</div>
                     </div>
                   </div>
@@ -1436,7 +1433,7 @@ export default function PosBillingPage() {
                             {item.product?.name}
                             <span className="block font-mono text-xs text-slate-400">{item.product?.sku}</span>
                           </td>
-                          <td className="p-2 text-center font-semibold">{item.quantity} {item.product?.unit?.short_name || 'Units'}</td>
+                          <td className="p-2 text-center font-semibold">{formatQuantity(item.quantity)} {item.product?.unit?.short_name || 'Units'}</td>
                           <td className="p-2 text-right">Rs. {Number(item.unit_price).toFixed(2)}</td>
                           <td className="p-2 text-right font-bold text-slate-900">Rs. {Number(item.subtotal).toFixed(2)}</td>
                         </tr>

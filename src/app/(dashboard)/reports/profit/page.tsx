@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import apiClient from '@/lib/api';
+import { formatQuantity } from '@/lib/formatters';
 import {
   TrendingUp,
   TrendingDown,
@@ -430,7 +431,7 @@ export default function ProfitReportPage() {
                           <div className="truncate pr-2">
                             <div className="font-bold text-slate-900 text-sm truncate">{prod.name}</div>
                             <div className="text-xs text-slate-500 font-medium mt-0.5">
-                              <span className="font-mono text-slate-600">{prod.sku}</span> • {prod.quantity_sold} sold
+                              <span className="font-mono text-slate-600">{prod.sku}</span> • {formatQuantity(prod.quantity_sold)} sold
                             </div>
                           </div>
                           <span className="px-2 py-0.5 rounded-md text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">

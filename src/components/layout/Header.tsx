@@ -3,14 +3,15 @@
 import React from 'react';
 import { User } from '@/types/auth';
 import { authService } from '@/lib/auth';
-import { Menu, LogOut, CheckCircle } from 'lucide-react';
+import { Menu, LogOut, CheckCircle, Sparkles } from 'lucide-react';
 
 interface HeaderProps {
   user: User | null;
   onMenuToggle: () => void;
+  onAiToggle?: () => void;
 }
 
-export default function Header({ user, onMenuToggle }: HeaderProps) {
+export default function Header({ user, onMenuToggle, onAiToggle }: HeaderProps) {
   return (
     <header className="h-16 2xl:h-20 bg-white border-b border-slate-200 px-3.5 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
       {/* Left: Mobile Menu Toggle, Logo & Title */}
@@ -49,7 +50,20 @@ export default function Header({ user, onMenuToggle }: HeaderProps) {
       </div>
 
       {/* Right: User Information & Action */}
-      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+        {/* AI Assistant Quick Trigger Pill */}
+        {onAiToggle && (
+          <button
+            type="button"
+            onClick={onAiToggle}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 hover:from-emerald-500/20 hover:to-teal-500/20 border border-emerald-500/30 text-emerald-700 text-xs sm:text-sm font-bold shadow-2xs transition-all hover:scale-102 active:scale-98 cursor-pointer"
+            title="Open Tecveq AI Assistant"
+          >
+            <Sparkles className="w-4 h-4 text-emerald-600 animate-pulse" />
+            <span className="hidden sm:inline">AI Assistant</span>
+          </button>
+        )}
+
         {/* System Status Pill */}
         <div className="hidden md:flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs 2xl:text-sm font-semibold rounded-full">
           <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />

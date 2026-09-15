@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import apiClient from '@/lib/api';
+import apiClient, { invalidateCache } from '@/lib/api';
 import { Category } from '@/types/inventory';
 import { X, Loader2, Tag, Plus, Edit2, Trash2, Search, AlertCircle, CheckCircle2, ListFilter } from 'lucide-react';
 
@@ -106,6 +106,7 @@ export default function CategoryModal({
 
     try {
       const res = await apiClient.delete(`/categories/${category.id}`);
+      invalidateCache('/categories');
       setSuccessMessage(res.data?.message || `Category "${category.name}" deleted successfully.`);
       await fetchCategories();
       onSuccess();
@@ -145,6 +146,7 @@ export default function CategoryModal({
         });
         setSuccessMessage(`Category "${name.trim()}" created successfully.`);
       }
+      invalidateCache('/categories');
       await fetchCategories();
       onSuccess();
       setActiveTab('list');

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import apiClient from '@/lib/api';
+import { formatQuantity } from '@/lib/formatters';
 import {
   History,
   ArrowUpRight,
@@ -155,14 +156,17 @@ export default function StockMovementsPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
-                    <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="w-6 h-6 animate-spin text-[#16A34A]" />
-                      <span>Loading stock movements...</span>
-                    </div>
-                  </td>
-                </tr>
+                Array.from({ length: 6 }).map((_, rIdx) => (
+                  <tr key={rIdx}>
+                    <td className="px-6 py-4"><div className="h-4 w-28 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-32 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-6 w-20 skeleton-shimmer rounded-full mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 skeleton-shimmer rounded-md mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 skeleton-shimmer rounded-md mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 skeleton-shimmer rounded-md mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-32 skeleton-shimmer rounded-md" /></td>
+                  </tr>
+                ))
               ) : movements.length > 0 ? (
                 movements.map((m) => {
                   const isInward =
@@ -222,7 +226,7 @@ export default function StockMovementsPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 text-center font-semibold text-slate-500">
-                        {m.previous_stock} {unitName}
+                        {formatQuantity(m.previous_stock)} {unitName}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span
@@ -231,11 +235,11 @@ export default function StockMovementsPage() {
                           }`}
                         >
                           {isInward ? '+' : '-'}
-                          {m.quantity} {unitName}
+                          {formatQuantity(m.quantity)} {unitName}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center font-extrabold text-slate-900">
-                        {m.new_stock} {unitName}
+                        {formatQuantity(m.new_stock)} {unitName}
                       </td>
                       <td className="px-6 py-4 text-xs text-slate-500">
                         <div className="font-medium text-slate-700">{m.notes || '-'}</div>
