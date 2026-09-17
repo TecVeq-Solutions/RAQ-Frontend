@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import apiClient from '@/lib/api';
+import { formatQuantity } from '@/lib/formatters';
 import {
   Receipt,
   Plus,
@@ -290,14 +291,17 @@ export default function PurchasesPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
-                    <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="w-6 h-6 animate-spin text-[#16A34A]" />
-                      <span>Loading purchase orders...</span>
-                    </div>
-                  </td>
-                </tr>
+                Array.from({ length: 5 }).map((_, rIdx) => (
+                  <tr key={rIdx}>
+                    <td className="px-6 py-4"><div className="h-4 w-24 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-24 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-36 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-24 skeleton-shimmer rounded-md ml-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-6 w-20 skeleton-shimmer rounded-full mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-8 w-16 skeleton-shimmer rounded-xl mx-auto" /></td>
+                  </tr>
+                ))
               ) : purchases.length > 0 ? (
                 purchases.map((po) => {
                   const itemCount = po.items?.length || 0;
@@ -433,12 +437,12 @@ export default function PurchasesPage() {
                       <tr key={item.id}>
                         <td className="px-4 py-3 font-semibold text-slate-800">
                           {item.product?.name || 'Product'}
-                          <span className="block text-[11px] text-slate-400 font-mono">
+                          <span className="block text-xs text-slate-400 font-mono">
                             {item.product?.sku || ''}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-center font-bold text-slate-700">
-                          {item.quantity} {item.product?.unit?.short_name || 'Units'}
+                          {formatQuantity(item.quantity)} {item.product?.unit?.short_name || 'Units'}
                         </td>
                         <td className="px-4 py-3 text-right font-medium text-slate-600">
                           Rs. {Number(item.unit_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}

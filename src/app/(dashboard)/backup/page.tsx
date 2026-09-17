@@ -260,36 +260,36 @@ export default function BackupPage() {
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h3 className="font-black text-base sm:text-lg text-slate-900">
+                <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-slate-100">
                   Automated Daily Backup Scheduler
                 </h3>
-                <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold text-[10px] uppercase">
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 font-bold text-xs uppercase">
                   Active
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                Executes daily at <strong>02:00 AM</strong>. Backups are compressed with native Gzip (<code className="text-xs font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-emerald-200">.sql.gz</code>) and pruned automatically per retention threshold.
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+                Executes daily at <strong>02:00 AM</strong>. Backups are compressed with native Gzip (<code className="text-xs font-mono font-bold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">.sql.gz</code>) and pruned automatically per retention threshold.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="group bg-gradient-to-br from-blue-50/60 via-white to-white rounded-3xl p-6 sm:p-7 border border-blue-200/60 shadow-sm hover:shadow-md transition-all">
+        <div className="group bg-gradient-to-br from-blue-50/60 via-white to-white dark:from-blue-950/20 dark:via-slate-900 dark:to-slate-900 rounded-3xl p-6 sm:p-7 border border-blue-200/60 dark:border-blue-805/40 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-start gap-4">
-            <div className="w-13 h-13 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0 shadow-inner group-hover:scale-110 transition-transform">
+            <div className="w-13 h-13 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold shrink-0 shadow-inner group-hover:scale-110 transition-transform">
               <Lock className="w-7 h-7" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h3 className="font-black text-base sm:text-lg text-slate-900">
+                <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-slate-100">
                   Production Restore Safeguard
                 </h3>
-                <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 font-bold text-[10px] uppercase">
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 font-bold text-xs uppercase">
                   Protected
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                Every restore operation creates an automatic pre-restore safety snapshot (<code className="text-xs font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-blue-200">pre_restore_*.sql.gz</code>) to prevent accidental data loss.
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+                Every restore operation creates an automatic pre-restore safety snapshot (<code className="text-xs font-mono font-bold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-800">pre_restore_*.sql.gz</code>) to prevent accidental data loss.
               </p>
             </div>
           </div>
@@ -297,17 +297,17 @@ export default function BackupPage() {
       </div>
 
       {/* Backup Archives Table Card */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shadow-xs">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold shadow-xs">
               <FileArchive className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-black text-base sm:text-lg text-slate-900">
+              <h2 className="font-black text-base sm:text-lg text-slate-900 dark:text-slate-100">
                 Available Backup Archives
               </h2>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 {backups.length} snapshot{backups.length !== 1 ? 's' : ''} stored in local persistent disk
               </p>
             </div>
@@ -317,17 +317,17 @@ export default function BackupPage() {
             type="button"
             onClick={fetchBackups}
             disabled={loading}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
             title="Refresh Backups"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : 'text-slate-500'}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : 'text-slate-500 dark:text-slate-400'}`} />
             <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-700">
-            <thead className="bg-slate-50/90 text-xs uppercase font-bold text-slate-600 border-b border-slate-200 tracking-wider">
+          <table className="w-full text-left text-sm text-slate-700 dark:text-slate-200">
+            <thead className="bg-slate-50/90 dark:bg-slate-800/80 text-xs uppercase font-bold text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 tracking-wider">
               <tr>
                 <th className="py-4.5 px-6">Archive Filename</th>
                 <th className="py-4.5 px-6">File Size</th>
@@ -337,13 +337,13 @@ export default function BackupPage() {
                 <th className="py-4.5 px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="py-16 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
-                      <span className="font-bold text-sm text-slate-600">Loading backup archives...</span>
+                      <span className="font-bold text-sm text-slate-600 dark:text-slate-300">Loading backup archives...</span>
                     </div>
                   </td>
                 </tr>
@@ -351,10 +351,10 @@ export default function BackupPage() {
                 <tr>
                   <td colSpan={6} className="py-16 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <div className="w-16 h-16 rounded-3xl bg-slate-100 text-slate-400 flex items-center justify-center mb-2">
+                      <div className="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mb-2">
                         <Database className="w-8 h-8 stroke-[1.5]" />
                       </div>
-                      <p className="font-black text-slate-800 text-lg">No backup archives found</p>
+                      <p className="font-black text-slate-800 dark:text-slate-200 text-lg">No backup archives found</p>
                       <p className="text-sm text-slate-400 max-w-sm">
                         Click &quot;Create Manual Backup&quot; above or wait for the daily 02:00 AM scheduler to generate an archive.
                       </p>
@@ -363,17 +363,17 @@ export default function BackupPage() {
                 </tr>
               ) : (
                 backups.map((b) => (
-                  <tr key={b.id} className="hover:bg-slate-50/80 transition-colors group">
+                  <tr key={b.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
                     <td className="py-4.5 px-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200/60 font-bold shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200/60 dark:border-emerald-800/40 font-bold shrink-0">
                           <HardDrive className="w-4 h-4" />
                         </div>
                         <div>
-                          <span className="font-mono font-bold text-slate-900 text-sm block">
+                          <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-sm block">
                             {b.filename}
                           </span>
-                          <span className="text-[11px] font-mono text-slate-400">
+                          <span className="text-xs font-mono text-slate-400">
                             ID: #{b.id} • gzip compressed
                           </span>
                         </div>

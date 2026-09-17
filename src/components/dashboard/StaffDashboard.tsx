@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { User } from '@/types/auth';
+import { formatInvoiceNumber } from '@/lib/formatters';
 import {
   TrendingUp,
   Boxes,
@@ -55,6 +56,10 @@ export interface StaffDashboardStats {
   low_stock_alerts: number;
   low_stock_products: LowStockItem[];
   recent_sales: RecentSale[];
+  today_gross_profit?: number | null;
+  today_net_profit?: number | null;
+  monthly_gross_profit?: number | null;
+  monthly_net_profit?: number | null;
 }
 
 interface StaffDashboardProps {
@@ -317,6 +322,74 @@ export default function StaffDashboard({
         </div>
       </div>
 
+      {/* SECTION 3B: Profitability & Financial Summary (Gross vs Net Profit) */}
+      {(stats?.today_gross_profit !== undefined && stats?.today_gross_profit !== null) && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base sm:text-lg font-black text-[#0F172A] tracking-tight">
+              Operational Profitability Summary
+            </h2>
+            <span className="text-xs text-slate-500 font-semibold">Authoritative Report Calculations</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Today's Gross Profit */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Today Gross Profit
+                </span>
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#16A34A] flex items-center justify-center font-bold shrink-0">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className={`text-xl font-black tracking-tight ${(stats?.today_gross_profit ?? 0) >= 0 ? 'text-[#16A34A]' : 'text-rose-600'}`}>
+                  {formatCurrency(stats?.today_gross_profit)}
+                </div>
+                <p className="text-xs text-slate-500 font-medium mt-1">Sales &minus; Cost of Goods Sold (COGS)</p>
+              </div>
+            </div>
+
+            {/* Today's Net Profit */}
+            <div className="bg-white rounded-2xl p-5 border border-emerald-300/80 bg-emerald-50/20 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                  Today Net Profit
+                </span>
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shrink-0">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className={`text-xl font-black tracking-tight ${(stats?.today_net_profit ?? 0) >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                  {formatCurrency(stats?.today_net_profit)}
+                </div>
+                <p className="text-xs text-emerald-700 font-medium mt-1">Sales &minus; COGS &minus; Operating Expenses</p>
+              </div>
+            </div>
+
+            {/* Month's Net Profit */}
+            <div className="bg-white rounded-2xl p-5 border border-blue-300/80 bg-blue-50/20 shadow-sm sm:col-span-2 lg:col-span-1">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-800">
+                  Month Net Profit
+                </span>
+                <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
+                  <Activity className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className={`text-xl font-black tracking-tight ${(stats?.monthly_net_profit ?? 0) >= 0 ? 'text-blue-800' : 'text-rose-600'}`}>
+                  {formatCurrency(stats?.monthly_net_profit)}
+                </div>
+                <p className="text-xs text-blue-700 font-medium mt-1">Month Sales &minus; COGS &minus; Expenses</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SECTION 4: Operational Data Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Sales Table */}
@@ -351,7 +424,7 @@ export default function StaffDashboard({
                     stats.recent_sales.map((s) => (
                       <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
                         <td className="py-3.5 px-3 font-bold font-mono text-slate-900 text-sm">
-                          {s.invoice_no}
+                          {formatInvoiceNumber(s.invoice_no)}
                         </td>
                         <td className="py-3.5 px-3 font-semibold text-slate-800 text-sm">
                           {s.customer?.name || 'Walk-in Customer'}

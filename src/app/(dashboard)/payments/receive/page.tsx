@@ -255,7 +255,7 @@ export default function ReceivePaymentPage() {
                   <UserCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Outstanding Khata Balance</span>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Outstanding Khata Balance</span>
                   <div className="font-black text-rose-600 text-base">
                     Rs. {Number(activeCustomer.current_balance).toFixed(2)}
                   </div>
@@ -264,7 +264,7 @@ export default function ReceivePaymentPage() {
 
               <div className="flex items-center justify-start sm:justify-end gap-3 sm:border-l sm:border-slate-200 sm:pl-4">
                 <div className="text-left sm:text-right">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Remaining Balance After Payment</span>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Remaining Balance After Payment</span>
                   <div className="font-black text-[#16A34A] text-base">
                     Rs. {remainingBalance.toFixed(2)}
                   </div>
@@ -387,7 +387,7 @@ export default function ReceivePaymentPage() {
                 </div>
                 <div>
                   <h3 className="font-black text-sm text-[#0F172A]">Payment Receipt Ready</h3>
-                  <p className="text-[11px] text-slate-400 font-mono">{activeReceiptPayment.payment_no}</p>
+                  <p className="text-xs text-slate-400 font-mono">{activeReceiptPayment.payment_no}</p>
                 </div>
               </div>
 
@@ -420,15 +420,15 @@ export default function ReceivePaymentPage() {
                 /* Thermal 80mm Preview */
                 <div
                   id="printable-payment-receipt"
-                  className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 max-w-[320px] mx-auto text-slate-800 font-mono text-[11px] leading-relaxed space-y-3"
+                  className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 max-w-[320px] mx-auto text-slate-800 font-mono text-xs leading-relaxed space-y-3"
                 >
                   <div className="text-center pb-3 border-b border-dashed border-slate-300">
                     <h2 className="text-sm font-black text-slate-900 uppercase">SALES & ACCOUNTING ERP</h2>
-                    <p className="text-[10px] text-slate-500">OFFICIAL PAYMENT RECEIPT</p>
+                    <p className="text-xs text-slate-500">OFFICIAL PAYMENT RECEIPT</p>
                     <div className="font-bold text-slate-700 mt-1">{activeReceiptPayment.payment_no}</div>
                   </div>
 
-                  <div className="space-y-1 text-[10px]">
+                  <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Date:</span>
                       <span className="font-bold">{activeReceiptPayment.payment_date}</span>
@@ -457,7 +457,7 @@ export default function ReceivePaymentPage() {
                       <span className="text-[#16A34A]">Rs. {Number(activeReceiptPayment.amount).toFixed(2)}</span>
                     </div>
                     {(activeReceiptPayment.customer || activeCustomer) && (
-                      <div className="flex justify-between text-[10px] text-slate-500">
+                      <div className="flex justify-between text-xs text-slate-500">
                         <span>Current Khata Balance:</span>
                         <span className="font-bold">
                           Rs. {Number(activeReceiptPayment.customer?.current_balance ?? remainingBalance).toFixed(2)}
@@ -467,12 +467,12 @@ export default function ReceivePaymentPage() {
                   </div>
 
                   {activeReceiptPayment.notes && (
-                    <div className="text-[10px] text-slate-500 italic">
+                    <div className="text-xs text-slate-500 italic">
                       Narration: {activeReceiptPayment.notes}
                     </div>
                   )}
 
-                  <div className="text-center pt-2 text-[9px] text-slate-400">
+                  <div className="text-center pt-2 text-xs text-slate-400">
                     <p>Computer Generated Receipt</p>
                     <p>Customer Ledger Credited</p>
                   </div>
@@ -486,39 +486,39 @@ export default function ReceivePaymentPage() {
                   <div className="flex items-start justify-between pb-3 border-b border-slate-200">
                     <div>
                       <h2 className="text-base font-black text-[#0F172A]">SALES & ACCOUNTING ERP</h2>
-                      <p className="text-slate-500 text-[11px]">Financial & Cash Flow Management</p>
+                      <p className="text-slate-500 text-xs">Financial & Cash Flow Management</p>
                     </div>
                     <div className="text-right">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-[#16A34A] border border-emerald-200">
+                      <span className="px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-[#16A34A] border border-emerald-200">
                         PAYMENT RECEIPT
                       </span>
                       <div className="font-mono font-bold text-xs text-[#0F172A] mt-1">{activeReceiptPayment.payment_no}</div>
-                      <div className="text-slate-400 text-[10px]">Date: {activeReceiptPayment.payment_date}</div>
+                      <div className="text-slate-400 text-xs">Date: {activeReceiptPayment.payment_date}</div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200/80">
                     <div>
-                      <div className="text-[10px] font-bold uppercase text-slate-400">Customer Details</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Customer Details</div>
                       <div className="font-bold text-slate-800 text-xs">
                         {activeReceiptPayment.customer?.name || activeCustomer?.name || 'Customer'}
                       </div>
-                      <div className="text-slate-500 text-[11px]">
+                      <div className="text-slate-500 text-xs">
                         {activeReceiptPayment.customer?.phone || activeCustomer?.phone || ''}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] font-bold uppercase text-slate-400">Transaction Details</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Transaction Details</div>
                       <div className="font-bold text-slate-800 text-xs">Method: {activeReceiptPayment.payment_method?.toUpperCase()}</div>
                       {activeReceiptPayment.reference_number && (
-                        <div className="text-slate-500 text-[10px]">Txn Ref: {activeReceiptPayment.reference_number}</div>
+                        <div className="text-slate-500 text-xs">Txn Ref: {activeReceiptPayment.reference_number}</div>
                       )}
                     </div>
                   </div>
 
                   <div className="p-4 bg-emerald-50/50 rounded-xl border border-emerald-200/70 flex justify-between items-center">
                     <div>
-                      <div className="text-[10px] font-bold uppercase text-emerald-800">Net Amount Received</div>
+                      <div className="text-xs font-bold uppercase text-emerald-800">Net Amount Received</div>
                       <div className="text-xs text-slate-500">Atomic ledger credit posted</div>
                     </div>
                     <div className="text-xl font-black text-[#16A34A]">
@@ -527,12 +527,12 @@ export default function ReceivePaymentPage() {
                   </div>
 
                   {activeReceiptPayment.notes && (
-                    <div className="text-slate-600 text-[11px] p-2.5 bg-slate-50 rounded-lg border border-slate-200/60">
+                    <div className="text-slate-600 text-xs p-2.5 bg-slate-50 rounded-lg border border-slate-200/60">
                       <strong>Narration:</strong> {activeReceiptPayment.notes}
                     </div>
                   )}
 
-                  <div className="pt-8 border-t border-slate-200 flex justify-between text-[11px] text-slate-400">
+                  <div className="pt-8 border-t border-slate-200 flex justify-between text-xs text-slate-400">
                     <div>Received By: ______________</div>
                     <div>Authorized Stamp: ______________</div>
                   </div>

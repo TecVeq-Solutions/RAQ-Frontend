@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import apiClient from '@/lib/api';
+import { formatInvoiceNumber, formatQuantity } from '@/lib/formatters';
 import { Receipt, Printer, Eye, CheckCircle2, X, Loader2 } from 'lucide-react';
 
 export default function InvoicesPage() {
@@ -56,18 +57,19 @@ export default function InvoicesPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
-                    <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="w-6 h-6 animate-spin text-[#16A34A]" />
-                      <span>Loading invoices...</span>
-                    </div>
-                  </td>
-                </tr>
+                Array.from({ length: 5 }).map((_, rIdx) => (
+                  <tr key={rIdx}>
+                    <td className="px-6 py-4"><div className="h-4 w-20 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-32 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-24 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-24 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4 text-right"><div className="h-8 w-28 skeleton-shimmer rounded-xl ml-auto" /></td>
+                  </tr>
+                ))
               ) : sales.length > 0 ? (
                 sales.map((sale) => (
                   <tr key={sale.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-mono font-bold text-[#0F172A]">{sale.invoice_no}</td>
+                    <td className="px-6 py-4 font-mono font-bold text-[#0F172A]">{formatInvoiceNumber(sale.invoice_no)}</td>
                     <td className="px-6 py-4 font-medium text-slate-800">{sale.customer?.name || 'Walk-in Customer'}</td>
                     <td className="px-6 py-4 text-slate-500">{sale.sale_date}</td>
                     <td className="px-6 py-4 font-extrabold text-[#16A34A]">
@@ -105,7 +107,7 @@ export default function InvoicesPage() {
                   <Receipt className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm text-[#0F172A]">Sale Invoice #{activeSale.invoice_no}</h3>
+                  <h3 className="font-extrabold text-sm text-[#0F172A]">Sale Invoice #{formatInvoiceNumber(activeSale.invoice_no)}</h3>
                   <p className="text-xs text-slate-400">Date: {activeSale.sale_date}</p>
                 </div>
               </div>
@@ -148,14 +150,14 @@ export default function InvoicesPage() {
                 <div className="w-[300px] bg-white p-4 border border-slate-200 shadow-sm text-xs font-mono space-y-3 rounded-xl text-slate-800">
                   <div className="text-center space-y-0.5 border-b border-dashed border-slate-300 pb-2">
                     <div className="font-black text-sm uppercase text-slate-900">SALES ERP STORE</div>
-                    <div className="text-[10px] text-slate-500">Retail & Wholesale Billing</div>
-                    <div className="text-[10px] text-slate-500">Tel: +92 300 1234567</div>
+                    <div className="text-xs text-slate-500">Retail & Wholesale Billing</div>
+                    <div className="text-xs text-slate-500">Tel: +92 300 1234567</div>
                   </div>
 
-                  <div className="space-y-0.5 text-[11px]">
+                  <div className="space-y-0.5 text-xs">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Invoice:</span>
-                      <span className="font-bold">{activeSale.invoice_no}</span>
+                      <span className="font-bold">{formatInvoiceNumber(activeSale.invoice_no)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Date:</span>
@@ -171,15 +173,15 @@ export default function InvoicesPage() {
                     {activeSale.items?.map((itm: any, idx: number) => (
                       <div key={idx} className="space-y-0.5">
                         <div className="font-bold text-slate-900 truncate">{itm.product?.name}</div>
-                        <div className="flex justify-between text-[10px] text-slate-600">
-                          <span>{itm.quantity} x Rs. {Number(itm.unit_price).toFixed(2)}</span>
+                        <div className="flex justify-between text-xs text-slate-600">
+                          <span>{formatQuantity(itm.quantity)} x Rs. {Number(itm.unit_price).toFixed(2)}</span>
                           <span className="font-bold text-slate-900">Rs. {Number(itm.subtotal).toFixed(2)}</span>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  <div className="space-y-1 text-[11px] pt-1">
+                  <div className="space-y-1 text-xs pt-1">
                     <div className="flex justify-between">
                       <span>Subtotal:</span>
                       <span>Rs. {Number(activeSale.subtotal).toFixed(2)}</span>
@@ -197,7 +199,7 @@ export default function InvoicesPage() {
                   </div>
 
                   <div className="text-center border-t border-dashed border-slate-300 pt-2 space-y-0.5">
-                    <div className="text-[10px] font-bold text-slate-700">Thank you for your visit!</div>
+                    <div className="text-xs font-bold text-slate-700">Thank you for your visit!</div>
                   </div>
                 </div>
               ) : (
@@ -205,30 +207,30 @@ export default function InvoicesPage() {
                   <div className="flex justify-between items-start border-b border-slate-200 pb-4">
                     <div>
                       <h2 className="text-base font-black text-[#0F172A]">SALES & INVENTORY ERP</h2>
-                      <p className="text-slate-500 text-[11px]">Retail & Financial Accounting</p>
+                      <p className="text-slate-500 text-xs">Retail & Financial Accounting</p>
                     </div>
                     <div className="text-right">
                       <span className="px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-[#16A34A]">
                         TAX INVOICE
                       </span>
-                      <div className="font-mono font-bold text-sm text-[#0F172A] mt-1">{activeSale.invoice_no}</div>
-                      <div className="text-slate-400 text-[11px]">Date: {activeSale.sale_date}</div>
+                      <div className="font-mono font-bold text-sm text-[#0F172A] mt-1">{formatInvoiceNumber(activeSale.invoice_no)}</div>
+                      <div className="text-slate-400 text-xs">Date: {activeSale.sale_date}</div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl">
                     <div>
-                      <div className="text-[10px] font-bold uppercase text-slate-400">Customer</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Customer</div>
                       <div className="font-bold text-slate-800 text-xs">{activeSale.customer?.name || 'Walk-in'}</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] font-bold uppercase text-slate-400">Status</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Status</div>
                       <div className="font-bold text-slate-800 text-xs uppercase">{activeSale.payment_status}</div>
                     </div>
                   </div>
 
                   <table className="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden">
-                    <thead className="bg-slate-100 text-slate-600 uppercase font-bold text-[10px]">
+                    <thead className="bg-slate-100 text-slate-600 uppercase font-bold text-xs">
                       <tr>
                         <th className="p-2">#</th>
                         <th className="p-2">Product</th>
@@ -242,7 +244,7 @@ export default function InvoicesPage() {
                         <tr key={idx}>
                           <td className="p-2 text-slate-400">{idx + 1}</td>
                           <td className="p-2 font-bold text-slate-800">{item.product?.name}</td>
-                          <td className="p-2 text-center">{item.quantity}</td>
+                          <td className="p-2 text-center">{formatQuantity(item.quantity)}</td>
                           <td className="p-2 text-right">Rs. {Number(item.unit_price).toFixed(2)}</td>
                           <td className="p-2 text-right font-bold">Rs. {Number(item.subtotal).toFixed(2)}</td>
                         </tr>

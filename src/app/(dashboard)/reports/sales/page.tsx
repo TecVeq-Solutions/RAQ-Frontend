@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import apiClient from '@/lib/api';
+import { formatInvoiceNumber, formatQuantity } from '@/lib/formatters';
 import {
   TrendingUp,
   DollarSign,
@@ -599,7 +600,7 @@ export default function SalesReportPage() {
                       <div className="truncate pr-3">
                         <div className="font-bold text-slate-900 text-sm truncate">{prod.name}</div>
                         <div className="text-xs text-slate-500 font-medium mt-0.5">
-                          <span className="font-mono text-slate-600">{prod.sku}</span> • {prod.quantity_sold} {prod.unit} sold
+                          <span className="font-mono text-slate-600">{prod.sku}</span> • {formatQuantity(prod.quantity_sold)} {prod.unit} sold
                         </div>
                       </div>
                       <div className="text-right shrink-0">
@@ -682,7 +683,7 @@ export default function SalesReportPage() {
                               onClick={() => setActiveSale(sale)}
                               className="hover:text-[#16A34A] underline text-left cursor-pointer font-black"
                             >
-                              {sale.invoice_no}
+                              {formatInvoiceNumber(sale.invoice_no)}
                             </button>
                           </td>
                           <td className="p-4 text-slate-700 whitespace-nowrap font-medium">
@@ -816,7 +817,7 @@ export default function SalesReportPage() {
             <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50 print:hidden">
               <div className="flex items-center gap-2.5">
                 <Receipt className="w-6 h-6 text-[#16A34A]" />
-                <span className="font-black text-slate-900 text-base">Sale Invoice: {activeSale.invoice_no}</span>
+                <span className="font-black text-slate-900 text-base">Sale Invoice: {formatInvoiceNumber(activeSale.invoice_no)}</span>
               </div>
 
               <div className="flex items-center gap-3">
@@ -866,7 +867,7 @@ export default function SalesReportPage() {
                   <div className="border-t border-b border-dashed border-slate-400 py-2 space-y-1 text-xs">
                     <div className="flex justify-between">
                       <span className="text-slate-600">Invoice:</span>
-                      <span className="font-bold">{activeSale.invoice_no}</span>
+                      <span className="font-bold">{formatInvoiceNumber(activeSale.invoice_no)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-600">Date:</span>
@@ -888,7 +889,7 @@ export default function SalesReportPage() {
                         <div className="font-bold text-slate-950 text-sm truncate">{itm.product?.name}</div>
                         <div className="flex justify-between text-xs text-slate-700">
                           <span>
-                            {itm.quantity} x Rs. {Number(itm.unit_price).toFixed(2)}
+                            {formatQuantity(itm.quantity)} x Rs. {Number(itm.unit_price).toFixed(2)}
                           </span>
                           <span className="font-bold text-slate-950">Rs. {Number(itm.subtotal).toFixed(2)}</span>
                         </div>
@@ -931,7 +932,7 @@ export default function SalesReportPage() {
 
                   <div className="text-center border-t border-dashed border-slate-400 pt-3 space-y-1">
                     <div className="text-xs font-bold text-slate-800">Thank you for your business!</div>
-                    <div className="text-[11px] text-slate-500">Software by Sales, Purchase & Accounting ERP</div>
+                    <div className="text-xs text-slate-500">Software by Sales, Purchase & Accounting ERP</div>
                   </div>
                 </div>
               ) : (
@@ -947,7 +948,7 @@ export default function SalesReportPage() {
                       <span className="px-3.5 py-1.5 rounded-full text-xs font-black uppercase bg-emerald-100 text-[#16A34A] border border-emerald-300">
                         TAX INVOICE
                       </span>
-                      <div className="font-mono font-bold text-base text-slate-950 mt-2">{activeSale.invoice_no}</div>
+                      <div className="font-mono font-bold text-base text-slate-950 mt-2">{formatInvoiceNumber(activeSale.invoice_no)}</div>
                       <div className="text-slate-500 text-xs mt-0.5">Date: {activeSale.sale_date.split('T')[0]}</div>
                     </div>
                   </div>
@@ -986,7 +987,7 @@ export default function SalesReportPage() {
                             <span className="block font-mono text-xs text-slate-500 font-medium">{item.product?.sku}</span>
                           </td>
                           <td className="p-3 text-center font-bold text-slate-800">
-                            {item.quantity} {item.product?.unit?.short_name || 'Units'}
+                            {formatQuantity(item.quantity)} {item.product?.unit?.short_name || 'Units'}
                           </td>
                           <td className="p-3 text-right font-medium">Rs. {Number(item.unit_price).toFixed(2)}</td>
                           <td className="p-3 text-right font-black text-slate-950">

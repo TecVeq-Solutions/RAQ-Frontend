@@ -30,6 +30,7 @@ interface ExpenseItem {
   amount: number;
   expense_date: string;
   payment_method: string;
+  financial_account_id?: number | null;
   reference_number?: string | null;
   description?: string | null;
   created_at: string;
@@ -37,6 +38,11 @@ interface ExpenseItem {
     id: number;
     name: string;
     email: string;
+  };
+  financial_account?: {
+    id: number;
+    name: string;
+    account_type: string;
   };
 }
 
@@ -73,6 +79,7 @@ const PAYMENT_METHODS = [
 
 export default function ExpensesPage() {
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
+  const [financialAccounts, setFinancialAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState({
     total_count: 0,
@@ -96,6 +103,7 @@ export default function ExpensesPage() {
     amount: '',
     expense_date: new Date().toISOString().split('T')[0],
     payment_method: 'cash',
+    financial_account_id: '',
     reference_number: '',
     description: '',
   });
@@ -133,6 +141,15 @@ export default function ExpensesPage() {
     return () => clearTimeout(timer);
   }, [fetchExpenses]);
 
+  useEffect(() => {
+    apiClient
+      .get('/financial-accounts?is_active=1&per_page=100')
+      .then((res) => {
+        if (res.data?.data) setFinancialAccounts(res.data.data);
+      })
+      .catch(() => {});
+  }, []);
+
   const openCreateModal = () => {
     setEditingExpense(null);
     setFormData({
@@ -141,6 +158,7 @@ export default function ExpensesPage() {
       amount: '',
       expense_date: new Date().toISOString().split('T')[0],
       payment_method: 'cash',
+      financial_account_id: '',
       reference_number: '',
       description: '',
     });
@@ -158,6 +176,7 @@ export default function ExpensesPage() {
       amount: String(expense.amount),
       expense_date: cleanDate,
       payment_method: expense.payment_method || 'cash',
+      financial_account_id: expense.financial_account_id ? String(expense.financial_account_id) : '',
       reference_number: expense.reference_number || '',
       description: expense.description || '',
     });
@@ -190,6 +209,7 @@ export default function ExpensesPage() {
         amount: amt,
         expense_date: formData.expense_date,
         payment_method: formData.payment_method,
+        financial_account_id: formData.financial_account_id ? Number(formData.financial_account_id) : null,
         reference_number: formData.reference_number.trim() || null,
         description: formData.description.trim() || null,
       };
@@ -421,8 +441,16 @@ export default function ExpensesPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 font-bold uppercase text-xs text-slate-700 tracking-wider">
-                      {exp.payment_method}
+                    <td className="px-6 py-4">
+                      <div className="font-bold uppercase text-xs text-slate-700 tracking-wider">
+                        {exp.payment_method}
+                      </div>
+                      {exp.financial_account && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 mt-1">
+                          <Building className="w-2.5 h-2.5" />
+                          {exp.financial_account.name}
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-right font-black text-base text-rose-600">
                       Rs. {Number(exp.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -578,6 +606,27 @@ export default function ExpensesPage() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* Financial Account Selector (Optional) */}
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
+                  Deduct from Financial Account (Optional)
+                </label>
+                <select
+                  value={formData.financial_account_id}
+                  onChange={(e) => setFormData({ ...formData, financial_account_id: e.target.value })}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all"
+                >
+                  <option value="">-- No Dedicated Account (Legacy Method Only) --</option>
+                  {financialAccounts
+                    .filter((a) => a.is_active)
+                    .map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.name} ({a.account_type.replace('_', ' ')}) — Bal: Rs. {Number(a.current_balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </option>
+                    ))}
+                </select>
               </div>
 
               {/* Date & Ref */}

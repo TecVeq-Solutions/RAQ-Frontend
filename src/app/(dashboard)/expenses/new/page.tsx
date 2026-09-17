@@ -160,7 +160,7 @@ export default function AddExpensePage() {
               <button
                 type="button"
                 onClick={() => setIsCustomCategory(!isCustomCategory)}
-                className="text-[11px] font-bold text-blue-600 hover:underline cursor-pointer"
+                className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
               >
                 {isCustomCategory ? 'Choose from list' : '+ Add custom category'}
               </button>

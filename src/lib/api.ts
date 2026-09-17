@@ -42,4 +42,39 @@ apiClient.interceptors.response.use(
   }
 );
 
+// Simple in-memory cache for static/read-mostly master data (categories, units, etc.)
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const masterDataCache = new Map<string, CacheEntry<any>>();
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
+
+export async function getCachedData<T>(endpoint: string, forceFresh = false): Promise<T> {
+  const cached = masterDataCache.get(endpoint);
+  const now = Date.now();
+
+  if (!forceFresh && cached && now - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+
+  const response = await apiClient.get<{ success: boolean; data: T }>(endpoint);
+  const data = response.data?.data;
+  masterDataCache.set(endpoint, { data, timestamp: now });
+  return data;
+}
+
+export function invalidateCache(endpointPrefix?: string) {
+  if (endpointPrefix) {
+    masterDataCache.forEach((_, key) => {
+      if (key.startsWith(endpointPrefix)) {
+        masterDataCache.delete(key);
+      }
+    });
+  } else {
+    masterDataCache.clear();
+  }
+}
+
 export default apiClient;

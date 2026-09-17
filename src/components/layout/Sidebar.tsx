@@ -27,6 +27,9 @@ import {
   Sparkles,
   CheckCircle2,
   X,
+  Factory,
+  Wrench,
+  Wallet,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -93,6 +96,24 @@ const MENU_ITEMS: MenuItem[] = [
     ],
   },
   {
+    name: 'Manufacturing',
+    icon: Factory,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'operations',
+    children: [
+      { name: 'Production Orders', href: '/manufacturing/orders' },
+      { name: 'Launch Order', href: '/manufacturing/orders/new' },
+      { name: 'Bill of Materials (BOM)', href: '/manufacturing/boms' },
+    ],
+  },
+  {
+    name: 'Assets & Machinery',
+    href: '/assets',
+    icon: Wrench,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'operations',
+  },
+  {
     name: 'Customers',
     icon: Users,
     roles: ['admin'],
@@ -113,6 +134,13 @@ const MENU_ITEMS: MenuItem[] = [
       { name: 'Add New Supplier', href: '/suppliers/new' },
       { name: 'Supplier Ledger (Khata)', href: '/suppliers/ledger' },
     ],
+  },
+  {
+    name: 'Cash & Bank Accounts',
+    href: '/accounts',
+    icon: Wallet,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'operations',
   },
   {
     name: 'Payments',
@@ -252,7 +280,7 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
           <button
             type="button"
             onClick={() => toggleMenu(item.name)}
-            className={`w-full flex items-center justify-between px-3 2xl:px-3.5 py-2.5 2xl:py-3 rounded-xl font-semibold text-[13.5px] 2xl:text-[15px] transition-all group cursor-pointer ${isParentActive
+            className={`w-full flex items-center justify-between px-3 2xl:px-3.5 py-2.5 2xl:py-3 rounded-xl font-semibold text-sm 2xl:text-base transition-all group cursor-pointer ${isParentActive
               ? 'bg-emerald-50/90 text-emerald-950 border border-emerald-200/90 shadow-xs'
               : 'text-slate-700 hover:bg-slate-100/90 hover:text-slate-950 border border-transparent'
               }`}
@@ -289,7 +317,7 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
                     key={child.href}
                     href={child.href}
                     onClick={onClose}
-                    className={`flex items-center justify-between px-3 py-2 2xl:py-2.5 rounded-xl text-[13px] 2xl:text-[14.5px] font-semibold transition-all group/sub ${isChildActive
+                    className={`flex items-center justify-between px-3 py-2 2xl:py-2.5 rounded-xl text-sm font-semibold transition-all group/sub ${isChildActive
                       ? 'bg-emerald-600 text-white font-bold shadow-xs'
                       : 'text-slate-600 hover:bg-slate-100/90 hover:text-slate-950'
                       }`}
@@ -303,9 +331,10 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
                       />
                       <span className="truncate tracking-tight">{child.name}</span>
                     </div>
+
                     {child.badge && (
                       <span
-                        className={`text-[9px] 2xl:text-[10px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider ${isChildActive
+                        className={`text-xs px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${isChildActive
                           ? 'bg-white/25 text-white'
                           : 'bg-emerald-100/80 text-emerald-800'
                           }`}
@@ -328,7 +357,7 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
         key={item.name}
         href={item.href || '#'}
         onClick={onClose}
-        className={`flex items-center justify-between px-3 2xl:px-3.5 py-2.5 2xl:py-3 rounded-xl font-semibold text-[13.5px] 2xl:text-[15px] transition-all group ${isParentActive
+        className={`flex items-center justify-between px-3 2xl:px-3.5 py-2.5 2xl:py-3 rounded-xl font-semibold text-sm 2xl:text-base transition-all group ${isParentActive
           ? 'bg-emerald-600 text-white shadow-xs font-bold'
           : 'text-slate-700 hover:bg-slate-100/90 hover:text-slate-950'
           }`}
@@ -347,7 +376,7 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
 
         {item.badge ? (
           <span
-            className={`text-[9px] 2xl:text-[10px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider ${isParentActive
+            className={`text-xs px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${isParentActive
               ? 'bg-white/25 text-white'
               : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
               }`}
@@ -378,6 +407,7 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
         className={`fixed top-0 bottom-0 left-0 z-50 w-72 2xl:w-80 max-w-[85vw] sm:max-w-xs 2xl:max-w-sm bg-white border-r border-slate-200/90 flex flex-col transition-all duration-300 ease-in-out shadow-lg lg:shadow-none lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
       >
+
         {/* Brand Header */}
         <div className="h-16 2xl:h-20 px-5 2xl:px-6 border-b border-slate-100 flex items-center justify-between flex-shrink-0 bg-white">
           <Link href="/dashboard" className="flex items-center gap-3 group">
@@ -390,13 +420,13 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />
             </div>
             <div>
-              <div className="text-[15px] 2xl:text-[17px] font-extrabold text-slate-900 tracking-tight leading-tight flex items-center gap-1.5">
+              <div className="text-base 2xl:text-lg font-extrabold text-slate-900 tracking-tight leading-tight flex items-center gap-1.5">
                 <span>Tecveq Suite</span>
-                <span className="text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 font-bold rounded">
+                <span className="text-xs px-1.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded">
                   ERP
                 </span>
               </div>
-              <div className="text-[11px] 2xl:text-[12px] font-semibold text-slate-400">
+              <div className="text-xs font-semibold text-slate-400">
                 Sales, Stock & Accounting
               </div>
             </div>
@@ -412,37 +442,12 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {/* User Mini Profile Card */}
-        {/* <div className="px-3.5 2xl:px-4.5 pt-3 pb-1 flex-shrink-0">
-          <div className="p-2.5 2xl:p-3 rounded-2xl bg-slate-50 border border-slate-200/70 flex items-center justify-between">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 2xl:w-9 2xl:h-9 rounded-xl bg-slate-900 text-white font-bold flex items-center justify-center text-xs 2xl:text-sm shadow-xs shrink-0">
-                {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs 2xl:text-sm font-bold text-slate-900 truncate">
-                  {user?.name || 'Administrator'}
-                </div>
-                <div className="flex items-center gap-1.5 text-[11px] 2xl:text-xs text-slate-500">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="capitalize font-semibold text-emerald-700">{user?.role || 'admin'}</span>
-                  <span>• Online</span>
-                </div>
-              </div>
-            </div>
-
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] 2xl:text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shrink-0">
-              Active
-            </span>
-          </div>
-        </div> */}
-
         {/* Navigation Items */}
         <div className="flex-1 overflow-y-auto px-3.5 2xl:px-4.5 py-3 space-y-4 scrollbar-thin">
           {/* Operations & Main Section */}
           {operationsItems.length > 0 && (
             <div className="space-y-1">
-              <div className="px-3 pt-1 pb-1.5 text-[11px] 2xl:text-[12px] font-extrabold uppercase tracking-wider text-slate-400 select-none">
+              <div className="px-3 pt-1 pb-1.5 text-xs font-bold uppercase tracking-wider text-slate-400 select-none">
                 Main Navigation
               </div>
               {operationsItems.map(renderMenuItem)}
@@ -452,7 +457,7 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
           {/* Admin & System Section */}
           {adminItems.length > 0 && (
             <div className="space-y-1 pt-2 border-t border-slate-100">
-              <div className="px-3 pt-1 pb-1.5 text-[11px] 2xl:text-[12px] font-extrabold uppercase tracking-wider text-slate-400 select-none">
+              <div className="px-3 pt-1 pb-1.5 text-xs font-bold uppercase tracking-wider text-slate-400 select-none">
                 System & Settings
               </div>
               {adminItems.map(renderMenuItem)}
@@ -462,10 +467,10 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
 
         {/* Logout & Footer */}
         <div className="p-3 2xl:p-4 border-t border-slate-100 flex-shrink-0 bg-slate-50/70 space-y-2">
-          <div className="flex items-center justify-between text-[11px] 2xl:text-[12px] font-medium text-slate-400 px-1">
+          <div className="flex items-center justify-between text-xs font-medium text-slate-400 px-1">
             <span>Tecveq Suite v2.4</span>
             <span className="flex items-center gap-1 text-emerald-600 font-semibold">
-              <CheckCircle2 className="w-3 h-3" /> Live
+              <CheckCircle2 className="w-3.5 h-3.5" /> Live
             </span>
           </div>
           <button
@@ -474,7 +479,7 @@ export default function Sidebar({ user, isOpen, onClose }: SidebarProps) {
               e.preventDefault();
               authService.logout();
             }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 2xl:py-3 rounded-xl text-[13.5px] 2xl:text-[15px] font-bold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors border border-transparent hover:border-red-200 cursor-pointer shadow-2xs"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 2xl:py-3 rounded-xl text-sm 2xl:text-base font-bold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors border border-transparent hover:border-red-200 cursor-pointer shadow-2xs"
           >
             <LogOut className="w-4 h-4 2xl:w-4.5 2xl:h-4.5" />
             <span>Sign Out Session</span>

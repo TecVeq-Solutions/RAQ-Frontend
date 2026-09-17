@@ -139,10 +139,10 @@ export default function SettingsPage() {
     <div className="space-y-6 animate-fadeIn max-w-5xl pb-16">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
+        <h1 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-[#0F172A] tracking-tight">
           System & Business Settings
         </h1>
-        <p className="text-sm sm:text-base text-slate-500 mt-1">
+        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
           Configure business identity, receipt vouchers, currencies, and automated backup retention policies
         </p>
       </div>
@@ -191,7 +191,7 @@ export default function SettingsPage() {
                   required
                   value={formData.business_name}
                   onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
-                  placeholder="e.g. Tecveq Electronics & General Store"
+                  placeholder="e.g. Premier Copy & Register Industries"
                   className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/25 focus:border-[#16A34A] transition-all"
                 />
               </div>
@@ -297,7 +297,7 @@ export default function SettingsPage() {
                   rows={3}
                   value={formData.receipt_footer}
                   onChange={(e) => setFormData({ ...formData, receipt_footer: e.target.value })}
-                  placeholder="e.g. Thank you for your business! Goods once sold are subject to store return policy."
+                  placeholder="e.g. Thank you for your business! Special orders for school & stationery registers."
                   className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]/25 focus:border-[#16A34A] transition-all"
                 />
               </div>

@@ -3,14 +3,15 @@
 import React from 'react';
 import { User } from '@/types/auth';
 import { authService } from '@/lib/auth';
-import { Menu, LogOut, CheckCircle } from 'lucide-react';
+import { Menu, LogOut, CheckCircle, Sparkles } from 'lucide-react';
 
 interface HeaderProps {
   user: User | null;
   onMenuToggle: () => void;
+  onAiToggle?: () => void;
 }
 
-export default function Header({ user, onMenuToggle }: HeaderProps) {
+export default function Header({ user, onMenuToggle, onAiToggle }: HeaderProps) {
   return (
     <header className="h-16 2xl:h-20 bg-white border-b border-slate-200 px-3.5 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
       {/* Left: Mobile Menu Toggle, Logo & Title */}
@@ -33,14 +34,14 @@ export default function Header({ user, onMenuToggle }: HeaderProps) {
           />
           <div className="min-w-0 truncate">
             <div className="flex items-center gap-1.5 truncate">
-              <span className="text-[13.5px] sm:text-[15px] 2xl:text-base font-bold text-slate-900 tracking-tight leading-tight truncate">
+              <span className="text-sm sm:text-base 2xl:text-lg font-bold text-slate-900 tracking-tight leading-tight truncate">
                 Tecveq Suite
               </span>
-              <span className="hidden xs:inline-flex items-center px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">
+              <span className="hidden xs:inline-flex items-center px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded">
                 ERP
               </span>
             </div>
-            <div className="text-[11px] 2xl:text-xs font-medium text-slate-500 truncate leading-tight flex items-center gap-1.5">
+            <div className="text-xs font-medium text-slate-500 truncate leading-tight flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 hidden sm:inline-block animate-pulse" />
               <span className="truncate">Sales & Accounting ERP</span>
             </div>
@@ -49,7 +50,20 @@ export default function Header({ user, onMenuToggle }: HeaderProps) {
       </div>
 
       {/* Right: User Information & Action */}
-      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+        {/* AI Assistant Quick Trigger Pill */}
+        {onAiToggle && (
+          <button
+            type="button"
+            onClick={onAiToggle}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 hover:from-emerald-500/20 hover:to-teal-500/20 border border-emerald-500/30 text-emerald-700 text-xs sm:text-sm font-bold shadow-2xs transition-all hover:scale-102 active:scale-98 cursor-pointer"
+            title="Open Tecveq AI Assistant"
+          >
+            <Sparkles className="w-4 h-4 text-emerald-600 animate-pulse" />
+            <span className="hidden sm:inline">AI Assistant</span>
+          </button>
+        )}
+
         {/* System Status Pill */}
         <div className="hidden md:flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs 2xl:text-sm font-semibold rounded-full">
           <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
@@ -59,15 +73,15 @@ export default function Header({ user, onMenuToggle }: HeaderProps) {
         {/* User Badge Info */}
         <div className="flex items-center gap-2.5 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200">
           <div className="text-right hidden sm:block">
-            <div className="text-xs 2xl:text-sm font-bold text-slate-900 leading-tight truncate max-w-[150px]">
+            <div className="text-sm font-bold text-slate-900 leading-tight truncate max-w-[150px]">
               {user?.name || 'User'}
             </div>
-            <div className="text-[11px] 2xl:text-xs text-slate-400 capitalize font-medium">
+            <div className="text-xs text-slate-400 capitalize font-medium">
               {user?.role ? `${user.role} role` : 'Authenticated'}
             </div>
           </div>
 
-          <div className="w-8 h-8 sm:w-9 sm:h-9 2xl:w-10 2xl:h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs 2xl:text-sm shadow-xs shrink-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 2xl:w-10 2xl:h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs shrink-0">
             {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
 

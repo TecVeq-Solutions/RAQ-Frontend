@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import apiClient from '@/lib/api';
+import { formatQuantity } from '@/lib/formatters';
 import {
   History,
   ArrowUpRight,
@@ -110,10 +111,13 @@ export default function StockMovementsPage() {
               <option value="">All Movement Types</option>
               <option value="purchase">Purchase (Inward Stock)</option>
               <option value="sale">Sale (Outward Stock)</option>
+              <option value="production_in">Production In (Finished Goods)</option>
+              <option value="production_out">Production Out (Raw Materials)</option>
               <option value="adjustment_in">Adjustment In</option>
               <option value="adjustment_out">Adjustment Out</option>
               <option value="return_in">Return In</option>
               <option value="return_out">Return Out</option>
+              <option value="wastage">Wastage / Scrap</option>
             </select>
           </div>
 
@@ -152,20 +156,24 @@ export default function StockMovementsPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
-                    <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="w-6 h-6 animate-spin text-[#16A34A]" />
-                      <span>Loading stock movements...</span>
-                    </div>
-                  </td>
-                </tr>
+                Array.from({ length: 6 }).map((_, rIdx) => (
+                  <tr key={rIdx}>
+                    <td className="px-6 py-4"><div className="h-4 w-28 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-32 skeleton-shimmer rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="h-6 w-20 skeleton-shimmer rounded-full mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 skeleton-shimmer rounded-md mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 skeleton-shimmer rounded-md mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 skeleton-shimmer rounded-md mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-32 skeleton-shimmer rounded-md" /></td>
+                  </tr>
+                ))
               ) : movements.length > 0 ? (
                 movements.map((m) => {
                   const isInward =
                     m.movement_type === 'purchase' ||
                     m.movement_type === 'adjustment_in' ||
-                    m.movement_type === 'return_in';
+                    m.movement_type === 'return_in' ||
+                    m.movement_type === 'production_in';
                   const unitName = m.product?.unit?.short_name || 'Units';
 
                   return (
@@ -190,6 +198,21 @@ export default function StockMovementsPage() {
                             <ArrowDownRight className="w-3.5 h-3.5 text-blue-600" />
                             Sale Outward
                           </span>
+                        ) : m.movement_type === 'production_in' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-300">
+                            <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600" />
+                            Production In
+                          </span>
+                        ) : m.movement_type === 'production_out' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+                            <ArrowDownRight className="w-3.5 h-3.5 text-amber-600" />
+                            Production Out
+                          </span>
+                        ) : m.movement_type === 'wastage' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300">
+                            <ArrowDownRight className="w-3.5 h-3.5 text-rose-600" />
+                            Wastage / Scrap
+                          </span>
                         ) : isInward ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                             <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
@@ -203,7 +226,7 @@ export default function StockMovementsPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 text-center font-semibold text-slate-500">
-                        {m.previous_stock} {unitName}
+                        {formatQuantity(m.previous_stock)} {unitName}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span
@@ -212,16 +235,16 @@ export default function StockMovementsPage() {
                           }`}
                         >
                           {isInward ? '+' : '-'}
-                          {m.quantity} {unitName}
+                          {formatQuantity(m.quantity)} {unitName}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center font-extrabold text-slate-900">
-                        {m.new_stock} {unitName}
+                        {formatQuantity(m.new_stock)} {unitName}
                       </td>
                       <td className="px-6 py-4 text-xs text-slate-500">
                         <div className="font-medium text-slate-700">{m.notes || '-'}</div>
                         {m.user && (
-                          <div className="text-[11px] text-slate-400">By: {m.user.name}</div>
+                          <div className="text-xs text-slate-400">By: {m.user.name}</div>
                         )}
                       </td>
                     </tr>

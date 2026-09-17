@@ -120,7 +120,7 @@ export default function SupplierModal({
             <input
               type="text"
               required
-              placeholder="e.g. Al-Noor Mills"
+              placeholder="e.g. Lahore Paper & Board Mills / Premier Paper Mart"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
@@ -183,7 +183,7 @@ export default function SupplierModal({
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed"
             />
             {supplierToEdit && (
-              <p className="mt-1 text-[11px] text-slate-500 flex items-center gap-1">
+              <p className="mt-1 text-xs text-slate-500 flex items-center gap-1">
                 <Info className="w-3.5 h-3.5 text-slate-400" />
                 Opening balance is immutable. Post reversing entry for changes.
               </p>

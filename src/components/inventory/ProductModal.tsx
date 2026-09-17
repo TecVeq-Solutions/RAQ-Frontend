@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import apiClient from '@/lib/api';
-import { Category, Product, ProductUnit } from '@/types/inventory';
+import { Category, Product, ProductType, ProductUnit } from '@/types/inventory';
 import { X, Loader2, Boxes, Calculator, AlertCircle } from 'lucide-react';
 
 interface ProductModalProps {
@@ -25,6 +25,12 @@ export default function ProductModal({
   const [name, setName] = useState('');
   const [sku, setSku] = useState('');
   const [barcode, setBarcode] = useState('');
+  const [productType, setProductType] = useState<ProductType>('finished_good');
+  const [paperSize, setPaperSize] = useState('');
+  const [gsm, setGsm] = useState('');
+  const [sheetsPerUnit, setSheetsPerUnit] = useState('');
+  const [pagesCount, setPagesCount] = useState('');
+  const [materialType, setMaterialType] = useState('');
   const [categoryId, setCategoryId] = useState<string>('');
   const [unitId, setUnitId] = useState<string>('');
   const [hasSecondaryUnit, setHasSecondaryUnit] = useState(false);
@@ -45,6 +51,12 @@ export default function ProductModal({
       setName(productToEdit.name || '');
       setSku(productToEdit.sku || '');
       setBarcode(productToEdit.barcode || '');
+      setProductType(productToEdit.product_type || 'finished_good');
+      setPaperSize(productToEdit.paper_size || '');
+      setGsm(productToEdit.gsm ? String(productToEdit.gsm) : '');
+      setSheetsPerUnit(productToEdit.sheets_per_unit ? String(productToEdit.sheets_per_unit) : '');
+      setPagesCount(productToEdit.pages_count ? String(productToEdit.pages_count) : '');
+      setMaterialType(productToEdit.material_type || '');
       setCategoryId(productToEdit.category_id ? String(productToEdit.category_id) : '');
       setUnitId(productToEdit.unit_id ? String(productToEdit.unit_id) : '');
 
@@ -68,6 +80,12 @@ export default function ProductModal({
       setName('');
       setSku(`SKU-${Math.floor(100000 + Math.random() * 900000)}`);
       setBarcode('');
+      setProductType('finished_good');
+      setPaperSize('');
+      setGsm('');
+      setSheetsPerUnit('');
+      setPagesCount('');
+      setMaterialType('');
       setCategoryId(categories.length > 0 ? String(categories[0].id) : '');
       setUnitId(units.length > 0 ? String(units[0].id) : '');
       setHasSecondaryUnit(false);
@@ -115,6 +133,12 @@ export default function ProductModal({
       name: name.trim(),
       sku: sku.trim(),
       barcode: barcode.trim() || null,
+      product_type: productType,
+      paper_size: paperSize.trim() || null,
+      gsm: gsm ? parseInt(gsm, 10) : null,
+      sheets_per_unit: sheetsPerUnit ? parseInt(sheetsPerUnit, 10) : null,
+      pages_count: pagesCount ? parseInt(pagesCount, 10) : null,
+      material_type: materialType.trim() || null,
       category_id: categoryId ? parseInt(categoryId, 10) : null,
       unit_id: parseInt(unitId, 10),
       secondary_unit_id: hasSecondaryUnit && secondaryUnitId ? parseInt(secondaryUnitId, 10) : null,
@@ -177,7 +201,15 @@ export default function ProductModal({
               <input
                 type="text"
                 required
-                placeholder="e.g. Super Basmati Rice"
+                placeholder={
+                  productType === 'finished_good'
+                    ? 'e.g. A4 Copy 100 Pages'
+                    : productType === 'raw_material'
+                    ? 'e.g. A4 Offset Paper 80 GSM'
+                    : productType === 'consumable'
+                    ? 'e.g. Packing Tape'
+                    : 'e.g. Paper Cutting Machine'
+                }
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
@@ -191,7 +223,15 @@ export default function ProductModal({
               <input
                 type="text"
                 required
-                placeholder="e.g. RICE-001"
+                placeholder={
+                  productType === 'finished_good'
+                    ? 'e.g. COPY-A4-100'
+                    : productType === 'raw_material'
+                    ? 'e.g. RAW-PPR-80'
+                    : productType === 'consumable'
+                    ? 'e.g. CONS-TAPE'
+                    : 'e.g. MACH-CUT-01'
+                }
                 value={sku}
                 onChange={(e) => setSku(e.target.value)}
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-medium font-mono focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
@@ -199,7 +239,115 @@ export default function ProductModal({
             </div>
           </div>
 
-          {/* Row 2: Category & Barcode */}
+          {/* Row 2: Product Type Classification */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Product Classification (Type) *
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { type: 'finished_good', label: 'Finished Good', desc: 'Registers, Copies, Notebooks, School Copies, A4 Registers' },
+                { type: 'raw_material', label: 'Raw Material', desc: 'Paper, Card / Grey Board, Glue, Binding Thread' },
+                { type: 'consumable', label: 'Consumable', desc: 'Packaging Material, Packing Tape, Operational Supplies' },
+                { type: 'machinery', label: 'Machinery', desc: 'Paper Cutting Machine, Binding Machine, Production Machines' },
+              ].map((item) => (
+                <button
+                  type="button"
+                  key={item.type}
+                  onClick={() => setProductType(item.type as ProductType)}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    productType === item.type
+                      ? 'border-[#16A34A] bg-emerald-50/70 ring-1 ring-[#16A34A]'
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
+                  }`}
+                >
+                  <div className={`text-xs font-bold ${productType === item.type ? 'text-[#16A34A]' : 'text-slate-800'}`}>
+                    {item.label}
+                  </div>
+                  <div className="text-xs text-slate-400 mt-0.5 leading-tight">{item.desc}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Conditional Manufacturing & Paper Attributes */}
+          {(productType === 'raw_material' || productType === 'finished_good') && (
+            <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl space-y-3 animate-fadeIn">
+              <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <Boxes className="w-3.5 h-3.5 text-[#16A34A]" />
+                <span>Manufacturing & Paper Specifications (Optional)</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
+                    Material / Paper Type
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Offset Paper, Art Card, Grey Board"
+                    value={materialType}
+                    onChange={(e) => setMaterialType(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
+                    Paper Size
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. A4, A5, Legal"
+                    value={paperSize}
+                    onChange={(e) => setPaperSize(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
+                    GSM (Weight)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="e.g. 70, 80, 100, 120"
+                    value={gsm}
+                    onChange={(e) => setGsm(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
+                    Sheets Per Unit (e.g. 500/Ream)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="e.g. 50, 100, 500"
+                    value={sheetsPerUnit}
+                    onChange={(e) => setSheetsPerUnit(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
+                    Pages Count (for Finished Books)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="e.g. 80, 100, 120, 160"
+                    value={pagesCount}
+                    onChange={(e) => setPagesCount(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#16A34A] bg-white"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Row 3: Category & Barcode */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
@@ -225,7 +373,7 @@ export default function ProductModal({
               </label>
               <input
                 type="text"
-                placeholder="e.g. 890123456789"
+                placeholder="e.g. 8901234567890"
                 value={barcode}
                 onChange={(e) => setBarcode(e.target.value)}
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
@@ -270,7 +418,7 @@ export default function ProductModal({
                   className="w-4 h-4 rounded text-[#16A34A] focus:ring-[#16A34A]"
                 />
                 <span className="text-xs font-bold text-slate-800">
-                  Enable Secondary Unit (e.g. 1 Bag = 25 KG)
+                  Enable Secondary Unit (e.g. 1 Box = 50 Pieces or 1 Pack = 500 Sheets)
                 </span>
               </label>
             </div>
@@ -308,7 +456,7 @@ export default function ProductModal({
                     type="number"
                     step="0.0001"
                     min="0.0001"
-                    placeholder="e.g. 25.00"
+                    placeholder="e.g. 50.00 or 500.00"
                     value={conversionRatio}
                     onChange={(e) => setConversionRatio(e.target.value)}
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A]"
