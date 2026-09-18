@@ -42,6 +42,7 @@ const CATEGORIES: { label: string; value: string; color: string }[] = [
   { label: 'User', value: 'user', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' },
   { label: 'Module', value: 'module', color: 'bg-teal-500/10 text-teal-400 border-teal-500/30' },
   { label: 'AI ERP', value: 'ai', color: 'bg-amber-500/10 text-amber-400 border-amber-500/30' },
+  { label: 'Support', value: 'support', color: 'bg-orange-500/10 text-orange-400 border-orange-500/30' },
   { label: 'Database', value: 'db', color: 'bg-rose-500/10 text-rose-400 border-rose-500/30' },
 ];
 

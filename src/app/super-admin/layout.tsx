@@ -14,7 +14,9 @@ import {
   KeyRound,
   Building2,
   ScrollText,
+  Bell,
 } from 'lucide-react';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 export default function SuperAdminLayout({
   children,
@@ -196,6 +198,8 @@ export default function SuperAdminLayout({
 
           {/* Right Super Admin Profile & Actions */}
           <div className="flex items-center gap-3">
+            <NotificationBell basePath="/super-admin" />
+
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-xs font-semibold text-slate-200">{user.name}</span>
               <span className="text-[11px] text-slate-400">{user.email}</span>

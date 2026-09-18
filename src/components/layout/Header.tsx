@@ -4,6 +4,7 @@ import React from 'react';
 import { User } from '@/types/auth';
 import { authService } from '@/lib/auth';
 import { Menu, LogOut, CheckCircle, Sparkles } from 'lucide-react';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 interface HeaderProps {
   user: User | null;
@@ -69,6 +70,9 @@ export default function Header({ user, onMenuToggle, onAiToggle }: HeaderProps) 
           <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
           <span>API Connected</span>
         </div>
+
+        {/* Real-time Notification Bell */}
+        <NotificationBell basePath="" />
 
         {/* User Badge Info */}
         <div className="flex items-center gap-2.5 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200">

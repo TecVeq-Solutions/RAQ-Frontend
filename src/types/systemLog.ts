@@ -1,4 +1,4 @@
-export type LogCategory = 'auth' | 'license' | 'package' | 'tenant' | 'module' | 'user' | 'db' | 'ai';
+export type LogCategory = 'auth' | 'license' | 'package' | 'tenant' | 'module' | 'user' | 'db' | 'ai' | 'support';
 export type LogSeverity = 'info' | 'warning' | 'critical';
 
 export interface AdminActivityLog {

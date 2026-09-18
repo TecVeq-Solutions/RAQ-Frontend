@@ -34,6 +34,7 @@ import {
   Wrench,
   Wallet,
   Lock,
+  Bell,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -208,6 +209,13 @@ const MENU_ITEMS: MenuItem[] = [
     roles: ['admin'],
     section: 'admin',
     moduleCode: 'backup',
+  },
+  {
+    name: 'Notifications',
+    href: '/notifications',
+    icon: Bell,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'admin',
   },
   {
     name: 'System Settings',

@@ -32,7 +32,9 @@ import {
   MoreVertical,
   X,
   Lock,
+  Headset,
 } from 'lucide-react';
+import StartSupportModal from '@/components/support/StartSupportModal';
 
 export default function TenantUsersManagementPage() {
   const params = useParams();
@@ -52,6 +54,7 @@ export default function TenantUsersManagementPage() {
   const [userToDeactivate, setUserToDeactivate] = useState<TenantUser | null>(null);
   const [userToRevoke, setUserToRevoke] = useState<TenantUser | null>(null);
   const [userToReset, setUserToReset] = useState<TenantUser | null>(null);
+  const [userToImpersonate, setUserToImpersonate] = useState<TenantUser | null>(null);
 
   // Form State
   const [createForm, setCreateForm] = useState<CreateTenantUserPayload>({
@@ -467,6 +470,18 @@ export default function TenantUsersManagementPage() {
                           </button>
                         )}
 
+                        {user.is_active && (
+                          <button
+                            type="button"
+                            onClick={() => setUserToImpersonate(user)}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors cursor-pointer flex items-center gap-1"
+                            title="Start Support Mode & Impersonate this user"
+                          >
+                            <Headset className="w-3 h-3 text-amber-700" />
+                            <span>Support</span>
+                          </button>
+                        )}
+
                         <button
                           type="button"
                           onClick={() => setUserToRevoke(user)}
@@ -741,6 +756,17 @@ export default function TenantUsersManagementPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* START SUPPORT MODE MODAL */}
+      {userToImpersonate && data?.tenant && (
+        <StartSupportModal
+          isOpen={!!userToImpersonate}
+          onClose={() => setUserToImpersonate(null)}
+          tenantId={Number(tenantId)}
+          tenantName={data.tenant.name}
+          preselectedUser={userToImpersonate}
+        />
       )}
     </div>
   );
