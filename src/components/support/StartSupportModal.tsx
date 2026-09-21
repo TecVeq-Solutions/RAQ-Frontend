@@ -9,9 +9,7 @@ import {
   Building2,
   AlertTriangle,
   X,
-  Sparkles,
   ArrowRight,
-  CheckCircle2,
   Lock,
 } from 'lucide-react';
 import { supportSessionService } from '@/lib/supportSessionService';
@@ -112,10 +110,10 @@ export default function StartSupportModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200 font-sans">
       <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
-        {/* Header with High-Visibility Gradient */}
-        <div className="p-6 bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 text-white relative">
+        {/* Header */}
+        <div className="p-6 bg-slate-900 text-white relative">
           <button
             type="button"
             onClick={onClose}
@@ -126,18 +124,18 @@ export default function StartSupportModal({
           </button>
 
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20">
-              <ShieldAlert className="w-6 h-6 text-amber-100" />
+            <div className="p-2.5 rounded-2xl bg-amber-500/20 border border-amber-500/30">
+              <ShieldAlert className="w-6 h-6 text-amber-400" />
             </div>
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-100/90">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
                 SaaS Support & Impersonation
               </span>
               <h2 className="text-xl font-black text-white">Start Support Session</h2>
             </div>
           </div>
 
-          <p className="text-xs text-white/85 leading-relaxed mt-1">
+          <p className="text-xs text-slate-300 leading-relaxed mt-1">
             Initiate a controlled, time-bounded, and fully audited support session to assist{' '}
             <strong className="text-white font-bold">{tenantName}</strong>.
           </p>
@@ -156,7 +154,7 @@ export default function StartSupportModal({
           <div className="space-y-3.5">
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Building2 className="w-4 h-4 text-indigo-600" />
+                <Building2 className="w-4 h-4 text-emerald-600" />
                 <div>
                   <span className="text-[11px] font-semibold text-slate-400 block">Organization</span>
                   <span className="text-xs font-bold text-slate-900">{tenantName}</span>
@@ -185,7 +183,7 @@ export default function StartSupportModal({
             ) : (
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-indigo-600" />
+                  <User className="w-3.5 h-3.5 text-emerald-600" />
                   <span>Select Impersonation Account</span>
                   <span className="text-rose-500">*</span>
                 </label>
@@ -195,7 +193,7 @@ export default function StartSupportModal({
                   <select
                     value={selectedUserId || ''}
                     onChange={(e) => setSelectedUserId(Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                     required
                   >
                     {users.map((u) => (
@@ -224,7 +222,7 @@ export default function StartSupportModal({
                   onClick={() => setDurationMinutes(opt.value)}
                   className={`py-2 px-2.5 rounded-xl text-xs font-bold border transition-all text-center cursor-pointer ${
                     durationMinutes === opt.value
-                      ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
@@ -238,7 +236,7 @@ export default function StartSupportModal({
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-indigo-600" />
+                <Lock className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Mandatory Support Reason / Ticket</span>
                 <span className="text-rose-500">*</span>
               </span>
@@ -249,7 +247,7 @@ export default function StartSupportModal({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="e.g., Ticket #4928 — Investigating discrepancy in raw material cutting log calculation."
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30 resize-none"
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 resize-none"
               required
             />
           </div>
@@ -279,7 +277,7 @@ export default function StartSupportModal({
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {submitting ? (
                 <>

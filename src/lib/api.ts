@@ -33,8 +33,12 @@ apiClient.interceptors.response.use(
       Cookies.remove('auth_token');
       Cookies.remove('user');
 
-      // Only redirect on client side
-      if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+      // Only redirect on client side and ignore super-admin routes
+      if (
+        typeof window !== 'undefined' &&
+        !window.location.pathname.startsWith('/login') &&
+        !window.location.pathname.startsWith('/super-admin')
+      ) {
         window.location.href = '/login?session_expired=1';
       }
     }

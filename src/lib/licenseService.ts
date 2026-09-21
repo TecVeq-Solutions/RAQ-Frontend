@@ -108,4 +108,14 @@ export const licenseService = {
     );
     return response.data.data;
   },
+
+  /**
+   * Fetch all tenants for dropdown selection.
+   */
+  async getTenants(): Promise<Array<{ id: number; name: string; email: string; status: string }>> {
+    const response = await superAdminApiClient.get<{ success: boolean; data: Array<{ id: number; name: string; email: string; status: string }> }>(
+      '/super-admin/tenants'
+    );
+    return response.data.data;
+  },
 };

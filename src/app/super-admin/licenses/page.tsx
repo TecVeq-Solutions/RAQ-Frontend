@@ -38,8 +38,11 @@ import {
 export default function SuperAdminLicensesPage() {
   const [licenses, setLicenses] = useState<License[]>([]);
   const [packages, setPackages] = useState<Package[]>([]);
+  const [tenants, setTenants] = useState<Array<{ id: number; name: string; email: string; status: string }>>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalError, setModalError] = useState<string | null>(null);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
 
   // Filters
   const [search, setSearch] = useState<string>('');
@@ -78,23 +81,33 @@ export default function SuperAdminLicensesPage() {
 
   const [actionLoading, setActionLoading] = useState<boolean>(false);
 
+  const showToast = (msg: string) => {
+    setSuccessToast(msg);
+    setTimeout(() => setSuccessToast(null), 4000);
+  };
+
   // Load Data
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [lics, pkgs] = await Promise.all([
+      const [lics, pkgs, tens] = await Promise.all([
         licenseService.getLicenses({
           status: statusFilter,
           package_id: packageFilter !== 'all' ? Number(packageFilter) : undefined,
           search: search.trim() || undefined,
         }),
         packageService.getAllPackages({ status: 'active' }),
+        licenseService.getTenants().catch(() => []),
       ]);
       setLicenses(lics);
       setPackages(pkgs);
+      setTenants(tens);
       if (pkgs.length > 0 && !generateForm.package_id) {
         setGenerateForm((prev) => ({ ...prev, package_id: pkgs[0].id }));
+      }
+      if (tens.length > 0 && !generateForm.tenant_id) {
+        setGenerateForm((prev) => ({ ...prev, tenant_id: tens[0].id }));
       }
     } catch (err: any) {
       setError(
@@ -120,17 +133,25 @@ export default function SuperAdminLicensesPage() {
   const handleGenerateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setActionLoading(true);
+    setModalError(null);
     try {
-      await licenseService.generateLicense({
+      const created = await licenseService.generateLicense({
         tenant_id: Number(generateForm.tenant_id),
         package_id: Number(generateForm.package_id),
         starts_at: generateForm.starts_at,
         status: generateForm.status,
       });
       setGeneratingOpen(false);
+      showToast(`License '${created.license_key}' issued successfully!`);
       await fetchData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to generate license.');
+      const resp = err.response?.data;
+      if (resp?.errors) {
+        const msgs = Object.values(resp.errors).flat().join(' ');
+        setModalError(msgs);
+      } else {
+        setModalError(resp?.message || 'Failed to generate license. Please check input parameters.');
+      }
     } finally {
       setActionLoading(false);
     }
@@ -140,7 +161,8 @@ export default function SuperAdminLicensesPage() {
   const handleActivate = async (license: License) => {
     setActionLoading(true);
     try {
-      await licenseService.activateLicense(license.id);
+      const updated = await licenseService.activateLicense(license.id);
+      showToast(`License '${license.license_key}' activated successfully!`);
       await fetchData();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to activate license.');
@@ -156,6 +178,7 @@ export default function SuperAdminLicensesPage() {
     setActionLoading(true);
     try {
       await licenseService.suspendLicense(suspendingLicense.id, suspendReason);
+      showToast(`License '${suspendingLicense.license_key}' suspended.`);
       setSuspendingLicense(null);
       setSuspendReason('');
       await fetchData();
@@ -173,6 +196,7 @@ export default function SuperAdminLicensesPage() {
     setActionLoading(true);
     try {
       await licenseService.revokeLicense(revokingLicense.id, revokeReason);
+      showToast(`License '${revokingLicense.license_key}' permanently revoked.`);
       setRevokingLicense(null);
       setRevokeReason('');
       setRevokeConfirmText('');
@@ -190,7 +214,8 @@ export default function SuperAdminLicensesPage() {
     if (!renewingLicense) return;
     setActionLoading(true);
     try {
-      await licenseService.renewLicense(renewingLicense.id, renewCycle);
+      const updated = await licenseService.renewLicense(renewingLicense.id, renewCycle);
+      showToast(`License '${renewingLicense.license_key}' renewed successfully!`);
       setRenewingLicense(null);
       await fetchData();
     } catch (err: any) {
@@ -207,6 +232,7 @@ export default function SuperAdminLicensesPage() {
     setActionLoading(true);
     try {
       await licenseService.extendLicense(extendingLicense.id, extendDays, extendReason);
+      showToast(`License extended by ${extendDays} days!`);
       setExtendingLicense(null);
       setExtendDays(30);
       setExtendReason('');
@@ -305,20 +331,54 @@ export default function SuperAdminLicensesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
+      {/* Toast Notification */}
+      {successToast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-700 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 font-sans text-xs font-bold border border-emerald-500">
+          <ShieldCheck className="w-5 h-5 text-emerald-200 shrink-0" />
+          <span>{successToast}</span>
+          <button
+            type="button"
+            onClick={() => setSuccessToast(null)}
+            className="ml-2 text-emerald-200 hover:text-white cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Global Error Banner */}
+      {error && (
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between text-xs text-rose-800">
+          <div className="flex items-center gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="text-rose-600 hover:text-rose-900 cursor-pointer font-bold"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* 1. Header Banner & Quick Controls */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-slate-900/90 to-indigo-950/40 p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl backdrop-blur-sm">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+              <KeyRound className="w-5 h-5" />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
               SaaS License Lifecycle Manager
             </h1>
-            <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-xs font-semibold">
-              <KeyRound className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
               Automated Engine
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Centralized validation, renewals, extensions, grace periods, and immutable audit history.
           </p>
         </div>
@@ -326,9 +386,12 @@ export default function SuperAdminLicensesPage() {
         {/* Action Toolbar */}
         <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
           <button
-            onClick={() => setGeneratingOpen(true)}
+            onClick={() => {
+              setModalError(null);
+              setGeneratingOpen(true);
+            }}
             type="button"
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-600/20 cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Generate License</span>
@@ -337,7 +400,7 @@ export default function SuperAdminLicensesPage() {
       </div>
 
       {/* 2. Filters & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200/90 shadow-xs">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -345,7 +408,7 @@ export default function SuperAdminLicensesPage() {
             placeholder="Search by license key, tenant name or package..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 transition-colors font-medium"
           />
         </div>
 
@@ -354,7 +417,7 @@ export default function SuperAdminLicensesPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer"
+            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:bg-white focus:border-emerald-500 cursor-pointer font-medium"
           >
             <option value="all">All Statuses</option>
             <option value="active">Active Only</option>
@@ -369,7 +432,7 @@ export default function SuperAdminLicensesPage() {
           <select
             value={packageFilter}
             onChange={(e) => setPackageFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer"
+            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:bg-white focus:border-emerald-500 cursor-pointer font-medium"
           >
             <option value="all">All Packages</option>
             {packages.map((p) => (
@@ -382,7 +445,7 @@ export default function SuperAdminLicensesPage() {
           <button
             onClick={fetchData}
             type="button"
-            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 transition-colors cursor-pointer shadow-xs"
             title="Reload Licenses"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -394,14 +457,14 @@ export default function SuperAdminLicensesPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-72 bg-slate-900/50 border border-slate-800 rounded-2xl p-6" />
+            <div key={i} className="h-72 bg-white border border-slate-200 rounded-2xl p-6 shadow-xs" />
           ))}
         </div>
       ) : licenses.length === 0 ? (
-        <div className="p-12 text-center bg-slate-900/40 rounded-2xl border border-slate-800 space-y-3">
-          <KeyRound className="w-10 h-10 text-slate-600 mx-auto" />
-          <h3 className="text-base font-bold text-white">No Licenses Found</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+        <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+          <KeyRound className="w-10 h-10 text-slate-400 mx-auto" />
+          <h3 className="text-base font-bold text-slate-900">No Licenses Found</h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
             {search || statusFilter !== 'all' || packageFilter !== 'all'
               ? 'No license records match your active search filter.'
               : 'Issue a new license to get started.'}
@@ -419,19 +482,19 @@ export default function SuperAdminLicensesPage() {
             return (
               <div
                 key={license.id}
-                className="bg-slate-900/80 border border-slate-800 hover:border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between transition-all"
+                className="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-5 shadow-xs flex flex-col justify-between transition-all duration-200 hover:-translate-y-0.5 group"
               >
                 {/* Header: Tenant & Status */}
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <Building2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                        <h3 className="font-bold text-sm text-white truncate">
+                        <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <h3 className="font-extrabold text-sm text-slate-900 truncate">
                           {license.tenant?.name || `Tenant #${license.tenant_id}`}
                         </h3>
                       </div>
-                      <span className="text-[11px] text-slate-400 truncate block mt-0.5">
+                      <span className="text-[11px] text-slate-500 truncate block mt-0.5">
                         {license.tenant?.email || 'No email associated'}
                       </span>
                     </div>
@@ -440,18 +503,18 @@ export default function SuperAdminLicensesPage() {
                   </div>
 
                   {/* License Key Box */}
-                  <div className="mt-3.5 p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2">
-                    <span className="font-mono text-xs font-bold text-indigo-300 tracking-wider select-all truncate">
+                  <div className="mt-3.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
+                    <span className="font-mono text-xs font-bold text-emerald-800 tracking-wider select-all truncate">
                       {license.license_key}
                     </span>
                     <button
                       onClick={() => handleCopyKey(license.license_key)}
                       type="button"
-                      className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer shrink-0"
+                      className="p-1 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer shrink-0"
                       title="Copy Key"
                     >
                       {copiedKey === license.license_key ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
                       ) : (
                         <Copy className="w-3.5 h-3.5" />
                       )}
@@ -459,29 +522,29 @@ export default function SuperAdminLicensesPage() {
                   </div>
 
                   {/* Package & Pricing info */}
-                  <div className="mt-3.5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                    <span className="text-slate-400">Package Tier:</span>
-                    <span className="font-bold text-white">
+                  <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span className="text-slate-500 font-medium">Package Tier:</span>
+                    <span className="font-bold text-slate-800">
                       {license.package?.name || `Package #${license.package_id}`} &bull;{' '}
-                      <span className="text-indigo-400 capitalize">{license.package?.billing_cycle}</span>
+                      <span className="text-emerald-700 capitalize">{license.package?.billing_cycle}</span>
                     </span>
                   </div>
 
                   {/* Expiration Dates */}
                   <div className="mt-2 flex items-center justify-between text-xs">
-                    <span className="text-slate-400">Expiration:</span>
+                    <span className="text-slate-500 font-medium">Expiration:</span>
                     <div className="text-right">
-                      <span className="font-medium text-slate-200 block">
+                      <span className="font-bold text-slate-800 block">
                         {expiresAt ? expiresAt.toLocaleDateString() : 'Lifetime Access'}
                       </span>
                       {daysRemaining !== null && (
                         <span
                           className={`text-[10px] font-bold ${
                             daysRemaining > 14
-                              ? 'text-emerald-400'
+                              ? 'text-emerald-700'
                               : daysRemaining > 0
-                              ? 'text-amber-400'
-                              : 'text-rose-400'
+                              ? 'text-amber-700'
+                              : 'text-red-700'
                           }`}
                         >
                           {daysRemaining > 0 ? `${daysRemaining} days remaining` : `${Math.abs(daysRemaining)} days ago`}
@@ -492,15 +555,15 @@ export default function SuperAdminLicensesPage() {
                 </div>
 
                 {/* Actions Row */}
-                <div className="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between gap-2 text-xs">
+                <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
                   {/* History button */}
                   <button
                     onClick={() => handleOpenTimeline(license)}
                     type="button"
-                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors flex items-center gap-1 cursor-pointer"
+                    className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors flex items-center gap-1 cursor-pointer"
                     title="Audit History"
                   >
-                    <History className="w-3.5 h-3.5 text-indigo-400" />
+                    <History className="w-3.5 h-3.5 text-slate-500" />
                     <span className="text-[11px] hidden sm:inline">{license.events_count || 0} Events</span>
                   </button>
 
@@ -511,7 +574,7 @@ export default function SuperAdminLicensesPage() {
                         onClick={() => handleActivate(license)}
                         disabled={actionLoading}
                         type="button"
-                        className="px-2.5 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 font-semibold text-[11px] transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold text-[11px] transition-colors cursor-pointer"
                       >
                         Activate
                       </button>
@@ -525,7 +588,7 @@ export default function SuperAdminLicensesPage() {
                           setSuspendReason('');
                         }}
                         type="button"
-                        className="px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/20 font-semibold text-[11px] transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-bold text-[11px] transition-colors cursor-pointer"
                       >
                         Suspend
                       </button>
@@ -539,7 +602,7 @@ export default function SuperAdminLicensesPage() {
                           setRenewCycle(license.package?.billing_cycle || 'monthly');
                         }}
                         type="button"
-                        className="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-semibold text-[11px] transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold text-[11px] transition-colors cursor-pointer"
                       >
                         Renew
                       </button>
@@ -554,7 +617,7 @@ export default function SuperAdminLicensesPage() {
                           setExtendReason('');
                         }}
                         type="button"
-                        className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-semibold text-[11px] transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-[11px] transition-colors cursor-pointer"
                       >
                         Extend
                       </button>
@@ -569,7 +632,7 @@ export default function SuperAdminLicensesPage() {
                           setRevokeConfirmText('');
                         }}
                         type="button"
-                        className="p-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-colors cursor-pointer"
+                        className="p-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors cursor-pointer"
                         title="Revoke License"
                       >
                         <XCircle className="w-3.5 h-3.5" />
@@ -587,46 +650,76 @@ export default function SuperAdminLicensesPage() {
       {/* 4. Generate License Modal                                                 */}
       {/* ========================================================================= */}
       {generatingOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
           <form
             onSubmit={handleGenerateSubmit}
-            className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95"
+            className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 font-sans"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <KeyRound className="w-5 h-5 text-indigo-400" />
-                <h3 className="font-bold text-base text-white">Generate SaaS License</h3>
+                <KeyRound className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-base text-slate-900">Generate SaaS License</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setGeneratingOpen(false)}
-                className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
+                className="p-1.5 rounded-lg bg-slate-50 text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
+            {/* Validation / API Error Banner */}
+            {modalError && (
+              <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-xs text-rose-800">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-bold">Cannot Issue License</p>
+                  <p className="text-[11px] text-rose-700 mt-0.5">{modalError}</p>
+                </div>
+              </div>
+            )}
+
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Tenant ID</label>
-              <input
-                type="number"
-                min="1"
-                required
-                value={generateForm.tenant_id}
-                onChange={(e) => setGenerateForm({ ...generateForm, tenant_id: parseInt(e.target.value) || 1 })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
-              />
-              <span className="text-[10px] text-slate-500 mt-0.5 block">
-                Target organization tenant numerical ID (e.g. 1 for Default Business).
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Target Organization / Tenant <span className="text-rose-500">*</span>
+              </label>
+              {tenants.length > 0 ? (
+                <select
+                  value={generateForm.tenant_id}
+                  onChange={(e) => setGenerateForm({ ...generateForm, tenant_id: parseInt(e.target.value) || 1 })}
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer font-medium"
+                >
+                  {tenants.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name} ({t.email}) — [Tenant #{t.id}]
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="number"
+                  min="1"
+                  required
+                  value={generateForm.tenant_id}
+                  onChange={(e) => setGenerateForm({ ...generateForm, tenant_id: parseInt(e.target.value) || 1 })}
+                  placeholder="e.g. 1"
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                />
+              )}
+              <span className="text-[10px] text-slate-400 mt-1 block">
+                Select the target organization tenant numerical ID (e.g. 1 for Default Business).
               </span>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Package Subscription Tier</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Package Subscription Tier <span className="text-rose-500">*</span>
+              </label>
               <select
                 value={generateForm.package_id}
                 onChange={(e) => setGenerateForm({ ...generateForm, package_id: parseInt(e.target.value) || 1 })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer font-medium"
               >
                 {packages.map((pkg) => (
                   <option key={pkg.id} value={pkg.id}>
@@ -638,22 +731,22 @@ export default function SuperAdminLicensesPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">Start Date</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Start Date</label>
                 <input
                   type="date"
                   required
                   value={generateForm.starts_at}
                   onChange={(e) => setGenerateForm({ ...generateForm, starts_at: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">Initial Status</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Initial Status</label>
                 <select
                   value={generateForm.status}
                   onChange={(e) => setGenerateForm({ ...generateForm, status: e.target.value as any })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
                 >
                   <option value="active">Active (Immediate)</option>
                   <option value="pending">Pending</option>
@@ -661,18 +754,18 @@ export default function SuperAdminLicensesPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setGeneratingOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={actionLoading}
-                className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/20 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {actionLoading ? 'Issuing...' : 'Issue License'}
               </button>
@@ -685,22 +778,22 @@ export default function SuperAdminLicensesPage() {
       {/* 5. Suspend License Modal                                                  */}
       {/* ========================================================================= */}
       {suspendingLicense && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
           <form
             onSubmit={handleSuspendSubmit}
-            className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95"
+            className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 font-sans"
           >
-            <div className="flex items-center gap-2 text-amber-400">
+            <div className="flex items-center gap-2 text-amber-600">
               <PauseCircle className="w-5 h-5" />
-              <h3 className="font-bold text-base text-white">Suspend License</h3>
+              <h3 className="font-bold text-base text-slate-900">Suspend License</h3>
             </div>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600">
               Suspending <strong>{suspendingLicense.license_key}</strong> will restrict tenant system operations until reactivated.
             </p>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">
-                Reason for Suspension <span className="text-red-400">*</span>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Reason for Suspension <span className="text-rose-500">*</span>
               </label>
               <textarea
                 rows={3}
@@ -708,7 +801,7 @@ export default function SuperAdminLicensesPage() {
                 placeholder="e.g. Non-payment, terms violation, or requested hold..."
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20"
               />
             </div>
 
@@ -716,14 +809,14 @@ export default function SuperAdminLicensesPage() {
               <button
                 type="button"
                 onClick={() => setSuspendingLicense(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={actionLoading || !suspendReason.trim()}
-                className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-lg shadow-amber-600/20 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-md shadow-amber-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {actionLoading ? 'Suspending...' : 'Suspend License'}
               </button>
@@ -736,22 +829,22 @@ export default function SuperAdminLicensesPage() {
       {/* 6. Revoke License Modal (High-Security Typed Confirmation)                */}
       {/* ========================================================================= */}
       {revokingLicense && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
           <form
             onSubmit={handleRevokeSubmit}
-            className="bg-slate-900 border border-red-500/40 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95"
+            className="bg-white border-2 border-rose-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 font-sans"
           >
-            <div className="flex items-center gap-2 text-red-400">
+            <div className="flex items-center gap-2 text-rose-600">
               <ShieldAlert className="w-6 h-6" />
-              <h3 className="font-bold text-base text-white">Permanently Revoke License?</h3>
+              <h3 className="font-bold text-base text-slate-900">Permanently Revoke License?</h3>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               This action is permanent and terminal. Once revoked, <strong>{revokingLicense.license_key}</strong> cannot be reactivated or renewed.
             </p>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">
-                Revocation Reason <span className="text-red-400">*</span>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Revocation Reason <span className="text-rose-500">*</span>
               </label>
               <textarea
                 rows={2}
@@ -759,13 +852,13 @@ export default function SuperAdminLicensesPage() {
                 placeholder="Reason for permanent license termination..."
                 value={revokeReason}
                 onChange={(e) => setRevokeReason(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">
-                Type <span className="text-red-400 font-mono">REVOKE</span> to confirm:
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Type <span className="text-rose-600 font-mono font-bold">REVOKE</span> to confirm:
               </label>
               <input
                 type="text"
@@ -773,7 +866,7 @@ export default function SuperAdminLicensesPage() {
                 value={revokeConfirmText}
                 onChange={(e) => setRevokeConfirmText(e.target.value)}
                 placeholder="REVOKE"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-mono text-white text-center tracking-widest focus:outline-none focus:border-red-500"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 text-center tracking-widest focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20"
               />
             </div>
 
@@ -781,14 +874,14 @@ export default function SuperAdminLicensesPage() {
               <button
                 type="button"
                 onClick={() => setRevokingLicense(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={actionLoading || !revokeReason.trim() || revokeConfirmText !== 'REVOKE'}
-                className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-lg shadow-red-600/20 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {actionLoading ? 'Revoking...' : 'Revoke License'}
               </button>
@@ -801,25 +894,25 @@ export default function SuperAdminLicensesPage() {
       {/* 7. Renew License Modal                                                    */}
       {/* ========================================================================= */}
       {renewingLicense && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
           <form
             onSubmit={handleRenewSubmit}
-            className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95"
+            className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 font-sans"
           >
-            <div className="flex items-center gap-2 text-indigo-400">
+            <div className="flex items-center gap-2 text-emerald-600">
               <RotateCw className="w-5 h-5" />
-              <h3 className="font-bold text-base text-white">Renew License</h3>
+              <h3 className="font-bold text-base text-slate-900">Renew License</h3>
             </div>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600">
               Extends subscription validity for <strong>{renewingLicense.license_key}</strong> based on package billing cycle without overlapping periods.
             </p>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Billing Period</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Billing Period</label>
               <select
                 value={renewCycle}
                 onChange={(e) => setRenewCycle(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
               >
                 <option value="monthly">+1 Month (Monthly Cycle)</option>
                 <option value="yearly">+1 Year (Annual Cycle)</option>
@@ -830,14 +923,14 @@ export default function SuperAdminLicensesPage() {
               <button
                 type="button"
                 onClick={() => setRenewingLicense(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={actionLoading}
-                className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/20 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {actionLoading ? 'Renewing...' : 'Confirm Renewal'}
               </button>
@@ -850,22 +943,22 @@ export default function SuperAdminLicensesPage() {
       {/* 8. Extend License Modal                                                   */}
       {/* ========================================================================= */}
       {extendingLicense && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
           <form
             onSubmit={handleExtendSubmit}
-            className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95"
+            className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 font-sans"
           >
-            <div className="flex items-center gap-2 text-cyan-400">
+            <div className="flex items-center gap-2 text-emerald-600">
               <PlusCircle className="w-5 h-5" />
-              <h3 className="font-bold text-base text-white">Extend License Validity</h3>
+              <h3 className="font-bold text-base text-slate-900">Extend License Validity</h3>
             </div>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600">
               Add custom days to the expiration date of <strong>{extendingLicense.license_key}</strong>.
             </p>
 
             {/* Quick Duration Chips */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">Extension Duration</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">Extension Duration</label>
               <div className="flex items-center gap-2 mb-2">
                 {[7, 14, 30, 90].map((d) => (
                   <button
@@ -874,8 +967,8 @@ export default function SuperAdminLicensesPage() {
                     onClick={() => setExtendDays(d)}
                     className={`px-3 py-1 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
                       extendDays === d
-                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
                     +{d}d
@@ -889,13 +982,13 @@ export default function SuperAdminLicensesPage() {
                 required
                 value={extendDays}
                 onChange={(e) => setExtendDays(parseInt(e.target.value) || 1)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">
-                Reason for Extension <span className="text-red-400">*</span>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Reason for Extension <span className="text-rose-500">*</span>
               </label>
               <textarea
                 rows={2}
@@ -903,7 +996,7 @@ export default function SuperAdminLicensesPage() {
                 placeholder="e.g. Promotional extension or onboarding grace period..."
                 value={extendReason}
                 onChange={(e) => setExtendReason(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>
 
@@ -911,14 +1004,14 @@ export default function SuperAdminLicensesPage() {
               <button
                 type="button"
                 onClick={() => setExtendingLicense(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={actionLoading || extendDays <= 0 || !extendReason.trim()}
-                className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow-lg shadow-cyan-600/20 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {actionLoading ? 'Extending...' : `Extend +${extendDays} Days`}
               </button>
@@ -931,13 +1024,13 @@ export default function SuperAdminLicensesPage() {
       {/* 9. Lifecycle Event History Drawer                                         */}
       {/* ========================================================================= */}
       {timelineLicense && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-end">
-          <div className="bg-slate-900 border-l border-slate-800 max-w-lg w-full h-full p-6 flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-right">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-end">
+          <div className="bg-white border-l border-slate-200 max-w-lg w-full h-full p-6 flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-right font-sans">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <History className="w-5 h-5 text-indigo-400" />
-                  <h3 className="font-bold text-base text-white">License Audit Timeline</h3>
+                  <History className="w-5 h-5 text-emerald-600" />
+                  <h3 className="font-bold text-base text-slate-900">License Audit Timeline</h3>
                 </div>
                 <p className="text-xs text-slate-400 font-mono mt-0.5">{timelineLicense.license_key}</p>
               </div>
@@ -945,7 +1038,7 @@ export default function SuperAdminLicensesPage() {
               <button
                 type="button"
                 onClick={() => setTimelineLicense(null)}
-                className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
+                className="p-1.5 rounded-lg bg-slate-50 text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -955,17 +1048,17 @@ export default function SuperAdminLicensesPage() {
               {eventsLoading ? (
                 <div className="text-center py-12 text-slate-400 text-xs animate-pulse">Loading event history...</div>
               ) : licenseEvents.length === 0 ? (
-                <div className="text-center py-12 text-slate-500 text-xs">No lifecycle events recorded.</div>
+                <div className="text-center py-12 text-slate-400 text-xs">No lifecycle events recorded.</div>
               ) : (
-                <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800">
+                <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
                   {licenseEvents.map((evt) => (
                     <div key={evt.id} className="relative group">
                       {/* Timeline dot */}
-                      <span className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-slate-900 border-2 border-indigo-400 group-hover:scale-125 transition-transform" />
+                      <span className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-white border-2 border-emerald-600 group-hover:scale-125 transition-transform" />
 
-                      <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5">
+                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                          <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
                             {evt.event_type}
                           </span>
                           <span className="text-[10px] text-slate-400">
@@ -974,19 +1067,19 @@ export default function SuperAdminLicensesPage() {
                         </div>
 
                         {evt.event_data?.reason && (
-                          <p className="text-xs text-slate-300">
+                          <p className="text-xs text-slate-700">
                             <strong>Reason:</strong> {evt.event_data.reason}
                           </p>
                         )}
 
                         {evt.event_data?.new_expiry && (
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-slate-500">
                             New Expiration: {new Date(evt.event_data.new_expiry).toLocaleDateString()}
                           </p>
                         )}
 
                         {evt.ip_address && (
-                          <p className="text-[10px] text-slate-500 font-mono">IP: {evt.ip_address}</p>
+                          <p className="text-[10px] text-slate-400 font-mono">IP: {evt.ip_address}</p>
                         )}
                       </div>
                     </div>
@@ -995,11 +1088,11 @@ export default function SuperAdminLicensesPage() {
               )}
             </div>
 
-            <div className="pt-4 border-t border-slate-800 flex justify-end">
+            <div className="pt-4 border-t border-slate-100 flex justify-end">
               <button
                 type="button"
                 onClick={() => setTimelineLicense(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
               >
                 Close Timeline
               </button>

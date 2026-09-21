@@ -18,7 +18,7 @@ import {
     RefreshCw,
     Radio,
     Settings2,
-    Layers,
+    ChevronRight,
 } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { notificationService } from '@/lib/notificationService';
@@ -118,33 +118,33 @@ export default function SuperAdminNotificationsPage() {
         switch (severity) {
             case 'critical':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
-                        <AlertCircle className="w-3.5 h-3.5" /> Critical
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                        <AlertCircle className="w-3.5 h-3.5 text-rose-600" /> Critical
                     </span>
                 );
             case 'error':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-500/15 text-red-400 border border-red-500/30">
-                        <AlertCircle className="w-3.5 h-3.5" /> Error
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
+                        <AlertCircle className="w-3.5 h-3.5 text-red-600" /> Error
                     </span>
                 );
             case 'warning':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                        <AlertTriangle className="w-3.5 h-3.5" /> Warning
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600" /> Warning
                     </span>
                 );
             case 'success':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Success
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Success
                     </span>
                 );
             case 'info':
             default:
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
-                        <Info className="w-3.5 h-3.5" /> Info
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                        <Info className="w-3.5 h-3.5 text-sky-600" /> Info
                     </span>
                 );
         }
@@ -165,63 +165,66 @@ export default function SuperAdminNotificationsPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="p-6 sm:p-8 space-y-6 max-w-7xl mx-auto font-sans">
             {/* Header Title Section */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl backdrop-blur-md">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-inner">
-                        <Bell className="w-6 h-6" />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-1.5">
+                        <Link href="/super-admin/dashboard" className="hover:text-emerald-600 transition-colors">
+                            Super Admin
+                        </Link>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                        <span className="text-emerald-600 font-bold">Notifications</span>
                     </div>
-                    <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                                Platform Notification Center
-                            </h1>
-                            {connected ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                                    Live Connected
-                                </span>
-                            ) : (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400">
-                                    <Radio className="w-3.5 h-3.5 text-slate-500" />
-                                    Polling Mode
-                                </span>
-                            )}
-                        </div>
-                        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                            Multi-tenant license expirations, tenant lifecycle alerts, audit triggers, and platform infrastructure events.
-                        </p>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+                            <Bell className="w-7 h-7 text-emerald-600" />
+                            <span>Platform Notification Center</span>
+                        </h1>
+                        {connected ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                                Live Connected
+                            </span>
+                        ) : (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                <Radio className="w-3.5 h-3.5 text-slate-500" />
+                                Polling Mode
+                            </span>
+                        )}
                     </div>
+                    <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                        Multi-tenant license expirations, tenant lifecycle alerts, audit triggers, and platform infrastructure events.
+                    </p>
                 </div>
 
                 {/* Right Tab Controls & Audio */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5 self-start sm:self-auto">
                     <button
                         type="button"
                         onClick={() => setSoundEnabled((prev) => !prev)}
-                        className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition ${
+                        className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer ${
                             soundEnabled
-                                ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-300'
-                                : 'bg-slate-800/80 border-slate-700 text-slate-400'
+                                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                                : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
                         }`}
                         title={soundEnabled ? 'Chime Enabled' : 'Chime Muted'}
                     >
-                        {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                        {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-600" /> : <VolumeX className="w-4 h-4" />}
                         <span className="hidden sm:inline">{soundEnabled ? 'Sound On' : 'Muted'}</span>
                     </button>
 
-                    <div className="flex p-1 bg-slate-950/80 rounded-xl border border-slate-800 text-xs font-semibold">
+                    <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200/80 text-xs font-bold">
                         <button
                             type="button"
                             onClick={() => setActiveTab('inbox')}
-                            className={`px-3.5 py-1.5 rounded-lg transition ${
+                            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
                                 activeTab === 'inbox'
-                                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
-                                    : 'text-slate-400 hover:text-slate-200'
+                                    ? 'bg-white text-slate-900 shadow-xs font-bold'
+                                    : 'text-slate-500 hover:text-slate-800'
                             }`}
                         >
-                            Inbox {unreadCount > 0 && <span className="ml-1 px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[10px]">{unreadCount}</span>}
+                            Inbox {unreadCount > 0 && <span className="ml-1.5 px-1.5 py-0.5 bg-rose-500 text-white rounded-full text-[10px] font-mono">{unreadCount}</span>}
                         </button>
                         <button
                             type="button"
@@ -229,14 +232,14 @@ export default function SuperAdminNotificationsPage() {
                                 setActiveTab('preferences');
                                 if (preferences.length === 0) loadPreferences();
                             }}
-                            className={`px-3.5 py-1.5 rounded-lg transition ${
+                            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
                                 activeTab === 'preferences'
-                                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
-                                    : 'text-slate-400 hover:text-slate-200'
+                                    ? 'bg-white text-slate-900 shadow-xs font-bold'
+                                    : 'text-slate-500 hover:text-slate-800'
                             }`}
                         >
-                            <span className="flex items-center gap-1">
-                                <Settings2 className="w-3.5 h-3.5" /> Preferences
+                            <span className="flex items-center gap-1.5">
+                                <Settings2 className="w-3.5 h-3.5 text-slate-600" /> Preferences
                             </span>
                         </button>
                     </div>
@@ -247,17 +250,17 @@ export default function SuperAdminNotificationsPage() {
             {activeTab === 'inbox' && (
                 <div className="space-y-4">
                     {/* Filters Bar */}
-                    <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-                        <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                        <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                             {/* Search */}
                             <div className="relative flex-1 min-w-[200px]">
-                                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                                 <input
                                     type="text"
                                     placeholder="Search platform notifications..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"
+                                    className="w-full pl-9 pr-3 py-2 bg-slate-50/50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                                 />
                             </div>
 
@@ -265,7 +268,7 @@ export default function SuperAdminNotificationsPage() {
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
+                                className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
                             >
                                 <option value="all">All Status</option>
                                 <option value="unread">Unread Only</option>
@@ -276,7 +279,7 @@ export default function SuperAdminNotificationsPage() {
                             <select
                                 value={severityFilter}
                                 onChange={(e) => setSeverityFilter(e.target.value)}
-                                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
+                                className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
                             >
                                 <option value="all">All Severities</option>
                                 <option value="critical">Critical</option>
@@ -290,7 +293,7 @@ export default function SuperAdminNotificationsPage() {
                             <select
                                 value={categoryFilter}
                                 onChange={(e) => setCategoryFilter(e.target.value)}
-                                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
+                                className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
                             >
                                 <option value="all">All Categories</option>
                                 <option value="billing">Billing</option>
@@ -307,9 +310,9 @@ export default function SuperAdminNotificationsPage() {
                                 <button
                                     type="button"
                                     onClick={markAllAsRead}
-                                    className="px-3.5 py-2 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                                    className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
                                 >
-                                    <CheckCheck className="w-4 h-4" />
+                                    <CheckCheck className="w-4 h-4 text-emerald-600" />
                                     Mark All Read
                                 </button>
                             )}
@@ -317,10 +320,10 @@ export default function SuperAdminNotificationsPage() {
                             <button
                                 type="button"
                                 onClick={() => handleFilterChange()}
-                                className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition"
+                                className="p-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-xl transition cursor-pointer shadow-2xs"
                                 title="Refresh"
                             >
-                                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : ''}`} />
                             </button>
                         </div>
                     </div>
@@ -328,16 +331,16 @@ export default function SuperAdminNotificationsPage() {
                     {/* Notifications Stream */}
                     <div className="space-y-3">
                         {loading && notifications.length === 0 ? (
-                            <div className="bg-slate-900/80 p-12 rounded-2xl border border-slate-800 text-center text-slate-400">
-                                <RefreshCw className="w-6 h-6 mx-auto animate-spin mb-2 text-indigo-400" />
-                                <p className="text-sm font-medium">Fetching platform notifications...</p>
+                            <div className="bg-white p-12 rounded-3xl border border-slate-200/80 text-center text-slate-400 shadow-xs">
+                                <RefreshCw className="w-6 h-6 mx-auto animate-spin mb-2 text-emerald-600" />
+                                <p className="text-sm font-semibold">Fetching platform notifications...</p>
                             </div>
                         ) : notifications.length === 0 ? (
-                            <div className="bg-slate-900/80 p-12 rounded-2xl border border-slate-800 text-center">
-                                <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-400">
-                                    <Bell className="w-7 h-7" />
+                            <div className="bg-white p-12 rounded-3xl border border-slate-200/80 text-center shadow-xs">
+                                <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
+                                    <Bell className="w-7 h-7 text-slate-300" />
                                 </div>
-                                <h3 className="text-base font-bold text-slate-200">No Notifications</h3>
+                                <h3 className="text-base font-bold text-slate-800">No Notifications</h3>
                                 <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-sm mx-auto">
                                     No platform notifications match your current filter settings.
                                 </p>
@@ -348,29 +351,29 @@ export default function SuperAdminNotificationsPage() {
                                     key={notif.id}
                                     className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col sm:flex-row items-start justify-between gap-4 ${
                                         notif.is_read
-                                            ? 'bg-slate-900/60 border-slate-800'
-                                            : 'bg-indigo-950/25 border-indigo-500/40 shadow-lg shadow-indigo-950/20'
+                                            ? 'bg-white border-slate-200/80 shadow-2xs hover:border-slate-300'
+                                            : 'bg-emerald-50/30 border-emerald-200 shadow-xs hover:border-emerald-300'
                                     }`}
                                 >
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2.5 flex-wrap mb-2">
                                             {getSeverityBadge(notif.severity)}
-                                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-800 text-slate-300">
+                                            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
                                                 {notif.category}
                                             </span>
                                             <span className="text-xs text-slate-400">
                                                 {formatTimestamp(notif.created_at)}
                                             </span>
                                             {!notif.is_read && (
-                                                <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" title="Unread" />
+                                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Unread" />
                                             )}
                                         </div>
 
-                                        <h3 className={`text-sm sm:text-base font-bold ${notif.is_read ? 'text-slate-200' : 'text-white'}`}>
+                                        <h3 className={`text-sm sm:text-base font-bold ${notif.is_read ? 'text-slate-800' : 'text-slate-900 font-extrabold'}`}>
                                             {notif.title}
                                         </h3>
 
-                                        <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
                                             {notif.message}
                                         </p>
 
@@ -382,7 +385,7 @@ export default function SuperAdminNotificationsPage() {
                                                     onClick={() => {
                                                         if (!notif.is_read) markAsRead(notif.id);
                                                     }}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition shadow-md shadow-indigo-600/30"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs hover:scale-[1.01]"
                                                 >
                                                     View Details <ExternalLink className="w-3.5 h-3.5" />
                                                 </Link>
@@ -396,7 +399,7 @@ export default function SuperAdminNotificationsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => markAsRead(notif.id)}
-                                                className="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-xl transition"
+                                                className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition cursor-pointer"
                                                 title="Mark as read"
                                             >
                                                 <Check className="w-4 h-4" />
@@ -405,7 +408,7 @@ export default function SuperAdminNotificationsPage() {
                                         <button
                                             type="button"
                                             onClick={() => deleteNotification(notif.id)}
-                                            className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-xl transition"
+                                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer"
                                             title="Delete notification"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -420,39 +423,43 @@ export default function SuperAdminNotificationsPage() {
 
             {/* TAB 2: PREFERENCES */}
             {activeTab === 'preferences' && (
-                <div className="bg-slate-900/80 p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-xl space-y-6">
+                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
                     <div>
-                        <h2 className="text-lg font-bold text-white">Super Admin Notification Preferences</h2>
-                        <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                        <h2 className="text-lg font-bold text-slate-900">Super Admin Notification Preferences</h2>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-1">
                             Configure channel subscriptions and minimum severity thresholds for platform-wide alerts.
                         </p>
                     </div>
 
                     {prefMessage && (
-                        <div className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
-                            {prefMessage}
+                        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <span>{prefMessage}</span>
                         </div>
                     )}
 
                     {prefLoading ? (
-                        <div className="p-8 text-center text-slate-400">Loading preferences...</div>
+                        <div className="p-8 text-center text-slate-400">
+                            <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-emerald-600" />
+                            <span>Loading preferences...</span>
+                        </div>
                     ) : (
                         <div className="space-y-4">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-xs sm:text-sm">
                                     <thead>
-                                        <tr className="border-b border-slate-800 text-slate-400 text-xs uppercase tracking-wider font-semibold">
-                                            <th className="py-3 px-4">Category</th>
+                                        <tr className="border-b border-slate-200/80 text-slate-500 text-xs uppercase tracking-wider font-bold bg-slate-50/70">
+                                            <th className="py-3 px-4 rounded-l-xl">Category</th>
                                             <th className="py-3 px-4 text-center">In-App Alert</th>
                                             <th className="py-3 px-4 text-center">Sound Chime</th>
                                             <th className="py-3 px-4 text-center">Email Dispatch</th>
-                                            <th className="py-3 px-4">Min Severity</th>
+                                            <th className="py-3 px-4 rounded-r-xl">Min Severity</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-800">
+                                    <tbody className="divide-y divide-slate-100">
                                         {preferences.map((pref, idx) => (
-                                            <tr key={pref.category} className="hover:bg-slate-800/40">
-                                                <td className="py-3.5 px-4 font-bold text-slate-200 capitalize">
+                                            <tr key={pref.category} className="hover:bg-slate-50/60 transition-colors">
+                                                <td className="py-3.5 px-4 font-bold text-slate-900 capitalize">
                                                     {pref.category}
                                                 </td>
                                                 <td className="py-3.5 px-4 text-center">
@@ -460,7 +467,7 @@ export default function SuperAdminNotificationsPage() {
                                                         type="checkbox"
                                                         checked={pref.in_app_enabled}
                                                         onChange={() => togglePrefField(idx, 'in_app_enabled')}
-                                                        className="w-4 h-4 text-indigo-500 rounded focus:ring-indigo-500 bg-slate-950 border-slate-700 cursor-pointer"
+                                                        className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 bg-white border-slate-300 cursor-pointer accent-emerald-600"
                                                     />
                                                 </td>
                                                 <td className="py-3.5 px-4 text-center">
@@ -468,7 +475,7 @@ export default function SuperAdminNotificationsPage() {
                                                         type="checkbox"
                                                         checked={pref.sound_enabled}
                                                         onChange={() => togglePrefField(idx, 'sound_enabled')}
-                                                        className="w-4 h-4 text-indigo-500 rounded focus:ring-indigo-500 bg-slate-950 border-slate-700 cursor-pointer"
+                                                        className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 bg-white border-slate-300 cursor-pointer accent-emerald-600"
                                                     />
                                                 </td>
                                                 <td className="py-3.5 px-4 text-center">
@@ -476,14 +483,14 @@ export default function SuperAdminNotificationsPage() {
                                                         type="checkbox"
                                                         checked={pref.email_enabled}
                                                         onChange={() => togglePrefField(idx, 'email_enabled')}
-                                                        className="w-4 h-4 text-indigo-500 rounded focus:ring-indigo-500 bg-slate-950 border-slate-700 cursor-pointer"
+                                                        className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 bg-white border-slate-300 cursor-pointer accent-emerald-600"
                                                     />
                                                 </td>
                                                 <td className="py-3.5 px-4">
                                                     <select
                                                         value={pref.min_severity}
                                                         onChange={(e) => setPrefSeverity(idx, e.target.value as any)}
-                                                        className="px-2.5 py-1 bg-slate-950 border border-slate-700 rounded-lg text-xs font-semibold text-slate-200"
+                                                        className="px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
                                                     >
                                                         <option value="info">Info (All)</option>
                                                         <option value="warning">Warning & Above</option>
@@ -501,7 +508,7 @@ export default function SuperAdminNotificationsPage() {
                                     type="button"
                                     onClick={handleSavePreferences}
                                     disabled={prefSaving}
-                                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl transition shadow-lg shadow-indigo-600/30 disabled:opacity-50"
+                                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md shadow-emerald-600/20 disabled:opacity-50 cursor-pointer hover:scale-[1.01]"
                                 >
                                     {prefSaving ? 'Saving...' : 'Save Preferences'}
                                 </button>

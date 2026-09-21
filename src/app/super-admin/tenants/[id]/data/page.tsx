@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { tenantDataResetService } from '@/lib/tenantDataResetService';
 import {
     TenantDataSummaryResponse,
@@ -19,33 +19,20 @@ import {
     CheckCircle2,
     XCircle,
     ShoppingCart,
-    ShoppingBag,
-    CreditCard,
-    DollarSign,
-    Factory,
     Boxes,
-    Package as PackageIcon,
     Users,
-    Truck,
-    UserCheck,
-    Lock,
     KeyRound,
     Check,
-    Info,
     ArrowLeft,
     Layers,
-    Clock,
     Database,
+    ChevronRight,
 } from 'lucide-react';
 
-interface PageProps {
-    params: Promise<{ id: string }>;
-}
-
-export default function TenantDataManagementPage({ params }: PageProps) {
-    const resolvedParams = use(params);
-    const tenantId = resolvedParams.id;
+export default function TenantDataManagementPage() {
+    const params = useParams();
     const router = useRouter();
+    const tenantId = (params?.id as string) || '';
 
     const [summary, setSummary] = useState<TenantDataSummaryResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -279,8 +266,8 @@ export default function TenantDataManagementPage({ params }: PageProps) {
 
     if (loading) {
         return (
-            <div className="p-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[60vh]">
-                <RefreshCw className="w-10 h-10 text-indigo-600 animate-spin mb-4" />
+            <div className="p-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[60vh] font-sans">
+                <RefreshCw className="w-10 h-10 text-emerald-600 animate-spin mb-4" />
                 <h2 className="text-xl font-bold text-slate-800">
                     Loading Tenant Data Summary...
                 </h2>
@@ -293,7 +280,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
 
     if (error && !summary) {
         return (
-            <div className="p-8 max-w-4xl mx-auto space-y-4">
+            <div className="p-8 max-w-4xl mx-auto space-y-4 font-sans">
                 <Link
                     href="/super-admin/tenants"
                     className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors"
@@ -323,29 +310,29 @@ export default function TenantDataManagementPage({ params }: PageProps) {
     const counts = summary?.counts;
 
     return (
-        <div className="p-6 sm:p-8 space-y-8 max-w-7xl mx-auto">
+        <div className="p-6 sm:p-8 space-y-8 max-w-7xl mx-auto font-sans">
             {/* Header & Breadcrumbs */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-1.5">
                         <Link
                             href="/super-admin/dashboard"
-                            className="hover:text-indigo-600 transition-colors"
+                            className="hover:text-emerald-600 transition-colors"
                         >
                             Super Admin
                         </Link>
-                        <span>/</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
                         <Link
                             href="/super-admin/tenants"
-                            className="hover:text-indigo-600 transition-colors"
+                            className="hover:text-emerald-600 transition-colors"
                         >
                             Tenants
                         </Link>
-                        <span>/</span>
-                        <span className="text-indigo-600 font-bold">Data & Resets</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                        <span className="text-emerald-600 font-bold">Data & Resets</span>
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-                        <Database className="w-7 h-7 text-indigo-600" />
+                        <Database className="w-7 h-7 text-emerald-600" />
                         <span>Tenant Data Management & Resets</span>
                     </h1>
                     <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -354,6 +341,13 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <Link
+                        href="/super-admin/tenants"
+                        className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-2xs"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Back</span>
+                    </Link>
                     <button
                         type="button"
                         onClick={() => fetchSummary(true)}
@@ -361,7 +355,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                         className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-2xs cursor-pointer disabled:opacity-50"
                     >
                         <RefreshCw
-                            className={`w-4 h-4 text-indigo-600 ${refreshing ? 'animate-spin' : ''}`}
+                            className={`w-4 h-4 text-emerald-600 ${refreshing ? 'animate-spin' : ''}`}
                         />
                         <span>{refreshing ? 'Refreshing...' : 'Refresh Summary'}</span>
                     </button>
@@ -403,9 +397,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
 
             {/* Tenant Identity Summary Card */}
             {tenant && (
-                <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl relative overflow-hidden">
-                    <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
+                <div className="p-6 rounded-3xl bg-slate-900 text-white shadow-xl relative overflow-hidden">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                         <div className="flex items-start gap-4">
                             <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center text-white font-black text-xl shrink-0 shadow-inner">
@@ -433,7 +425,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                                     <span>•</span>
                                     <span className="font-mono">UUID: {tenant.uuid.slice(0, 13)}...</span>
                                     <span>•</span>
-                                    <span>Slug: <strong className="text-indigo-200">{tenant.slug}</strong></span>
+                                    <span>Slug: <strong className="text-emerald-300">{tenant.slug}</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -442,7 +434,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md text-xs">
                             <div>
                                 <span className="text-slate-400 block mb-0.5">Package</span>
-                                <strong className="text-indigo-200 font-bold">
+                                <strong className="text-emerald-300 font-bold">
                                     {tenant.package?.name || 'Standard'}
                                 </strong>
                             </div>
@@ -469,21 +461,21 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                 </div>
             )}
 
-            {/* Section 14: Data Overview Record Counts */}
+            {/* Section: Data Overview Record Counts */}
             {counts && (
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                                <Layers className="w-5 h-5 text-indigo-600" />
+                                <Layers className="w-5 h-5 text-emerald-600" />
                                 <span>Tenant Data Footprint</span>
                             </h2>
                             <p className="text-xs text-slate-500">
                                 Live breakdown of all records stored for this tenant in database.
                             </p>
                         </div>
-                        <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                            Total Records: {counts.grand_total.toLocaleString()}
+                        <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                            Total Records: {(counts?.grand_total ?? ((counts?.operational?.total ?? 0) + (counts?.master?.total ?? 0) + (counts?.saas?.total ?? 0))).toLocaleString()}
                         </span>
                     </div>
 
@@ -492,7 +484,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                         <div className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-4">
                             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                                 <div className="flex items-center gap-2.5">
-                                    <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+                                    <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
                                         <ShoppingCart className="w-4 h-4" />
                                     </div>
                                     <div>
@@ -504,43 +496,43 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                                         </span>
                                     </div>
                                 </div>
-                                <span className="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg">
-                                    {counts.operational.total}
+                                <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                                    {(counts?.operational?.total ?? 0).toLocaleString()}
                                 </span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 text-xs">
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Sales</span>
-                                    <strong className="text-slate-900 font-bold">{counts.operational.sales}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.operational?.sales ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Sale Items</span>
-                                    <strong className="text-slate-900 font-bold">{counts.operational.sale_items}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.operational?.sale_items ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Purchases</span>
-                                    <strong className="text-slate-900 font-bold">{counts.operational.purchases}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.operational?.purchases ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Purchase Items</span>
-                                    <strong className="text-slate-900 font-bold">{counts.operational.purchase_items}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.operational?.purchase_items ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Payments</span>
-                                    <strong className="text-slate-900 font-bold">{counts.operational.payments}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.operational?.payments ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Expenses</span>
-                                    <strong className="text-slate-900 font-bold">{counts.operational.expenses}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.operational?.expenses ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Production</span>
-                                    <strong className="text-slate-900 font-bold">{counts.operational.production_orders}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.operational?.production_orders ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Stock Moves</span>
-                                    <strong className="text-slate-900 font-bold">{counts.operational.stock_movements}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.operational?.stock_movements ?? 0}</strong>
                                 </div>
                             </div>
                         </div>
@@ -561,43 +553,43 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                                         </span>
                                     </div>
                                 </div>
-                                <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
-                                    {counts.master.total}
+                                <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                                    {(counts?.master?.total ?? 0).toLocaleString()}
                                 </span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 text-xs">
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Products</span>
-                                    <strong className="text-slate-900 font-bold">{counts.master.products}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.master?.products ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Categories</span>
-                                    <strong className="text-slate-900 font-bold">{counts.master.categories}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.master?.categories ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Units</span>
-                                    <strong className="text-slate-900 font-bold">{counts.master.units}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.master?.units ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Customers</span>
-                                    <strong className="text-slate-900 font-bold">{counts.master.customers}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.master?.customers ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Suppliers</span>
-                                    <strong className="text-slate-900 font-bold">{counts.master.suppliers}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.master?.suppliers ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">BOMs</span>
-                                    <strong className="text-slate-900 font-bold">{counts.master.boms}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.master?.boms ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Machinery/Assets</span>
-                                    <strong className="text-slate-900 font-bold">{counts.master.assets}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.master?.assets ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Accounts</span>
-                                    <strong className="text-slate-900 font-bold">{counts.master.financial_accounts}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.master?.financial_accounts ?? 0}</strong>
                                 </div>
                             </div>
                         </div>
@@ -618,27 +610,27 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                                         </span>
                                     </div>
                                 </div>
-                                <span className="text-xs font-black text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">
-                                    {counts.saas.total}
+                                <span className="text-xs font-black text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg">
+                                    {(counts?.saas?.total ?? 0).toLocaleString()}
                                 </span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 text-xs">
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Tenant Users</span>
-                                    <strong className="text-slate-900 font-bold">{counts.saas.users}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.saas?.users ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Licenses</span>
-                                    <strong className="text-slate-900 font-bold">{counts.saas.licenses}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.saas?.licenses ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">License Events</span>
-                                    <strong className="text-slate-900 font-bold">{counts.saas.license_events}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.saas?.license_events ?? 0}</strong>
                                 </div>
                                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center justify-between">
                                     <span className="text-slate-500">Overrides</span>
-                                    <strong className="text-slate-900 font-bold">{counts.saas.module_overrides}</strong>
+                                    <strong className="text-slate-900 font-bold">{counts?.saas?.module_overrides ?? 0}</strong>
                                 </div>
                             </div>
 
@@ -650,10 +642,10 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                 </div>
             )}
 
-            {/* Section 15-18: Action Cards Grid */}
+            {/* Section: Action Cards Grid */}
             <div className="space-y-4">
                 <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                    <ShieldAlert className="w-5 h-5 text-indigo-600" />
+                    <ShieldAlert className="w-5 h-5 text-emerald-600" />
                     <span>Administrative Reset & Lifecycle Controls</span>
                 </h2>
 
@@ -661,7 +653,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                     {/* Card 1: Operational Reset */}
                     <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-5 hover:border-slate-300 transition-all">
                         <div className="space-y-3">
-                            <div className="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
+                            <div className="w-11 h-11 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center">
                                 <RotateCcw className="w-5 h-5" />
                             </div>
                             <h3 className="text-base font-bold text-slate-900">
@@ -673,8 +665,8 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                             <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-700 space-y-1">
                                 <div className="flex justify-between font-semibold">
                                     <span>Affected Records:</span>
-                                    <span className="text-indigo-600 font-bold">
-                                        {counts?.operational.total || 0}
+                                    <span className="text-emerald-700 font-bold">
+                                        {(counts?.operational?.total ?? 0).toLocaleString()}
                                     </span>
                                 </div>
                                 <div className="text-[11px] text-slate-400">
@@ -686,7 +678,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                         <button
                             type="button"
                             onClick={() => openModal('operational_reset')}
-                            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs hover:scale-[1.01]"
+                            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs hover:scale-[1.01]"
                         >
                             <RotateCcw className="w-4 h-4" />
                             <span>Reset Operational Data</span>
@@ -709,7 +701,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                                 <div className="flex justify-between font-semibold">
                                     <span>Total Records Removed:</span>
                                     <span className="text-amber-700 font-bold">
-                                        {((counts?.operational.total || 0) + (counts?.master.total || 0)).toLocaleString()}
+                                        {((counts?.operational?.total ?? 0) + (counts?.master?.total ?? 0)).toLocaleString()}
                                     </span>
                                 </div>
                                 <div className="text-[11px] text-amber-800/80">
@@ -768,7 +760,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                 </div>
             </div>
 
-            {/* Section 18: Danger Zone (Delete Tenant) */}
+            {/* Danger Zone (Delete Tenant) */}
             <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-rose-50/70 via-rose-50/40 to-white border-2 border-rose-200/80 shadow-xs space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-start gap-4">
@@ -808,7 +800,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                 <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-start gap-3.5">
-                            <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 shrink-0">
+                            <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 shrink-0">
                                 <RotateCcw className="w-6 h-6" />
                             </div>
                             <div>
@@ -826,11 +818,11 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                                 The following data will be permanently cleared:
                             </strong>
                             <ul className="list-disc list-inside space-y-1 text-slate-600">
-                                <li>{counts?.operational.sales || 0} Sales & {counts?.operational.sale_items || 0} Sale Items</li>
-                                <li>{counts?.operational.purchases || 0} Purchases & {counts?.operational.purchase_items || 0} Purchase Items</li>
-                                <li>{counts?.operational.payments || 0} Payments & {counts?.operational.expenses || 0} Expenses</li>
-                                <li>{counts?.operational.production_orders || 0} Production Orders & Stage Costs</li>
-                                <li>{counts?.operational.stock_movements || 0} Stock Movements (Recalculated to 0)</li>
+                                <li>{counts?.operational?.sales ?? 0} Sales & {counts?.operational?.sale_items ?? 0} Sale Items</li>
+                                <li>{counts?.operational?.purchases ?? 0} Purchases & {counts?.operational?.purchase_items ?? 0} Purchase Items</li>
+                                <li>{counts?.operational?.payments ?? 0} Payments & {counts?.operational?.expenses ?? 0} Expenses</li>
+                                <li>{counts?.operational?.production_orders ?? 0} Production Orders & Stage Costs</li>
+                                <li>{counts?.operational?.stock_movements ?? 0} Stock Movements (Recalculated to 0)</li>
                                 <li>Customer & Supplier Ledgers & Transaction Balances</li>
                             </ul>
                             <div className="pt-2 border-t border-slate-200 text-emerald-700 font-semibold flex items-center gap-1.5">
@@ -848,14 +840,14 @@ export default function TenantDataManagementPage({ params }: PageProps) {
 
                         <div className="space-y-1.5">
                             <label className="text-xs font-bold text-slate-700 block">
-                                Type confirmation phrase: <span className="font-mono text-indigo-600 select-all font-black">RESET OPERATIONAL DATA</span>
+                                Type confirmation phrase: <span className="font-mono text-emerald-700 select-all font-black">RESET OPERATIONAL DATA</span>
                             </label>
                             <input
                                 type="text"
                                 value={confirmationPhrase}
                                 onChange={(e) => setConfirmationPhrase(e.target.value)}
                                 placeholder="RESET OPERATIONAL DATA"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-slate-900 bg-slate-50/50"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-900 bg-slate-50/50"
                             />
                         </div>
 
@@ -872,7 +864,7 @@ export default function TenantDataManagementPage({ params }: PageProps) {
                                 type="button"
                                 onClick={handleOperationalReset}
                                 disabled={actionLoading || confirmationPhrase.trim() !== 'RESET OPERATIONAL DATA'}
-                                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {actionLoading ? (
                                     <>

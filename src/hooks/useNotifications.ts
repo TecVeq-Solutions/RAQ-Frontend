@@ -25,6 +25,10 @@ export function useNotifications() {
 
     // Fetch notifications from REST API
     const loadNotifications = useCallback(async (filters: NotificationFilters = {}) => {
+        if (!Cookies.get('auth_token')) {
+            setLoading(false);
+            return;
+        }
         try {
             setLoading(true);
             const res: NotificationResponse = await notificationService.getNotifications(filters);
@@ -42,6 +46,7 @@ export function useNotifications() {
 
     // Refresh unread count only
     const refreshUnreadCount = useCallback(async () => {
+        if (!Cookies.get('auth_token')) return;
         try {
             const count = await notificationService.getUnreadCount();
             setUnreadCount(count);
