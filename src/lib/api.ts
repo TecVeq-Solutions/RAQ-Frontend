@@ -79,6 +79,8 @@ export function invalidateCache(endpointPrefix?: string) {
   } else {
     masterDataCache.clear();
   }
+
+
 }
 
 export default apiClient;

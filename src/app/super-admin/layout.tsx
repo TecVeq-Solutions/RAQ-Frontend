@@ -97,7 +97,10 @@ export default function SuperAdminLayout({
   const isLogsActive = pathname.startsWith('/super-admin/logs');
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col antialiased selection:bg-emerald-600 selection:text-white font-sans">
+    <div 
+      className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col antialiased selection:bg-emerald-600 selection:text-white font-sans"
+      style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif' }}
+    >
       {/* Top Subtle Brand Accent Line */}
       <div className="h-1 w-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500" />
 
