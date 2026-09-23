@@ -46,6 +46,17 @@ export const licenseService = {
   },
 
   /**
+   * Manually edit the expiration date of a license.
+   */
+  async updateLicense(id: number, expires_at: string): Promise<License> {
+    const response = await superAdminApiClient.put<LicenseApiResponse<License>>(
+      `/super-admin/licenses/${id}`,
+      { expires_at }
+    );
+    return response.data.data;
+  },
+
+  /**
    * Activate a pending or suspended license.
    */
   async activateLicense(id: number): Promise<License> {

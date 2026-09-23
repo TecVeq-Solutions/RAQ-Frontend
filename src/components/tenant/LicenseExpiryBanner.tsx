@@ -31,6 +31,14 @@ export const LicenseExpiryBanner: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
+                        {pkg && (
+                            <Link
+                                href={`/billing/pay?package_id=${pkg.id}&amount=${pkg.price || 0}`}
+                                className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-lg text-xs font-bold transition shadow-sm whitespace-nowrap"
+                            >
+                                Renew Now
+                            </Link>
+                        )}
                         <button
                             type="button"
                             onClick={() => refreshTenantContext()}
@@ -61,6 +69,14 @@ export const LicenseExpiryBanner: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
+                        {pkg && (
+                            <Link
+                                href={`/billing/pay?package_id=${pkg.id}&amount=${pkg.price || 0}`}
+                                className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-lg text-xs font-bold transition shadow-sm whitespace-nowrap"
+                            >
+                                Renew Now
+                            </Link>
+                        )}
                         <button
                             type="button"
                             onClick={() => refreshTenantContext()}
@@ -74,8 +90,8 @@ export const LicenseExpiryBanner: React.FC = () => {
         );
     }
 
-    // 3. Expiring Soon Warning State (e.g. <= 14 days)
-    if (is_expiring_soon || (days_remaining > 0 && days_remaining <= 14)) {
+    // 3. Expiring Soon Warning State (<= 7 days)
+    if (is_expiring_soon || (days_remaining > 0 && days_remaining <= 7)) {
         return (
             <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900/90 text-indigo-100 px-4 py-2.5 border-b border-indigo-800/60 shadow-sm">
                 <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
@@ -86,11 +102,19 @@ export const LicenseExpiryBanner: React.FC = () => {
                         <div className="min-w-0">
                             <span className="font-semibold text-white">License Expiring Soon:</span>{' '}
                             <span className="text-indigo-200">
-                                Your {pkg?.name || 'SaaS'} subscription license expires in{' '}
-                                <strong className="text-amber-300 font-bold">{days_remaining} day{days_remaining === 1 ? '' : 's'}</strong>{' '}
-                                ({license.expires_at}).
+                                Your subscription will expire in <strong className="text-amber-300 font-bold">{days_remaining} day{days_remaining === 1 ? '' : 's'}</strong>. Please renew your subscription to continue using the service.
                             </span>
                         </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                        {pkg && (
+                            <Link
+                                href={`/billing/pay?package_id=${pkg.id}&amount=${pkg.price || 0}`}
+                                className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-lg text-xs font-bold transition shadow-sm whitespace-nowrap"
+                            >
+                                Renew Now
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

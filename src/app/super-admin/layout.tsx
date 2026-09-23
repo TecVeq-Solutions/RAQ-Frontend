@@ -15,6 +15,7 @@ import {
   Building2,
   ScrollText,
   Bell,
+  CreditCard,
 } from 'lucide-react';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 
@@ -22,7 +23,7 @@ export default function SuperAdminLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) { 
   const [user, setUser] = useState<SuperAdminUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState<string>('');
@@ -95,6 +96,7 @@ export default function SuperAdminLayout({
   const isLicensesActive = pathname.startsWith('/super-admin/licenses');
   const isTenantsActive = pathname.startsWith('/super-admin/tenants');
   const isLogsActive = pathname.startsWith('/super-admin/logs');
+  const isPaymentsActive = pathname.startsWith('/super-admin/payments');
 
   return (
     <div 
@@ -183,6 +185,18 @@ export default function SuperAdminLayout({
               </Link>
 
               <Link
+                href="/super-admin/payments"
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                  isPaymentsActive
+                    ? 'bg-emerald-600 text-white shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+                }`}
+              >
+                <CreditCard className="w-3.5 h-3.5 shrink-0" />
+                <span>Payments</span>
+              </Link>
+
+              <Link
                 href="/super-admin/tenants"
                 className={`flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-lg font-semibold transition-all whitespace-nowrap ${
                   isTenantsActive
@@ -250,6 +264,9 @@ export default function SuperAdminLayout({
         {children}
       </main>
 
+
+
+
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-4 px-4 sm:px-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl 2xl:max-w-[1700px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
@@ -264,6 +281,9 @@ export default function SuperAdminLayout({
           </span>
         </div>
       </footer>
+
+
+
     </div>
   );
 }
