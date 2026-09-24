@@ -283,14 +283,14 @@ export default function SuperAdminPaymentsPage() {
                 <img
                   src={(() => {
                     const baseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000').replace(/\/api\/?$/, '');
-                    const cleanPath = selectedTx.payment_proof_path.startsWith('/') ? selectedTx.payment_proof_path.substring(1) : selectedTx.payment_proof_path;
+                    const cleanPath = selectedTx.payment_proof_path!.startsWith('/') ? selectedTx.payment_proof_path!.substring(1) : selectedTx.payment_proof_path!;
                     return `${baseUrl}/storage/${cleanPath}`;
                   })()}
                   alt="Proof"
                   className="w-full h-48 object-cover rounded-xl border border-slate-200 cursor-pointer hover:opacity-90"
                   onClick={() => {
                     const baseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000').replace(/\/api\/?$/, '');
-                    const cleanPath = selectedTx.payment_proof_path.startsWith('/') ? selectedTx.payment_proof_path.substring(1) : selectedTx.payment_proof_path;
+                    const cleanPath = selectedTx.payment_proof_path!.startsWith('/') ? selectedTx.payment_proof_path!.substring(1) : selectedTx.payment_proof_path!;
                     window.open(`${baseUrl}/storage/${cleanPath}`, '_blank');
                   }}
                 />
