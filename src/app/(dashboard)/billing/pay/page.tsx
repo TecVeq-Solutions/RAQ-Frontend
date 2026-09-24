@@ -53,12 +53,8 @@ function PaymentCheckoutContent() {
       });
       setTransaction(tx);
       
-      if (selectedGateway.type === 'qr') {
-        setStep(2); // Go to QR upload step
-      } else {
-        // Mock external redirect for API gateway (like JazzCash/Safepay)
-        setStep(3);
-      }
+      // All gateways (including JazzCash and QR) require manual proof upload in this flow
+      setStep(2);
     } catch (err: any) {
       alert('Failed to initiate payment: ' + err.message);
     } finally {
@@ -155,26 +151,36 @@ function PaymentCheckoutContent() {
         </div>
       )}
 
-      {/* Step 2: QR Payment Upload */}
-      {step === 2 && selectedGateway?.type === 'qr' && (
+      {/* Step 2: Payment Upload */}
+      {step === 2 && (
         <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
           <div className="text-center mb-8">
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Scan to Pay</h2>
-            <p className="text-sm text-slate-500">Scan the QR code below using your banking app to pay <strong>PKR {amount}</strong>.</p>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">
+              {selectedGateway?.type === 'qr' ? 'Scan to Pay' : `Pay via ${selectedGateway?.name}`}
+            </h2>
+            <p className="text-sm text-slate-500">
+              {selectedGateway?.type === 'qr' 
+                ? 'Scan the QR code below using your banking app to pay ' 
+                : 'Please complete your transfer of '}
+              <strong>PKR {amount}</strong>
+              {selectedGateway?.type !== 'qr' && ` using ${selectedGateway?.name}.`}
+            </p>
           </div>
 
-          <div className="flex justify-center mb-8">
-            <div className="p-4 bg-white border-2 border-slate-100 rounded-3xl shadow-sm">
-              {/* Fallback QR placeholder if config doesn't have an image path */}
-              {selectedGateway.config?.qr_image ? (
-                <img src={selectedGateway.config.qr_image} alt="QR Code" className="w-48 h-48 rounded-xl object-cover" />
-              ) : (
-                <div className="w-48 h-48 bg-slate-100 rounded-xl flex items-center justify-center">
-                  <QrCode className="w-16 h-16 text-slate-400" />
-                </div>
-              )}
+          {selectedGateway?.type === 'qr' && (
+            <div className="flex justify-center mb-8">
+              <div className="p-4 bg-white border-2 border-slate-100 rounded-3xl shadow-sm">
+                {/* Fallback QR placeholder if config doesn't have an image path */}
+                {selectedGateway.config?.qr_image ? (
+                  <img src={selectedGateway.config.qr_image} alt="QR Code" className="w-48 h-48 rounded-xl object-cover" />
+                ) : (
+                  <div className="w-48 h-48 bg-slate-100 rounded-xl flex items-center justify-center">
+                    <QrCode className="w-16 h-16 text-slate-400" />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-8 flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
@@ -232,9 +238,7 @@ function PaymentCheckoutContent() {
           </div>
           <h2 className="text-2xl font-black text-slate-900 mb-3">Payment Submitted!</h2>
           <p className="text-sm text-slate-500 font-medium mb-8 max-w-sm mx-auto">
-            {selectedGateway?.type === 'qr' 
-              ? 'Your payment proof has been received. Our admin team will verify it shortly and activate your subscription.'
-              : 'Your payment was processed successfully! Your subscription is now active.'}
+            Your payment proof has been received. Our admin team will verify it shortly and activate your subscription.
           </p>
           <button
             onClick={() => router.push('/dashboard')}

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { ResolvedModule, CurrentPackageInfo } from '@/types/moduleAccess';
 import {
   Lock,
@@ -88,10 +89,10 @@ export default function UpgradeModuleDialog({
                 {availableIn.map((pkg) => (
                   <div
                     key={pkg.id}
-                    className="flex items-center justify-between p-3.5 rounded-2xl border border-indigo-100 bg-indigo-50/40 hover:bg-indigo-50 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-2xl border border-indigo-100 bg-indigo-50/40 hover:bg-indigo-50 transition-colors gap-3"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                      <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
                         <Zap className="w-4 h-4" />
                       </div>
                       <div>
@@ -101,11 +102,20 @@ export default function UpgradeModuleDialog({
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-sm font-extrabold text-indigo-700">
-                        PKR {Number(pkg.price).toLocaleString()}
-                      </span>
-                      <span className="text-xs text-slate-400 block">/{pkg.billing_cycle}</span>
+                    <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto mt-2 sm:mt-0 border-t sm:border-t-0 border-indigo-100 pt-2 sm:pt-0">
+                      <div className="text-left sm:text-right">
+                        <span className="text-sm font-extrabold text-indigo-700">
+                          PKR {Number(pkg.price).toLocaleString()}
+                        </span>
+                        <span className="text-xs text-slate-400 block">/{pkg.billing_cycle}</span>
+                      </div>
+                      <Link
+                        href={`/billing/pay?package_id=${pkg.id}&amount=${pkg.price}`}
+                        onClick={onClose}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors whitespace-nowrap flex items-center gap-1.5"
+                      >
+                        Upgrade <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
                     </div>
                   </div>
                 ))}
