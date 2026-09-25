@@ -34,6 +34,7 @@ import {
   Wrench,
   Wallet,
   Lock,
+  Bell,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -70,29 +71,6 @@ const MENU_ITEMS: MenuItem[] = [
     moduleCode: 'dashboard',
   },
   {
-    name: 'Sales',
-    icon: ShoppingCart,
-    roles: ['admin', 'staff'],
-    section: 'operations',
-    moduleCode: 'sales',
-    children: [
-      { name: 'New Sale (POS)', href: '/sales/new', badge: 'Fast POS' },
-      { name: 'Sales History', href: '/sales' },
-      { name: 'Receipts / Invoices', href: '/sales/invoices' },
-    ],
-  },
-  {
-    name: 'Purchases',
-    icon: Receipt,
-    roles: ['admin', 'staff'],
-    section: 'operations',
-    moduleCode: 'purchases',
-    children: [
-      { name: 'New Purchase', href: '/purchases/new' },
-      { name: 'Purchase History', href: '/purchases' },
-    ],
-  },
-  {
     name: 'Stock & Inventory',
     icon: Boxes,
     roles: ['admin', 'staff', 'viewer'],
@@ -118,12 +96,16 @@ const MENU_ITEMS: MenuItem[] = [
     ],
   },
   {
-    name: 'Assets & Machinery',
-    href: '/assets',
-    icon: Wrench,
-    roles: ['admin', 'staff', 'viewer'],
+    name: 'Sales',
+    icon: ShoppingCart,
+    roles: ['admin', 'staff'],
     section: 'operations',
-    moduleCode: 'fixed_assets',
+    moduleCode: 'sales',
+    children: [
+      { name: 'New Sale (POS)', href: '/sales/new', badge: 'Fast POS' },
+      { name: 'Sales History', href: '/sales' },
+      { name: 'Receipts / Invoices', href: '/sales/invoices' },
+    ],
   },
   {
     name: 'Customers',
@@ -148,6 +130,25 @@ const MENU_ITEMS: MenuItem[] = [
       { name: 'Add New Supplier', href: '/suppliers/new' },
       { name: 'Supplier Ledger (Khata)', href: '/suppliers/ledger' },
     ],
+  },
+  {
+    name: 'Purchases',
+    icon: Receipt,
+    roles: ['admin', 'staff'],
+    section: 'operations',
+    moduleCode: 'purchases',
+    children: [
+      { name: 'New Purchase', href: '/purchases/new' },
+      { name: 'Purchase History', href: '/purchases' },
+    ],
+  },
+  {
+    name: 'Assets & Machinery',
+    href: '/assets',
+    icon: Wrench,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'operations',
+    moduleCode: 'fixed_assets',
   },
   {
     name: 'Cash & Bank Accounts',
@@ -208,6 +209,13 @@ const MENU_ITEMS: MenuItem[] = [
     roles: ['admin'],
     section: 'admin',
     moduleCode: 'backup',
+  },
+  {
+    name: 'Notifications',
+    href: '/notifications',
+    icon: Bell,
+    roles: ['admin', 'staff', 'viewer'],
+    section: 'admin',
   },
   {
     name: 'System Settings',

@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 
 import StaffDashboard from '@/components/dashboard/StaffDashboard';
+import { TenantPackageSummary } from '@/components/tenant/TenantPackageSummary';
 import { DueAlertsData } from '@/types/ledger';
 import { formatInvoiceNumber } from '@/lib/formatters';
 import { DashboardSkeleton } from '@/components/ui/Skeleton';
@@ -276,6 +277,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Global Tenant SaaS Package, Limits & License Summary */}
+      <TenantPackageSummary />
 
       {/* SECTION B: Executive Financial Alerts Center */}
       {user?.role !== 'viewer' && (

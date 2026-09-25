@@ -90,7 +90,7 @@ export const superAdminAuthService = {
    */
   getUserFromCookie(): SuperAdminUser | null {
     const userStr = Cookies.get(SUPER_ADMIN_USER_KEY);
-    if (!userStr) return null;
+    if (!userStr || userStr === 'undefined' || userStr === 'null') return null;
     try {
       return JSON.parse(userStr) as SuperAdminUser;
     } catch {

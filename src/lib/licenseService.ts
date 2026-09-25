@@ -46,6 +46,17 @@ export const licenseService = {
   },
 
   /**
+   * Manually edit the expiration date of a license.
+   */
+  async updateLicense(id: number, expires_at: string): Promise<License> {
+    const response = await superAdminApiClient.put<LicenseApiResponse<License>>(
+      `/super-admin/licenses/${id}`,
+      { expires_at }
+    );
+    return response.data.data;
+  },
+
+  /**
    * Activate a pending or suspended license.
    */
   async activateLicense(id: number): Promise<License> {
@@ -105,6 +116,16 @@ export const licenseService = {
   async getLicenseEvents(id: number): Promise<LicenseEvent[]> {
     const response = await superAdminApiClient.get<LicenseApiResponse<LicenseEvent[]>>(
       `/super-admin/licenses/${id}/events`
+    );
+    return response.data.data;
+  },
+
+  /**
+   * Fetch all tenants for dropdown selection.
+   */
+  async getTenants(): Promise<Array<{ id: number; name: string; email: string; status: string }>> {
+    const response = await superAdminApiClient.get<{ success: boolean; data: Array<{ id: number; name: string; email: string; status: string }> }>(
+      '/super-admin/tenants'
     );
     return response.data.data;
   },

@@ -4,7 +4,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { superAdminDashboardService } from '@/lib/superAdminDashboardService';
 import { SuperAdminDashboardData } from '@/types/superAdminDashboard';
 import {
-  Users,
   ShieldCheck,
   CreditCard,
   AlertTriangle,
@@ -15,12 +14,12 @@ import {
   Info,
   Clock,
   CheckCircle2,
-  Calendar,
   Building2,
-  Lock,
   ArrowUpRight,
-  ChevronRight,
   Activity,
+  Sparkles,
+  Zap,
+  Layers,
 } from 'lucide-react';
 
 const TIME_RANGES = [
@@ -81,19 +80,12 @@ export default function SuperAdminDashboardPage() {
     fetchDashboardData(range, true);
   };
 
-  // Format currency
-  const formatCurrency = (amount: number, currency = 'PKR') => {
-    return `${currency} ${amount.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
-  };
-
   // Format compact number
   const formatCompact = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       notation: 'compact',
       compactDisplay: 'short',
+      maximumFractionDigits: 1,
     }).format(amount);
   };
 
@@ -102,29 +94,38 @@ export default function SuperAdminDashboardPage() {
     return (
       <div className="space-y-6 animate-pulse">
         {/* Header Skeleton */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
           <div className="space-y-2">
-            <div className="h-7 w-64 bg-slate-800 rounded-lg" />
-            <div className="h-4 w-96 bg-slate-800/60 rounded-md" />
+            <div className="h-7 w-64 bg-slate-200 rounded-lg" />
+            <div className="h-4 w-96 max-w-full bg-slate-100 rounded-md" />
           </div>
-          <div className="h-10 w-48 bg-slate-800 rounded-xl" />
+          <div className="h-10 w-48 bg-slate-200 rounded-xl" />
         </div>
 
         {/* Top KPIs Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-36 bg-slate-900/50 border border-slate-800 rounded-2xl p-5 space-y-3">
-              <div className="h-4 w-24 bg-slate-800 rounded" />
-              <div className="h-8 w-20 bg-slate-800 rounded-lg" />
-              <div className="h-3 w-32 bg-slate-800/60 rounded" />
+            <div key={i} className="h-40 bg-white border border-slate-200/90 rounded-2xl p-5 space-y-3 shadow-xs">
+              <div className="flex justify-between items-center">
+                <div className="h-4 w-24 bg-slate-200 rounded" />
+                <div className="h-8 w-8 bg-slate-100 rounded-xl" />
+              </div>
+              <div className="h-8 w-24 bg-slate-200 rounded-lg mt-2" />
+              <div className="h-8 w-full bg-slate-100 rounded-lg mt-4" />
             </div>
           ))}
         </div>
 
-        {/* Charts Skeleton */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 h-96 bg-slate-900/50 border border-slate-800 rounded-2xl p-6" />
-          <div className="h-96 bg-slate-900/50 border border-slate-800 rounded-2xl p-6" />
+        {/* Middle Row Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-7 h-96 bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs" />
+          <div className="lg:col-span-5 h-96 bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs" />
+        </div>
+
+        {/* Bottom Row Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-6 h-80 bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs" />
+          <div className="lg:col-span-6 h-80 bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs" />
         </div>
       </div>
     );
@@ -133,16 +134,16 @@ export default function SuperAdminDashboardPage() {
   // Error State with Retry
   if (error && !data) {
     return (
-      <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 text-center max-w-xl mx-auto my-12 space-y-4">
-        <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center mx-auto">
-          <AlertOctagon className="w-6 h-6" />
+      <div className="bg-white border border-red-200 rounded-2xl p-8 text-center max-w-xl mx-auto my-12 space-y-4 shadow-sm">
+        <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-100">
+          <AlertOctagon className="w-7 h-7" />
         </div>
-        <h3 className="text-lg font-bold text-white">Analytics Unavailable</h3>
-        <p className="text-slate-400 text-sm">{error}</p>
+        <h3 className="text-lg font-bold text-slate-900">Platform Analytics Unavailable</h3>
+        <p className="text-slate-500 text-sm leading-relaxed">{error}</p>
         <button
           onClick={() => fetchDashboardData(range)}
           type="button"
-          className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-medium text-sm transition-all shadow-lg cursor-pointer"
+          className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition-all shadow-xs cursor-pointer"
         >
           Retry Connection
         </button>
@@ -155,7 +156,7 @@ export default function SuperAdminDashboardPage() {
   // Prepare SVG chart coordinates for Tenant Growth
   const chartHeight = 240;
   const chartWidth = 700;
-  const paddingX = 40;
+  const paddingX = 45;
   const paddingY = 30;
 
   const maxTenants = Math.max(...tenant_growth.map((p) => p.total_tenants), 5);
@@ -185,150 +186,155 @@ export default function SuperAdminDashboardPage() {
       : '';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 sm:space-y-8 font-sans">
       {/* 1. Header Banner & Quick Controls */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-slate-900/90 to-indigo-950/40 p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl backdrop-blur-sm">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              SaaS Platform Health Analytics
-            </h1>
-            <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Live Telemetry
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Real-time platform orchestration, tenant lifecycle distributions, and ARR analytics.
-          </p>
-        </div>
-
-        {/* Action Toolbar */}
-        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-          <div className="text-[11px] text-slate-400 hidden lg:flex items-center gap-1.5 bg-slate-800/40 px-3 py-1.5 rounded-xl border border-slate-800">
-            <Clock className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Updated {new Date(data!.generated_at).toLocaleTimeString()}</span>
+      <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-xs">
+        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                Platform Intelligence & Overview
+              </h1>
+              <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Telemetry
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
+              Real-time multi-tenant SaaS orchestration, subscription lifecycle distribution, and financial ARR metrics.
+            </p>
           </div>
 
-          <button
-            onClick={handleManualRefresh}
-            disabled={refreshing}
-            type="button"
-            className="px-3.5 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 border border-slate-700/70 text-xs font-medium flex items-center gap-2 transition-all hover:border-slate-600 disabled:opacity-50 cursor-pointer shadow-sm"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 text-indigo-400 ${refreshing ? 'animate-spin' : ''}`} />
-            <span>{refreshing ? 'Syncing...' : 'Refresh'}</span>
-          </button>
+          {/* Action Toolbar */}
+          <div className="flex items-center gap-2.5 sm:gap-3 w-full md:w-auto justify-between md:justify-end shrink-0">
+            <div className="text-[11px] text-slate-600 hidden sm:flex items-center gap-1.5 bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 shadow-inner">
+              <Clock className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="font-mono font-medium">Sync: {new Date(data!.generated_at).toLocaleTimeString()}</span>
+            </div>
+
+            <button
+              onClick={handleManualRefresh}
+              disabled={refreshing}
+              type="button"
+              className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer shadow-xs hover:border-slate-400"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'Syncing...' : 'Refresh Metrics'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* 2. Top Metric Cards (Tenants, Licenses, MRR, ARR) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: Tenant Lifecycle Overview */}
-        <div className="bg-slate-900/70 border border-slate-800 hover:border-slate-700/80 rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all group">
-          <div className="absolute top-0 right-0 w-28 h-28 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all pointer-events-none" />
+        <div className="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5 group">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Tenants</span>
-            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Tenants</span>
+            <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-xs">
               <Building2 className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white tracking-tight">{tenants.total}</span>
-            <span className="text-xs font-medium text-emerald-400 flex items-center">
+            <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
+              {tenants.total}
+            </span>
+            <span className="text-xs font-bold text-emerald-600 flex items-center gap-0.5">
               <ArrowUpRight className="w-3.5 h-3.5" />
               Active
             </span>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-800/80 grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="bg-emerald-500/10 rounded-lg py-1 border border-emerald-500/20">
-              <span className="block font-bold text-emerald-400">{tenants.active}</span>
-              <span className="text-[10px] text-slate-400">Active</span>
+          <div className="mt-4 pt-3.5 border-t border-slate-100 grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="bg-emerald-50 rounded-lg py-1.5 px-1 border border-emerald-200">
+              <span className="block font-bold text-emerald-800 font-mono text-xs sm:text-sm">{tenants.active}</span>
+              <span className="text-[10px] text-emerald-700 font-semibold">Active</span>
             </div>
-            <div className="bg-amber-500/10 rounded-lg py-1 border border-amber-500/20">
-              <span className="block font-bold text-amber-400">{tenants.trial}</span>
-              <span className="text-[10px] text-slate-400">Trial</span>
+            <div className="bg-amber-50 rounded-lg py-1.5 px-1 border border-amber-200">
+              <span className="block font-bold text-amber-800 font-mono text-xs sm:text-sm">{tenants.trial}</span>
+              <span className="text-[10px] text-amber-700 font-semibold">Trial</span>
             </div>
-            <div className="bg-red-500/10 rounded-lg py-1 border border-red-500/20">
-              <span className="block font-bold text-red-400">{tenants.suspended}</span>
-              <span className="text-[10px] text-slate-400">Suspended</span>
+            <div className="bg-red-50 rounded-lg py-1.5 px-1 border border-red-200">
+              <span className="block font-bold text-red-800 font-mono text-xs sm:text-sm">{tenants.suspended}</span>
+              <span className="text-[10px] text-red-700 font-semibold">Suspended</span>
             </div>
           </div>
         </div>
 
         {/* Card 2: Licenses Status */}
-        <div className="bg-slate-900/70 border border-slate-800 hover:border-slate-700/80 rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all group">
-          <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all pointer-events-none" />
+        <div className="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5 group">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Active Licenses</span>
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Active Licenses</span>
+            <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-xs">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white tracking-tight">{licenses.active}</span>
-            <span className="text-xs text-slate-400">/ {licenses.total} issued</span>
+            <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
+              {licenses.active}
+            </span>
+            <span className="text-xs font-medium text-slate-500">/ {licenses.total} issued</span>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-center text-xs">
+          <div className="mt-4 pt-3.5 border-t border-slate-100 grid grid-cols-2 gap-2 text-center text-xs">
             <div
-              className={`rounded-lg py-1 border ${
+              className={`rounded-lg py-1.5 px-2 border transition-all ${
                 licenses.expiring_soon > 0
-                  ? 'bg-amber-500/15 border-amber-500/30 text-amber-300 animate-pulse'
-                  : 'bg-slate-800/60 border-slate-700/60 text-slate-300'
+                  ? 'bg-amber-50 border-amber-300 text-amber-800 font-bold animate-pulse'
+                  : 'bg-slate-50 border-slate-200 text-slate-700'
               }`}
             >
-              <span className="block font-bold">{licenses.expiring_soon}</span>
-              <span className="text-[10px]">Expiring &le;14d</span>
+              <span className="block font-bold font-mono text-xs sm:text-sm">{licenses.expiring_soon}</span>
+              <span className="text-[10px] font-semibold">Expiring &le;14d</span>
             </div>
-            <div className="bg-rose-500/10 rounded-lg py-1 border border-rose-500/20 text-rose-400">
-              <span className="block font-bold">{licenses.expired}</span>
-              <span className="text-[10px] text-slate-400">Expired</span>
+            <div className="bg-red-50 rounded-lg py-1.5 px-2 border border-red-200 text-red-800">
+              <span className="block font-bold font-mono text-xs sm:text-sm">{licenses.expired}</span>
+              <span className="text-[10px] text-red-700 font-semibold">Expired</span>
             </div>
           </div>
         </div>
 
         {/* Card 3: Monthly Recurring Revenue (MRR) */}
-        <div className="bg-slate-900/70 border border-slate-800 hover:border-slate-700/80 rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all group">
-          <div className="absolute top-0 right-0 w-28 h-28 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all pointer-events-none" />
+        <div className="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5 group">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Monthly Revenue (MRR)</span>
-            <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Monthly Revenue (MRR)</span>
+            <div className="p-2.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-100 shadow-xs">
               <CreditCard className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <div className="mt-3 flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
               {formatCompact(revenue.monthly_mrr)}
             </span>
-            <span className="text-xs text-slate-400 ml-1.5">{revenue.currency}</span>
+            <span className="text-xs font-bold text-slate-500 uppercase">{revenue.currency}</span>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <span>{revenue.paying_tenants_count} Active subscriptions</span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-              Recurring
+          <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span className="text-[11px] font-semibold text-slate-600">{revenue.paying_tenants_count} Paid Accounts</span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
+              Monthly
             </span>
           </div>
         </div>
 
         {/* Card 4: Projected Annual Revenue (ARR) */}
-        <div className="bg-slate-900/70 border border-slate-800 hover:border-slate-700/80 rounded-2xl p-5 shadow-lg relative overflow-hidden transition-all group">
-          <div className="absolute top-0 right-0 w-28 h-28 bg-violet-500/10 rounded-full blur-2xl group-hover:bg-violet-500/20 transition-all pointer-events-none" />
+        <div className="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5 group">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Projected Annual (ARR)</span>
-            <div className="p-2 rounded-xl bg-violet-500/10 text-violet-400 border border-violet-500/20">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Annual Run Rate (ARR)</span>
+            <div className="p-2.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-100 shadow-xs">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <div className="mt-3 flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
               {formatCompact(revenue.projected_annual_arr)}
             </span>
-            <span className="text-xs text-slate-400 ml-1.5">{revenue.currency}</span>
+            <span className="text-xs font-bold text-slate-500 uppercase">{revenue.currency}</span>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <span>MRR &times; 12 mo projection</span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-500/10 text-violet-400 border border-violet-500/20">
-              Annual
+          <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span className="text-[11px] font-semibold text-slate-600">MRR &times; 12 Forecast</span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200">
+              Annualized
             </span>
           </div>
         </div>
@@ -337,29 +343,31 @@ export default function SuperAdminDashboardPage() {
       {/* 3. Middle Row: Tenant Growth Chart & Module Adoption */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Tenant Growth Chart (7 cols) */}
-        <div className="lg:col-span-7 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col justify-between">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+        <div className="lg:col-span-7 bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-indigo-400" />
-                <h2 className="text-base font-bold text-white tracking-tight">Tenant Growth Over Time</h2>
+                <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
+                <h2 className="text-base font-extrabold text-slate-900 tracking-tight">Tenant Growth Trajectory</h2>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Cumulative active platform organizations based on tenant creation dates.
+              <p className="text-xs text-slate-500 mt-0.5">
+                Cumulative platform organizations based on signup telemetry.
               </p>
             </div>
 
-            {/* Time Range Pills */}
-            <div className="flex items-center p-1 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+            {/* Time Range Segmented Pills */}
+            <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
               {TIME_RANGES.map((r) => (
                 <button
                   key={r.key}
                   type="button"
                   onClick={() => handleRangeChange(r.key)}
-                  className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                     range === r.key
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                      ? 'bg-emerald-600 text-white shadow-xs font-bold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
                   }`}
                 >
                   {r.label}
@@ -371,7 +379,7 @@ export default function SuperAdminDashboardPage() {
           {/* Interactive SVG Chart Canvas */}
           <div className="relative mt-6 w-full h-[260px] flex items-center justify-center">
             {tenant_growth.length === 0 ? (
-              <div className="text-center text-slate-500 text-xs">No registration data recorded in this period.</div>
+              <div className="text-center text-slate-400 text-xs">No registration telemetry recorded in this period.</div>
             ) : (
               <div className="w-full h-full relative">
                 <svg
@@ -380,9 +388,10 @@ export default function SuperAdminDashboardPage() {
                   preserveAspectRatio="none"
                 >
                   <defs>
-                    <linearGradient id="growthGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#6366F1" stopOpacity="0.35" />
-                      <stop offset="100%" stopColor="#6366F1" stopOpacity="0.0" />
+                    <linearGradient id="growthGradientEmerald" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#16A34A" stopOpacity="0.25" />
+                      <stop offset="60%" stopColor="#16A34A" stopOpacity="0.08" />
+                      <stop offset="100%" stopColor="#16A34A" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
 
@@ -397,15 +406,16 @@ export default function SuperAdminDashboardPage() {
                           y1={y}
                           x2={chartWidth - paddingX}
                           y2={y}
-                          stroke="#1E293B"
+                          stroke="#E2E8F0"
                           strokeDasharray="4 4"
                           strokeWidth="1"
                         />
                         <text
                           x={paddingX - 10}
-                          y={y + 4}
+                          y={y + 3.5}
                           fill="#64748B"
                           fontSize="10"
+                          fontFamily="monospace"
                           textAnchor="end"
                         >
                           {val}
@@ -415,13 +425,13 @@ export default function SuperAdminDashboardPage() {
                   })}
 
                   {/* Gradient Area Fill */}
-                  <path d={areaD} fill="url(#growthGradient)" />
+                  <path d={areaD} fill="url(#growthGradientEmerald)" />
 
                   {/* Smooth Line Curve */}
                   <path
                     d={pathD}
                     fill="none"
-                    stroke="#818CF8"
+                    stroke="#16A34A"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -436,17 +446,17 @@ export default function SuperAdminDashboardPage() {
                         r={hoveredPoint?.date === pt.date ? 6 : 3.5}
                         className={`transition-all duration-150 ${
                           hoveredPoint?.date === pt.date
-                            ? 'fill-indigo-400 stroke-white stroke-2'
-                            : 'fill-slate-900 stroke-indigo-400 stroke-2'
+                            ? 'fill-emerald-600 stroke-white stroke-2 shadow-md'
+                            : 'fill-white stroke-emerald-600 stroke-2'
                         }`}
                         onMouseEnter={() => setHoveredPoint(pt)}
                         onMouseLeave={() => setHoveredPoint(null)}
                       />
-                      {/* Invisible hit area */}
+                      {/* Hit area */}
                       <circle
                         cx={pt.x}
                         cy={pt.y}
-                        r={12}
+                        r={14}
                         fill="transparent"
                         onMouseEnter={() => setHoveredPoint(pt)}
                         onMouseLeave={() => setHoveredPoint(null)}
@@ -458,16 +468,16 @@ export default function SuperAdminDashboardPage() {
                 {/* Floating Tooltip */}
                 {hoveredPoint && (
                   <div
-                    className="absolute z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 bg-slate-900/95 border border-indigo-500/40 backdrop-blur-md rounded-xl px-3 py-2 text-xs shadow-2xl text-white"
+                    className="absolute z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 bg-white border border-slate-200 backdrop-blur-md rounded-xl px-3.5 py-2 text-xs shadow-xl text-slate-900"
                     style={{
                       left: `${(hoveredPoint.x / chartWidth) * 100}%`,
                       top: `${(hoveredPoint.y / chartHeight) * 100}%`,
                     }}
                   >
-                    <div className="font-bold text-indigo-300">{hoveredPoint.label}</div>
-                    <div className="flex items-center justify-between gap-3 text-[11px] mt-1 text-slate-300">
-                      <span>Total: <strong className="text-white">{hoveredPoint.total_tenants}</strong></span>
-                      <span>New: <strong className="text-emerald-400">+{hoveredPoint.new_tenants}</strong></span>
+                    <div className="font-bold text-slate-900">{hoveredPoint.label}</div>
+                    <div className="flex items-center justify-between gap-3 text-[11px] mt-1 text-slate-600">
+                      <span>Total: <strong className="text-slate-900 font-mono">{hoveredPoint.total_tenants}</strong></span>
+                      <span>New: <strong className="text-emerald-700 font-mono font-bold">+{hoveredPoint.new_tenants}</strong></span>
                     </div>
                   </div>
                 )}
@@ -475,25 +485,27 @@ export default function SuperAdminDashboardPage() {
             )}
           </div>
 
-          <div className="flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800/80 pt-3 mt-4">
-            <span>Range: {TIME_RANGES.find((r) => r.key === range)?.label}</span>
-            <span>Total Baseline: {tenant_growth[0]?.total_tenants || 0} &rarr; Current: {tenants.total}</span>
+          <div className="flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-100 pt-3 mt-4">
+            <span>Range: <strong className="text-slate-700">{TIME_RANGES.find((r) => r.key === range)?.label}</strong></span>
+            <span>Baseline: <strong className="text-slate-800 font-mono">{tenant_growth[0]?.total_tenants || 0}</strong> &rarr; Current: <strong className="text-emerald-700 font-mono font-bold">{tenants.total}</strong></span>
           </div>
         </div>
 
         {/* Right Column: Module Adoption Breakdown (5 cols) */}
-        <div className="lg:col-span-5 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+        <div className="lg:col-span-5 bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <Boxes className="w-4 h-4 text-cyan-400" />
-                <h2 className="text-base font-bold text-white tracking-tight">Module Adoption</h2>
+                <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  <Boxes className="w-4 h-4" />
+                </div>
+                <h2 className="text-base font-extrabold text-slate-900 tracking-tight">Module Adoption</h2>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Effective adoption computed from active packages &plus; tenant overrides.
+              <p className="text-xs text-slate-500 mt-0.5">
+                Computed from packages &plus; tenant overrides.
               </p>
             </div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
               {module_adoption.length} Modules
             </span>
           </div>
@@ -501,31 +513,33 @@ export default function SuperAdminDashboardPage() {
           {/* Module List with Progress Bars */}
           <div className="mt-4 space-y-3.5 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
             {module_adoption.length === 0 ? (
-              <div className="text-center text-slate-500 text-xs py-8">No active modules found.</div>
+              <div className="text-center text-slate-400 text-xs py-8">No active modules found.</div>
             ) : (
               module_adoption.map((mod) => (
                 <div key={mod.id} className="space-y-1.5 group">
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-200 group-hover:text-white transition-colors">
+                      <span className="font-bold text-slate-800 group-hover:text-emerald-700 transition-colors">
                         {mod.name}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-mono">({mod.code})</span>
+                      <span className="text-[10px] text-slate-500 font-mono bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
+                        {mod.code}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] text-slate-400">
-                        {mod.tenants_count} / {mod.total_active_tenants} tenants
+                      <span className="text-[11px] text-slate-500 font-mono">
+                        {mod.tenants_count}/{mod.total_active_tenants}
                       </span>
-                      <span className="text-xs font-bold text-cyan-400 w-12 text-right">
+                      <span className="text-xs font-bold text-emerald-700 font-mono w-12 text-right">
                         {mod.adoption_percentage}%
                       </span>
                     </div>
                   </div>
 
-                  {/* Horizontal Bar */}
-                  <div className="w-full h-2 bg-slate-800/80 rounded-full overflow-hidden">
+                  {/* Progress Bar */}
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                     <div
-                      className="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full transition-all duration-500 shadow-xs"
                       style={{ width: `${Math.min(mod.adoption_percentage, 100)}%` }}
                     />
                   </div>
@@ -539,30 +553,32 @@ export default function SuperAdminDashboardPage() {
       {/* 4. Bottom Row: System Alerts & Recent Platform Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: System Alerts (6 cols) */}
-        <div className="lg:col-span-6 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+        <div className="lg:col-span-6 bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-400" />
-              <h2 className="text-base font-bold text-white tracking-tight">Platform System Alerts</h2>
+              <div className="p-1.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-100">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <h2 className="text-base font-extrabold text-slate-900 tracking-tight">Platform System Alerts</h2>
             </div>
             <span
               className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${
                 alerts.length === 0
-                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                  : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : 'bg-amber-50 text-amber-800 border-amber-200'
               }`}
             >
-              {alerts.length === 0 ? 'All Clear' : `${alerts.length} Active`}
+              {alerts.length === 0 ? 'All Systems Clear' : `${alerts.length} Active Alerts`}
             </span>
           </div>
 
           <div className="mt-4 space-y-3">
             {alerts.length === 0 ? (
-              <div className="p-6 rounded-xl bg-slate-950/60 border border-slate-800/60 text-center space-y-2">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
-                <h4 className="text-xs font-bold text-slate-200">No Critical Platform Issues</h4>
-                <p className="text-[11px] text-slate-400">
-                  All tenant licenses, backups, and subscriptions are operating within normal parameters.
+              <div className="p-6 rounded-xl bg-emerald-50/50 border border-emerald-100 text-center space-y-2">
+                <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
+                <h4 className="text-xs font-bold text-slate-900">No Critical Platform Issues</h4>
+                <p className="text-[11px] text-slate-500 leading-relaxed max-w-sm mx-auto">
+                  All tenant licenses, automated backups, and subscription quotas are operating within normal parameters.
                 </p>
               </div>
             ) : (
@@ -575,37 +591,37 @@ export default function SuperAdminDashboardPage() {
                     key={alert.id}
                     className={`p-4 rounded-xl border flex items-start gap-3 transition-all ${
                       isCritical
-                        ? 'bg-red-500/10 border-red-500/30 text-red-200'
+                        ? 'bg-red-50 border-red-200 text-red-900 shadow-xs'
                         : isWarning
-                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-200'
-                        : 'bg-blue-500/10 border-blue-500/30 text-blue-200'
+                        ? 'bg-amber-50 border-amber-200 text-amber-900 shadow-xs'
+                        : 'bg-blue-50 border-blue-200 text-blue-900 shadow-xs'
                     }`}
                   >
-                    <div className="mt-0.5">
+                    <div className="mt-0.5 shrink-0">
                       {isCritical ? (
-                        <AlertOctagon className="w-5 h-5 text-red-400" />
+                        <AlertOctagon className="w-5 h-5 text-red-600" />
                       ) : isWarning ? (
-                        <AlertTriangle className="w-5 h-5 text-amber-400" />
+                        <AlertTriangle className="w-5 h-5 text-amber-600" />
                       ) : (
-                        <Info className="w-5 h-5 text-blue-400" />
+                        <Info className="w-5 h-5 text-blue-600" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-bold text-xs">{alert.title}</span>
                         <span
-                          className={`text-[9px] uppercase font-extrabold px-1.5 py-0.5 rounded ${
+                          className={`text-[9px] uppercase font-black px-2 py-0.5 rounded ${
                             isCritical
-                              ? 'bg-red-500/20 text-red-300'
+                              ? 'bg-red-100 text-red-800 border border-red-200'
                               : isWarning
-                              ? 'bg-amber-500/20 text-amber-300'
-                              : 'bg-blue-500/20 text-blue-300'
+                              ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                              : 'bg-blue-100 text-blue-800 border border-blue-200'
                           }`}
                         >
                           {alert.severity}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-300 mt-1">{alert.message}</p>
+                      <p className="text-xs text-slate-700 mt-1 leading-relaxed">{alert.message}</p>
                     </div>
                   </div>
                 );
@@ -615,35 +631,41 @@ export default function SuperAdminDashboardPage() {
         </div>
 
         {/* Right: Recent Activity / Audit Trail (6 cols) */}
-        <div className="lg:col-span-6 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+        <div className="lg:col-span-6 bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-400" />
-              <h2 className="text-base font-bold text-white tracking-tight">Recent Platform Events</h2>
+              <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">
+                <Activity className="w-4 h-4" />
+              </div>
+              <h2 className="text-base font-extrabold text-slate-900 tracking-tight">Recent Platform Events</h2>
             </div>
-            <span className="text-xs text-slate-400">Audit Trail</span>
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              Audit Trail
+            </span>
           </div>
 
-          <div className="mt-4 space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="mt-4 space-y-2.5 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
             {recent_activity.length === 0 ? (
-              <div className="text-center text-slate-500 text-xs py-8">No recent events recorded.</div>
+              <div className="text-center text-slate-400 text-xs py-8">No recent events recorded.</div>
             ) : (
               recent_activity.map((item) => (
                 <div
                   key={item.id}
-                  className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/60 flex items-start justify-between gap-3 text-xs hover:border-slate-700 transition-all"
+                  className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start justify-between gap-3 text-xs hover:border-slate-300 transition-all group"
                 >
-                  <div className="space-y-0.5 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-slate-200">{item.tenant_name}</span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                        {item.tenant_name}
+                      </span>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
                         {item.event_type}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 truncate">{item.description}</p>
+                    <p className="text-[11px] text-slate-600 truncate">{item.description}</p>
                   </div>
 
-                  <span className="text-[10px] text-slate-400 whitespace-nowrap">
+                  <span className="text-[10px] font-mono text-slate-400 shrink-0">
                     {item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}
                   </span>
                 </div>

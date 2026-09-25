@@ -95,7 +95,7 @@ export const authService = {
    */
   getUserFromCookie(): User | null {
     const userStr = Cookies.get(USER_KEY);
-    if (!userStr) return null;
+    if (!userStr || userStr === 'undefined' || userStr === 'null') return null;
     try {
       return JSON.parse(userStr) as User;
     } catch {
