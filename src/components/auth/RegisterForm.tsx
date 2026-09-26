@@ -3,21 +3,21 @@
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authService } from '@/lib/auth';
-import { Lock, Mail, Loader2, AlertCircle, ShieldCheck, UserCheck, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, Loader2, AlertCircle, Building2, User, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/dashboard';
-  const sessionExpired = searchParams.get('session_expired');
 
+  const [businessName, setBusinessName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(
-    sessionExpired ? 'Your session has expired. Please sign in again.' : null
-  );
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,14 +25,19 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      await authService.login({ email, password });
+      await authService.register({
+        business_name: businessName,
+        name,
+        email,
+        password,
+      });
       window.location.href = redirectUrl;
     } catch (err: any) {
       if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else if (err.response?.data?.errors) {
         const firstError = Object.values(err.response.data.errors)[0] as string[];
-        setError(firstError[0] || 'Authentication failed.');
+        setError(firstError[0] || 'Registration failed.');
       } else {
         setError('Unable to connect to the server. Please verify backend is running.');
       }
@@ -45,15 +50,15 @@ export default function LoginForm() {
   return (
     <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-slate-100 transition-all">
       {/* Header & Logo */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white mb-4 shadow-sm ring-1 ring-slate-100 p-2">
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-4 shadow-sm ring-1 ring-slate-100 p-2">
           <img src="/tecveq-logo.png" alt="Tecveq Logo" className="w-full h-full object-contain" />
         </div>
         <h1 className="text-2xl font-bold text-[#0F172A] tracking-tight">
-          Tecveq Management
+          Create an Account
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Sales, Purchase, Stock & Accounting System
+          Start your 14-day free trial today.
         </p>
       </div>
 
@@ -65,8 +70,48 @@ export default function LoginForm() {
         </div>
       )}
 
-      {/* Login Form */}
-      <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Register Form */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
+            Business / Company Name
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <Building2 className="w-5 h-5" />
+            </div>
+            <input
+              type="text"
+              required
+              disabled={loading}
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              placeholder="Your Business Name"
+              className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[#0F172A] placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all text-sm font-medium disabled:opacity-75 disabled:cursor-not-allowed"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
+            Your Full Name
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <User className="w-5 h-5" />
+            </div>
+            <input
+              type="text"
+              required
+              disabled={loading}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="John Doe"
+              className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[#0F172A] placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all text-sm font-medium disabled:opacity-75 disabled:cursor-not-allowed"
+            />
+          </div>
+        </div>
+
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
             Email Address
@@ -92,7 +137,6 @@ export default function LoginForm() {
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
               Password
             </label>
-            <span className="text-xs text-slate-400">Min. 6 characters</span>
           </div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -105,6 +149,7 @@ export default function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              minLength={8}
               className="w-full pl-11 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[#0F172A] placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all text-sm font-medium disabled:opacity-75 disabled:cursor-not-allowed"
             />
             <button
@@ -122,31 +167,29 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full mt-2 py-3 px-4 rounded-xl text-white font-semibold bg-[#16A34A] hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:ring-offset-2 transition-all shadow-md hover:shadow-lg disabled:opacity-85 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 relative overflow-hidden group cursor-pointer"
+          className="w-full mt-4 py-3 px-4 rounded-xl text-white font-semibold bg-[#16A34A] hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:ring-offset-2 transition-all shadow-md hover:shadow-lg disabled:opacity-85 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 relative overflow-hidden group cursor-pointer"
         >
           {loading ? (
             <>
               <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-              <span className="tracking-wide text-sm font-medium">Authenticating...</span>
+              <span className="tracking-wide text-sm font-medium">Creating Account...</span>
             </>
           ) : (
             <>
-              <UserCheck className="w-5 h-5" />
-              <span>Sign In to Dashboard</span>
+              <CheckCircle2 className="w-5 h-5" />
+              <span>Sign Up for Free</span>
             </>
           )}
         </button>
       </form>
-
-      {/* Add Sign Up Link */}
+      
       <div className="mt-6 text-center text-sm text-slate-500">
-        Don't have a business account?{' '}
-        <a href="/register" className="text-[#16A34A] font-semibold hover:underline">
-          Create one now
-        </a>
+        Already have an account?{' '}
+        <Link href="/login" className="text-[#16A34A] font-semibold hover:underline">
+          Sign In
+        </Link>
       </div>
 
     </div>
   );
 }
-

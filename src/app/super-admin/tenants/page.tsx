@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { licenseService } from '@/lib/licenseService';
 import { License } from '@/types/license';
 import StartSupportModal from '@/components/support/StartSupportModal';
+import AddTenantModal from '@/components/super-admin/AddTenantModal';
 import {
   Building2,
   Users,
@@ -20,6 +21,7 @@ import {
   Database,
   Headset,
   ChevronRight,
+  Plus
 } from 'lucide-react';
 
 export default function SuperAdminTenantsPage() {
@@ -27,6 +29,7 @@ export default function SuperAdminTenantsPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [search, setSearch] = useState<string>('');
   const [supportTenant, setSupportTenant] = useState<{ id: number; name: string } | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
 
   const fetchTenants = async () => {
     try {
@@ -75,14 +78,25 @@ export default function SuperAdminTenantsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={fetchTenants}
-          className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-2xs self-start cursor-pointer"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : ''}`} />
-          <span>Refresh</span>
-        </button>
+        <div className="flex items-center gap-2 self-start">
+          <button
+            type="button"
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-4 py-2.5 rounded-xl border border-emerald-600 bg-emerald-600 font-bold text-sm text-white hover:bg-emerald-700 transition-colors flex items-center gap-2 shadow-2xs cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Business</span>
+          </button>
+          
+          <button
+            type="button"
+            onClick={fetchTenants}
+            className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-2xs cursor-pointer"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : ''}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
       {/* Search Bar */}
@@ -211,6 +225,13 @@ export default function SuperAdminTenantsPage() {
           tenantName={supportTenant.name}
         />
       )}
+
+      {/* Add Tenant Modal */}
+      <AddTenantModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={fetchTenants}
+      />
     </div>
   );
 }

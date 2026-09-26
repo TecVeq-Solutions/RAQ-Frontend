@@ -1,12 +1,36 @@
 import Cookies from 'js-cookie';
 import apiClient from './api';
-import { AuthResponse, LoginCredentials, MeResponse, Role, User } from '@/types/auth';
+import { AuthResponse, LoginCredentials, RegisterCredentials, MeResponse, Role, User } from '@/types/auth';
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user';
 const COOKIE_EXPIRES_DAYS = 7;
 
 export const authService = {
+  /**
+   * Register a new user and store token/user in cookies
+   */
+  async register(credentials: RegisterCredentials): Promise<{ user: User; token: string }> {
+    const response = await apiClient.post<AuthResponse>('/register', credentials);
+    const { token, user } = response.data.data;
+
+    Cookies.set(TOKEN_KEY, token, {
+      expires: COOKIE_EXPIRES_DAYS,
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    Cookies.set(USER_KEY, JSON.stringify(user), {
+      expires: COOKIE_EXPIRES_DAYS,
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    return { user, token };
+  },
+
   /**
    * Log in user with credentials and store token/user in cookies
    */
