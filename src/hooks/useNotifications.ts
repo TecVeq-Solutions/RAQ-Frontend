@@ -130,20 +130,14 @@ export function useNotifications() {
 
     // Setup Socket.IO connection and rooms
     useEffect(() => {
-        const token = Cookies.get('auth_token') || Cookies.get('super_admin_token');
+        const token = Cookies.get('auth_token');
         const userCookie = Cookies.get('user');
-        const superAdminCookie = Cookies.get('super_admin_user');
 
         let room = '';
-        if (superAdminCookie) {
-            try {
-                const sa = JSON.parse(superAdminCookie);
-                if (sa.id) room = `super-admin:${sa.id}`;
-            } catch (e) { }
-        } else if (userCookie) {
+        if (userCookie) {
             try {
                 const user = JSON.parse(userCookie);
-                if (user.tenant_id) room = `tenant:${user.tenant_id}`;
+                if (user.id) room = `tenant:${user.id}`; // Simplified room structure for single tenant
             } catch (e) { }
         }
 

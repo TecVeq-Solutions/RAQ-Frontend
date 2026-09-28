@@ -5,34 +5,10 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const tenantToken = request.cookies.get('auth_token')?.value;
-  const superAdminToken = request.cookies.get('super_admin_token')?.value;
-
-  const isSuperAdminLoginPage = pathname === '/super-admin-login';
-  const isSuperAdminRoute = pathname.startsWith('/super-admin') && !isSuperAdminLoginPage;
-
   const isTenantLoginPage = pathname === '/login';
 
   // --------------------------------------------------------------------------
-  // 1. Super Admin Authentication Routing
-  // --------------------------------------------------------------------------
-  if (isSuperAdminLoginPage) {
-    if (superAdminToken) {
-      return NextResponse.redirect(new URL('/super-admin/dashboard', request.url));
-    }
-    return NextResponse.next();
-  }
-
-  if (isSuperAdminRoute) {
-    if (!superAdminToken) {
-      const loginUrl = new URL('/super-admin-login', request.url);
-      loginUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-    return NextResponse.next();
-  }
-
-  // --------------------------------------------------------------------------
-  // 2. Tenant ERP Authentication Routing
+  // Tenant ERP Authentication Routing
   // --------------------------------------------------------------------------
   if (isTenantLoginPage) {
     if (tenantToken) {
@@ -43,9 +19,6 @@ export function middleware(request: NextRequest) {
 
   // Root redirect
   if (pathname === '/') {
-    if (superAdminToken) {
-      return NextResponse.redirect(new URL('/super-admin/dashboard', request.url));
-    }
     if (tenantToken) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }

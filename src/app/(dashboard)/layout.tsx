@@ -7,7 +7,6 @@ import { authService } from '@/lib/auth';
 import { User } from '@/types/auth';
 import { WorkspaceSkeleton } from '@/components/ui/Skeleton';
 import AiAssistantDrawer from '@/components/ai/AiAssistantDrawer';
-import SupportModeBanner from '@/components/support/SupportModeBanner';
 import { TenantContextProvider } from '@/context/TenantContext';
 import { LicenseExpiryBanner } from '@/components/tenant/LicenseExpiryBanner';
 import { Sparkles } from 'lucide-react';
@@ -64,9 +63,6 @@ export default function DashboardLayout({
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 max-w-full lg:pl-72 2xl:pl-80 overflow-x-hidden transition-all duration-300">
-          {/* Support Mode Live Floating Banner */}
-          <SupportModeBanner />
-
           {/* License Expiry Banner */}
           <LicenseExpiryBanner />
 
